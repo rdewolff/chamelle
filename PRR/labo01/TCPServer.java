@@ -5,22 +5,22 @@ import java.util.*;
 //import java.lang.Runnable; // threads Runnable ;p
 
 /**
- * PRR - Laboratoire 1 - Implemnation n° 1
+ * PRR - Laboratoire 1 - Implemnation n 1
  * Romain de Wolff et Simon Hintermann
  * 
  * Le client se lance avec 2 arguments :
  *  - 1 : l'adresse du serveur
  *  - 2 : le port sur lequel se connecter
  * 
- * Première implémentation 
+ * Premiere implementation 
  * @author rdewolff
  * @date  5.10.2007
  */
-
+ 
 /**
  * 
- * On va départager les différentes tâches du serveur 
- * selon la donnée du laboratoire. 
+ * On va d√©partager les diff√©rentes t√¢ches du serveur 
+ * selon la donnee du laboratoire. 
  * Ceci autant pour le serveur que pour le client.
  * 
  * -- UDP Datagrames - String to Bytes ^^
@@ -40,7 +40,7 @@ class TCPServer {
 	static int startPort = 8000;
 
 	/* 
-	 * Affichage de la matrice passée en parametre (2D)
+	 * Affichage de la matrice pass√©e en parametre (2D)
 	 */
 	private static void afficheMatrice(int [][] tableau) {
 		for (short i=0; i<tableau.length; i++) {
@@ -59,7 +59,7 @@ class TCPServer {
 		// affiche info sur nom + ip serveur
 		System.out.println("Lancement du serveur sur " + InetAddress.getLocalHost());
 
-		// le premier parametre passé au programme correspond a la taille des matrices que 
+		// le premier parametre pass√© au programme correspond a la taille des matrices que 
 		// l'on va calculer
 		int n = Integer.decode( argv[0] ); 
 		// verification de la taille min et max et changement des valeurs si necessaire
@@ -77,7 +77,7 @@ class TCPServer {
 		tabB = new int[n][n];
 		tabC = new int[n][n];
 
-		// insertion de valeurs aléatoire dans le tableau
+		// insertion de valeurs al√©atoire dans le tableau
 		Random hasard = new Random();
 		// parcours les deux talbeaux et insere les valeurs aleatoires
 		for (short i=0; i<n; i++) {
@@ -108,10 +108,10 @@ class TCPServer {
 		for (int i=0; i<n; i++) {
 			welcomeSocket[i] = new ServerSocket(startPort+i);
 			connectionSocket[i] = welcomeSocket[i].accept();
-			System.out.println("Client " + (i+1) + " connecté.");
+			System.out.println("Client " + (i+1) + " connect√©.");
 		}
 		
-		System.out.println("Début de la transmission...");
+		System.out.println("D√©but de la transmission...");
 
 		/*
 		// BufferedReader
@@ -129,7 +129,7 @@ class TCPServer {
 		outToClient.close();
 */
 		// --------------------------------------------------------------------
-		// affiche les tableaux ainsi que le resultat calculé
+		// affiche les tableaux ainsi que le resultat calcule
 		System.out.println("Matrice A");
 		afficheMatrice(tabA);
 
