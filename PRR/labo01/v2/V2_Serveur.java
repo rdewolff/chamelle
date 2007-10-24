@@ -26,8 +26,6 @@ public class V2_Serveur
 		socket.send(paquet);
 		
 		socket.close();
-		
-		
 	}
 }
 
