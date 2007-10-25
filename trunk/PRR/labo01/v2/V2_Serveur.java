@@ -12,20 +12,23 @@ public class V2_Serveur
 	
 	public static void main (String args[]) throws IOException, SocketException 
 	{
-		Integer tailleTampon = 4; 
+		
+		Integer TAILLE_TAMPON = 10; // Integer.MAX_VALUE = 2147483647 => 10 chars
 		Integer nbClientConnecte = 0;
 		Integer tailleMatrice = N;
 		
-		byte[] tampon = new byte[tailleTampon];
+		
+		byte[] tampon = new byte[TAILLE_TAMPON];
 
 		DatagramSocket socket = new DatagramSocket(PORT);
 		DatagramPacket paquet = new DatagramPacket(tampon, tampon.length);
-		System.out.println("Démarrage du serveur...");
+		System.out.println("*** Serveur démarré ***");
+		
 		
 		// TODO : multi client WHILE ... n .. 
 		// attends tous les clients
 		socket.receive(paquet); // attend la requete du client
-		// System.out.println("Client " + new String(paquet.getData()));
+		System.out.println("Recu : " + new String(paquet.getData()));
 		// leur envoie les données necessaires (N + ligne, numéro de ligne et matrice B)
 		nbClientConnecte++;
 		System.out.println("client " + nbClientConnecte + " connecté");
@@ -33,9 +36,15 @@ public class V2_Serveur
 		InetAddress addresseClient = paquet.getAddress(); // l'addresse qu'utilise le client
 		int portClient = paquet.getPort(); // le port qu'utilise le client
 		
-		byte[] tampon2 = new byte[nbClientConnecte.toString().length()];
+		// byte[] tampon2 = new byte[nbClientConnecte.toString().length()];
+		Integer test = Integer.MAX_VALUE;
+		System.out.print(test);
+		tampon = (test.toString()).getBytes();
+		
+		
+		
 		// System.out.println("Sur le point d'envoyer : " + Integer.);
-		paquet = new DatagramPacket(tampon2, tampon2.length, addresseClient, portClient); // reinit le paquet
+		paquet = new DatagramPacket(tampon, tampon.length, addresseClient, portClient); // reinit le paquet
 		// on lui envoie son ID qui correspond a la ligne qu'il va devoir calculer
 		socket.send(paquet); // envoie de l'ID qui correspond à la ligne à calculer
 		
@@ -50,7 +59,9 @@ public class V2_Serveur
 		
 		// envoie les informations au client 
 		
-		socket.send(paquet); 
+		socket.send(paquet);
+		
+		// socket.setSoTimeout(1000); // TODO gere les timeout de connection 
 		*/
 		
 		socket.close();
