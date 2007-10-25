@@ -2,6 +2,7 @@ package v2;
 
 import java.net.*;
 import java.io.*;
+import java.util.*;
 
 public class V2_Client {	
 	public static void main (String args[]) throws IOException {
@@ -15,6 +16,7 @@ public class V2_Client {
 			// introduction
 			// TODO : attente de pression clavier
 			//System.out.println("Appuyer sur une touche pour continuer .. ")
+			
 			// parametre de la connexion
 			InetAddress address = InetAddress.getByName("localhost");
 			int port = 6000;
@@ -22,24 +24,25 @@ public class V2_Client {
 			// envoie au serveur un paquet de requete, pour qu'il sache qu'il est connecté
 			DatagramSocket socket = new DatagramSocket();
 			DatagramPacket paquet = new DatagramPacket(tampon, tampon.length, address, port);
-			socket.send(paquet); // envoi
-
-			System.out.println("Connection avec le serveur établie");
-
-			//int N = Integer.parseInt(packet.getData().toString()); // TODO : inutile ?
-			// obtenir un socket de datagramme
-			//System.out.println("Valeur de N : " + N + "\n");
-
+			socket.send(paquet); // envoi du paquet a l'aide du socket
+			
+			
 			// recoit les infos du serveur
-			DatagramPacket paquet2 = new DatagramPacket(tampon, tampon.length);
+			 	//int N = Integer.parseInt(packet.getData().toString()); // TODO : inutile ?
+				// obtenir un socket de datagramme
+				//System.out.println("Valeur de N : " + N + "\n");
+			paquet = new DatagramPacket(tampon, tampon.length);
 			socket.receive(paquet); 
+			// la connection est dès lors etablie, la communication fonctionne
+			System.out.println("Connection avec le serveur établie");
+			String data = new String(paquet.getData()); // ou : String data = new String(paquet.getData(), 0); // old! 
+			
+			System.out.println("Paquet recu: " + data);
 
-			String msg = new String(paquet2.getData(), 0);
+			// recoit une ligne, un numéro de ligne et la matrice B			
+			// on a besoin de : 
+			// N, ligne[], matB[][]
 
-
-			System.out.println("Paquet recu:" + msg);
-
-			// recoit une ligne, un numéro de ligne et la matrice B
 			// calcul les valeurs
 
 			// renvoie les résultats au serveur

@@ -21,7 +21,7 @@ import java.util.*;
  
 /**
  * 
- * On va départager les différentes tâches du serveur 
+ * On va departager les differentes taches du serveur 
  * selon la donnee du laboratoire. 
  * Ceci autant pour le serveur que pour le client.
  * 
@@ -42,7 +42,7 @@ class V1_Serveur {
 	static int startPort = 8000;
 
 	/* 
-	 * Affichage de la matrice passée en parametre (2D)
+	 * Affichage de la matrice passee en parametre (2D)
 	 */
 	private static void afficheMatrice(int [][] tableau) {
 		for (short i=0; i<tableau.length; i++) {
@@ -61,7 +61,7 @@ class V1_Serveur {
 		// affiche info sur nom + ip serveur
 		System.out.println("Lancement du serveur sur " + InetAddress.getLocalHost());
 
-		// le premier parametre passé au programme correspond a la taille des matrices que 
+		// le premier parametre passe au programme correspond a la taille des matrices que 
 		// l'on va calculer
 		int n = Integer.decode( argv[0] ); 
 		// verification de la taille min et max et changement des valeurs si necessaire
@@ -79,7 +79,7 @@ class V1_Serveur {
 		tabB = new int[n][n];
 		tabC = new int[n][n];
 
-		// insertion de valeurs aléatoire dans le tableau
+		// insertion de valeurs aleatoire dans le tableau
 		Random hasard = new Random();
 		// parcours les deux talbeaux et insere les valeurs aleatoires
 		for (short i=0; i<n; i++) {
@@ -110,10 +110,10 @@ class V1_Serveur {
 		for (int i=0; i<n; i++) {
 			welcomeSocket[i] = new ServerSocket(startPort+i);
 			connectionSocket[i] = welcomeSocket[i].accept();
-			System.out.println("Client " + (i+1) + " connecté.");
+			System.out.println("Client " + (i+1) + " connecte.");
 		}
 		
-		System.out.println("Début de la transmission...");
+		System.out.println("Debut de la transmission...");
 
 		/*
 		// BufferedReader
