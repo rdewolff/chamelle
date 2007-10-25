@@ -8,6 +8,18 @@ public class V2_Serveur
 	static int PORT = 6000;
 	static int N = 3;
 	
+	/* 
+	 * Affichage de la matrice passee en parametre (2D)
+	 */
+	private static void afficheMatrice(int [][] tableau) {
+		for (short i=0; i<tableau.length; i++) {
+			for (short j=0; j<tableau.length; j++) {
+				System.out.print(tableau[i][j] + " ");
+			}
+			System.out.print('\n');
+		}
+	}
+	
 	public static void main (String args[]) throws IOException, SocketException 
 	{
 		

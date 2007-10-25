@@ -5,6 +5,19 @@ import java.io.*;
 import java.util.*;
 
 public class V2_Client {	
+	
+	/* 
+	 * Affichage de la matrice passee en parametre (2D)
+	 */
+	private static void afficheMatrice(int [][] tableau) {
+		for (short i=0; i<tableau.length; i++) {
+			for (short j=0; j<tableau.length; j++) {
+				System.out.print(tableau[i][j] + " ");
+			}
+			System.out.print('\n');
+		}
+	}
+
 	public static void main (String args[]) throws IOException {
 		try {
 			
@@ -41,13 +54,19 @@ public class V2_Client {
 			System.out.println("Connection avec le serveur Žtablie");
 			
 			// recoit les infos qui sont dans un seul character (deux nombre < 10)
-			Integer idClient = Integer.parseInt(new String(paquet.getData()).trim());
-			
-			socket.receive(paquet); 
 			Integer ligneACalculer = Integer.parseInt(new String(paquet.getData()).trim());
 			
+			socket.receive(paquet); 
+			Integer tailleMatrice = Integer.parseInt(new String(paquet.getData()).trim());
 			
-			System.out.println("idClient: " + idClient + "\nligneACalculer: " + ligneACalculer);
+			//socket.receive(paquet);
+			//Integer tailleMatrice = Integer.parseInt(new String(paquet.getData()).trim());
+			
+			System.out.println("ligneACalculer: " + ligneACalculer + "\ntailleMatrice: " + tailleMatrice);
+			
+			// variante 2 : recoit une ligne de la matrice A
+			//Integer[]  ligneA;
+			//tabB = new int[n][n];
 			
 			// recoit une ligne, un numŽro de ligne et la matrice B			
 			// on a besoin de : 
