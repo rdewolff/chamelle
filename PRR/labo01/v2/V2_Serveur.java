@@ -5,39 +5,39 @@ import java.io.*;
 
 public class V2_Serveur 
 {
+	static int PORT = 6000;
+	static int N = 3;
+	
 	public static void main (String args[]) throws IOException, SocketException 
 	{
-		
-		Integer N = 3;
-		
 		byte[] tampon = new byte[256];
 		
-		DatagramSocket socket = new DatagramSocket(4445);
-		
+		DatagramSocket socket = new DatagramSocket(PORT);
 		DatagramPacket paquet = new DatagramPacket(tampon, tampon.length);
+		System.out.println("OK \n");
+		socket.receive(paquet); // attend la requete du client
+		System.out.println("client 1 connectŽ");
+		// attends tous les clients
+		// leur envoie les donnŽes necessaires (N + ligne, numŽro de ligne et matrice B)
 		
-		//socket.receive(paquet); // bloquant
+		// rŽcupre toute les valeurs
+		String messageRecu = new String(paquet.getData(), 0);
+		System.out.println("Echo > " + messageRecu);
 		
-		//String messageRecu = new String(paquet.getData(), 0);
-		//System.out.println("Echo: " + messageRecu);
+		InetAddress addresseClient = paquet.getAddress();
+		int portClient = paquet.getPort();
 		
-		// 1 - InetAddress addresseClient = paquet.getAddress();
-		// 2 - 
-		InetAddress addresseClient = InetAddress.getByName("localhost");
-		//int portClient = paquet.getPort();
+		messageRecu = "N"; // valeur de la ligne qu'il va calculer
+		tampon = messageRecu.getBytes();
 		
-		// 1 - tampon = messageRecu.getBytes();
-		// 2 -
-		tampon[0] = N.byteValue();
+		paquet = new DatagramPacket(tampon, tampon.length, addresseClient, portClient);
 		
+		// envoie les informations au client 
 		
-		// 1 - paquet = new DatagramPacket(tampon, tampon.length, addresseClient, portClient);
-		// 2 -
-		paquet = new DatagramPacket(tampon, tampon.length, addresseClient, 4445);
-		
-		socket.send(paquet);
+		socket.send(paquet); 
 		
 		socket.close();
+		System.out.println("fin serveur");
 	}
 }
 
