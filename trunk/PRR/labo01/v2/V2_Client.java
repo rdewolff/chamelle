@@ -39,11 +39,16 @@ public class V2_Client {
 			socket.receive(paquet); 
 			// la connection est dès lors etablie, la communication fonctionne
 			System.out.println("Connection avec le serveur établie");
-			// String data = new String(paquet.getData()); // ou : 
-			String data = new String(paquet.getData()); // old! 
 			
-			System.out.println("Paquet recu: " + data);
-
+			// recoit les infos qui sont dans un seul character (deux nombre < 10)
+			Integer idClient = Integer.parseInt(new String(paquet.getData()).trim());
+			
+			socket.receive(paquet); 
+			Integer ligneACalculer = Integer.parseInt(new String(paquet.getData()).trim());
+			
+			
+			System.out.println("idClient: " + idClient + "\nligneACalculer: " + ligneACalculer);
+			
 			// recoit une ligne, un numéro de ligne et la matrice B			
 			// on a besoin de : 
 			// N, ligne[], matB[][]

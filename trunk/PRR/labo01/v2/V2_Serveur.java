@@ -8,15 +8,12 @@ public class V2_Serveur
 	static int PORT = 6000;
 	static int N = 3;
 	
-	
-	
 	public static void main (String args[]) throws IOException, SocketException 
 	{
 		
 		Integer TAILLE_TAMPON = 10; // Integer.MAX_VALUE = 2147483647 => 10 chars
 		Integer nbClientConnecte = 0;
 		Integer tailleMatrice = N;
-		
 		
 		byte[] tampon = new byte[TAILLE_TAMPON];
 
@@ -32,22 +29,20 @@ public class V2_Serveur
 		// leur envoie les données necessaires (N + ligne, numéro de ligne et matrice B)
 		nbClientConnecte++;
 		System.out.println("client " + nbClientConnecte + " connecté");
+		
 		// renvoie le numero au client, qui correspond à la ligne qu'il doit traiter
 		InetAddress addresseClient = paquet.getAddress(); // l'addresse qu'utilise le client
 		int portClient = paquet.getPort(); // le port qu'utilise le client
-		
-		// byte[] tampon2 = new byte[nbClientConnecte.toString().length()];
-		Integer test = Integer.MAX_VALUE;
-		System.out.print(test);
-		tampon = (test.toString()).getBytes();
-		
-		
-		
-		// System.out.println("Sur le point d'envoyer : " + Integer.);
+		// met l'information a transmettre en octets
+		tampon = (nbClientConnecte.toString()).getBytes();
 		paquet = new DatagramPacket(tampon, tampon.length, addresseClient, portClient); // reinit le paquet
 		// on lui envoie son ID qui correspond a la ligne qu'il va devoir calculer
 		socket.send(paquet); // envoie de l'ID qui correspond à la ligne à calculer
 		
+		// renvoie la tailleMatrice
+		tampon = (tailleMatrice.toString()).getBytes();
+		paquet = new DatagramPacket(tampon, tampon.length, addresseClient, portClient); 
+		socket.send(paquet);
 		
 		/*
 		// récupère toute les valeurs
