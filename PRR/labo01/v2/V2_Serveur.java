@@ -34,7 +34,7 @@ public class V2_Serveur
 		tabB = new Integer[tailleMatrice][tailleMatrice];
 		tabC = new Integer[tailleMatrice][tailleMatrice];
 
-		// insertion de valeurs aléatoire dans le tableau
+		// insertion de valeurs aleatoires dans le tableau
 		Random hasard = new Random();
 		// parcours les deux talbeaux et insere les valeurs aleatoires
 		for (short i=0; i<tailleMatrice; i++) {
@@ -74,7 +74,7 @@ public class V2_Serveur
 		socket.send(paquet);
 
 		// envoie la ligne de la matrice A
-		for (int i=0; i<tailleMatrice; i++) {
+		for (short i=0; i<tailleMatrice; i++) {
 			tampon = (tabA[nbClientConnecte][i].toString()).getBytes();
 			paquet = new DatagramPacket(tampon, tampon.length, addresseClient, portClient);
 			socket.send(paquet);

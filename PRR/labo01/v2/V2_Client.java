@@ -1,5 +1,4 @@
 package v2;
-// comment 1 : I love malwina!
 
 import java.net.*;
 import java.io.*;
@@ -27,11 +26,14 @@ public class V2_Client {
 			String query = "HELO";
 			byte[] tampon = new byte[TAILLE_TAMPON];
 			tampon = query.getBytes();
-
-			// introduction 
-			// TODO : attente de pression clavier
-			//System.out.println("Appuyer sur une touche pour continuer .. ");
+ 
 			System.out.println("*** Client ***");
+			/* TODO : attente de pression clavier
+			BufferedReaderstdin= new BufferedReader( 
+			new InputStreamReader(System.in)); 
+			System.out.println("Appuyer sur une touche pour continuer .. "); 
+			System.out.println(stdin.readLine()); 
+			 */
 			
 			// parametre de la connexion
 			InetAddress address = InetAddress.getByName("localhost");
@@ -55,16 +57,14 @@ public class V2_Client {
 			socket.receive(paquet); 
 			Integer tailleMatrice = Integer.parseInt(new String(paquet.getData()).trim());
 			
-			//socket.receive(paquet);
-			//Integer tailleMatrice = Integer.parseInt(new String(paquet.getData()).trim());
-			
 			System.out.println("ligneACalculer: " + ligneACalculer + "\ntailleMatrice: " + tailleMatrice);
 			
 			Integer[] ligneA = new Integer[tailleMatrice];
+			Integer[] ligneC = new Integer[tailleMatrice];			
 			Integer[][] tabB = new Integer[tailleMatrice][tailleMatrice];
 			
 			// recoit la ligne A
-			for (int i=0; i<tailleMatrice; i++) {
+			for (short i=0; i<tailleMatrice; i++) {
 				socket.receive(paquet);
 				Integer val = Integer.parseInt(new String(paquet.getData()).trim());
 				ligneA[i] = val;
@@ -79,6 +79,23 @@ public class V2_Client {
 				}
 			}
 			
+			// calcul les valeurs
+			ligneC[0] = 0; ligneC[1] = 0; ligneC[2] = 0; // TODO : autre moyen d'initialiser ces valeurs directement ?
+			for (short j=0; j<tailleMatrice; j++) { // j = colonne
+				// multiplie avec la colonne de la matrice B
+				for (short k=0; k<tailleMatrice; k++) {
+					ligneC[j] += ligneA[k] * tabB[k][j];
+				}    		   
+			}
+			
+			// renvoie les rŽsultats au serveur
+			tampon = (ligneACalculer.toString()).getBytes();
+			socket = new DatagramSocket();
+			paquet = new DatagramPacket(tampon, tampon.length, address, port);
+			socket.send(paquet); // envoi du paquet a l'aide du socket
+
+			
+			// affiche les resultats
 			System.out.println("Ligne de A a calculer");
 			for (int i=0; i<ligneA.length; i++) {
 				System.out.print(ligneA[i] + " ");
@@ -87,8 +104,13 @@ public class V2_Client {
 			System.out.println("\nMatrice B");
 			afficheMatrice(tabB);
 			
+			System.out.println("Ligne de B calculŽe");
+			for (int i=0; i<ligneC.length; i++) {
+				System.out.print(ligneC[i] + " ");
+			}
+			
 			// calcul les valeurs
-
+			
 			// renvoie les rŽsultats au serveur
 			//DatagramPacket paquet = new DatagramPacket(tampon, tampon.length, address, port);
 			//socket.send(paquet);
