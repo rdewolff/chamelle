@@ -6,10 +6,6 @@ import java.io.*;
 
 public class V2_Serveur 
 {
-	// TODO passer en parametre
-	static int PORT = 6000;
-	static int N = 3;
-
 	/* 
 	 * Affichage de la matrice carrŽe passŽe en parametre (2 dimensions)
 	 */
@@ -24,118 +20,134 @@ public class V2_Serveur
 
 	public static void main (String args[]) throws IOException, SocketException 
 	{
-		// dŽclaration des variables
-		Integer TAILLE_TAMPON = 10; // Integer.MAX_VALUE = 2147483647 => 10 chars
-		Integer nbClientConnecte = -1; // de 0 a N
-		Integer tailleMatrice = N;
 
-		// creation des 2 tableaux sur lequelles on va faire des calculs
-		Integer[][]  tabA, tabB, tabC;
-		tabA = new Integer[tailleMatrice][tailleMatrice];
-		tabB = new Integer[tailleMatrice][tailleMatrice];
-		tabC = new Integer[tailleMatrice][tailleMatrice];
-		
-		
-		// insertion de valeurs aleatoires dans le tableau
-		Random hasard = new Random();
-		// parcours les deux talbeaux et insere les valeurs aleatoires
-		for (short i=0; i<tailleMatrice; i++) {
-			for (short j=0; j<tailleMatrice; j++) {
-				tabA[i][j] = hasard.nextInt(10);
-				tabB[i][j] = hasard.nextInt(10);
-			}
-		}
 
-		// tampon utilisŽ pour la communication
-		byte[] tampon = new byte[TAILLE_TAMPON];
+		if (args.length < 2) {
 
-		// ouverture d'un port en mode UDP
-		DatagramSocket socket = new DatagramSocket(PORT);
-		DatagramPacket paquet = new DatagramPacket(tampon, tampon.length);
-		System.out.println("*** Serveur dŽmarrŽ ***");
+			System.out.println("Erreur, manque parametres : java serveur <tailleMatrice> <port>");
 
-		// TODO : multi client WHILE ... n .. 
-		// attends tous les clients
-		socket.receive(paquet); // attend la requete du client
-		System.out.println("Recu : " + new String(paquet.getData()));
-		// leur envoie les donnŽes necessaires (N + ligne, numŽro de ligne et matrice B)
-		
-		System.out.println("client " + nbClientConnecte + " connectŽ");
-		nbClientConnecte++;
-		// renvoie le numero au client, qui correspond ˆ la ligne qu'il doit traiter ( 0 ˆ N )
-		InetAddress addresseClient = paquet.getAddress(); // l'addresse qu'utilise le client
-		int portClient = paquet.getPort(); // le port qu'utilise le client
+		} else {
+			try {
+				// dŽclaration des variables
+				Integer TAILLE_TAMPON = 10; // Integer.MAX_VALUE = 2147483647 => 10 chars
+				Integer nbClientConnecte = -1; // de 0 a N
+				Integer tailleMatrice = Integer.parseInt(args[0]);
+				Integer port = Integer.parseInt(args[1]);
+				
+				// creation des 2 tableaux sur lequelles on va faire des calculs
+				Integer[][]  tabA, tabB, tabC;
+				tabA = new Integer[tailleMatrice][tailleMatrice];
+				tabB = new Integer[tailleMatrice][tailleMatrice];
+				tabC = new Integer[tailleMatrice][tailleMatrice];
 
-		tampon = (nbClientConnecte.toString()).getBytes(); // met l'information a transmettre en octets
-		paquet = new DatagramPacket(tampon, tampon.length, addresseClient, portClient); // reinit le paquet
-		// on lui envoie son ID qui correspond a la ligne qu'il va devoir calculer
-		socket.send(paquet); // envoie de l'ID qui correspond ˆ la ligne ˆ calculer
 
-		// renvoie la tailleMatrice
-		tampon = (tailleMatrice.toString()).getBytes();
-		paquet = new DatagramPacket(tampon, tampon.length, addresseClient, portClient); 
-		socket.send(paquet);
+				// insertion de valeurs aleatoires dans le tableau
+				Random hasard = new Random();
+				// parcours les deux talbeaux et insere les valeurs aleatoires
+				for (short i=0; i<tailleMatrice; i++) {
+					for (short j=0; j<tailleMatrice; j++) {
+						tabA[i][j] = hasard.nextInt(10);
+						tabB[i][j] = hasard.nextInt(10);
+					}
+				}
 
-		// envoie la ligne de la matrice A
-		for (short i=0; i<tailleMatrice; i++) {
-			tampon = (tabA[nbClientConnecte][i].toString()).getBytes();
-			paquet = new DatagramPacket(tampon, tampon.length, addresseClient, portClient);
-			socket.send(paquet);
-		}
-		
-		// envoie la matrice B
-		for (short i=0; i<tailleMatrice; i++) {
-			for (short j=0; j<tailleMatrice; j++) {
-				tampon = (tabB[i][j].toString()).getBytes();
-				paquet = new DatagramPacket(tampon, tampon.length, addresseClient, portClient);
+				// tampon utilisŽ pour la communication
+				byte[] tampon = new byte[TAILLE_TAMPON];
+
+				// ouverture d'un port en mode UDP
+				DatagramSocket socket = new DatagramSocket(port);
+				DatagramPacket paquet = new DatagramPacket(tampon, tampon.length);
+				System.out.println("*** Serveur dŽmarrŽ ***");
+
+				// TODO : multi client WHILE ... n .. 
+				
+				// attends tous les clients
+				socket.receive(paquet); // attend la requete du client
+				System.out.println("Recu : " + new String(paquet.getData()));
+				// leur envoie les donnŽes necessaires (N + ligne, numŽro de ligne et matrice B)
+
+				System.out.println("client " + (nbClientConnecte+2) + " connectŽ");
+				nbClientConnecte++;
+				// renvoie le numero au client, qui correspond ˆ la ligne qu'il doit traiter ( 0 ˆ N )
+				InetAddress addresseClient = paquet.getAddress(); // l'addresse qu'utilise le client
+				int portClient = paquet.getPort(); // le port qu'utilise le client
+
+				tampon = (nbClientConnecte.toString()).getBytes(); // met l'information a transmettre en octets
+				paquet = new DatagramPacket(tampon, tampon.length, addresseClient, portClient); // reinit le paquet
+				// on lui envoie son ID qui correspond a la ligne qu'il va devoir calculer
+				socket.send(paquet); // envoie de l'ID qui correspond ˆ la ligne ˆ calculer
+
+				// renvoie la tailleMatrice
+				tampon = (tailleMatrice.toString()).getBytes();
+				paquet = new DatagramPacket(tampon, tampon.length, addresseClient, portClient); 
 				socket.send(paquet);
+
+				// envoie la ligne de la matrice A
+				for (short i=0; i<tailleMatrice; i++) {
+					tampon = (tabA[nbClientConnecte][i].toString()).getBytes();
+					paquet = new DatagramPacket(tampon, tampon.length, addresseClient, portClient);
+					socket.send(paquet);
+				}
+
+				// envoie la matrice B
+				for (short i=0; i<tailleMatrice; i++) {
+					for (short j=0; j<tailleMatrice; j++) {
+						tampon = (tabB[i][j].toString()).getBytes();
+						paquet = new DatagramPacket(tampon, tampon.length, addresseClient, portClient);
+						socket.send(paquet);
+					}
+				}
+
+				// TODO boucle sur tout les client
+				// rŽcupre toute les valeurs
+				tampon = new byte[TAILLE_TAMPON];
+				paquet = new DatagramPacket(tampon, tampon.length);
+				socket.receive(paquet); // attend la requete du client
+				Integer ligneRecue = Integer.parseInt(new String(paquet.getData()).trim());
+				System.out.println("Recu ligne " + ligneRecue);
+
+				for (short i=0; i<tailleMatrice; i++) {
+					paquet = new DatagramPacket(tampon, tampon.length);
+					socket.receive(paquet);
+					tabC[ligneRecue][i] = Integer.parseInt(new String(paquet.getData()).trim());
+				}
+
+				// affiche les tableaux ainsi que le resultat calcule
+				System.out.println("Matrice A");
+				afficheMatrice(tabA);
+
+				System.out.println("Matrice B");
+				afficheMatrice(tabB);
+
+				System.out.println("Matrice C = A x B");
+				afficheMatrice(tabC);
+
+				// calcul les valeurs localement, pour comparer avec les informatiosn recus des clients
+				for (short i=0; i<tailleMatrice; i++) { // i = ligne
+					for (short j=0; j<tailleMatrice; j++) { // j = colonne
+						// multiplie avec la colonne de la matrice B
+						tabC[i][j] = 0;
+						for (short k=0; k<tailleMatrice; k++) {
+							tabC[i][j] += tabA[i][k] * tabB[k][j];
+						}    		   
+					}
+				}
+
+				System.out.println("Matrice C = A x B (local calcul)");
+				afficheMatrice(tabC);
+
+				/* ComplŽmentaire : util ˆ la fin ?
+				socket.setSoTimeout(1000); // TODO gere les timeout de connection 
+				 */
+
+				socket.close();
+				System.out.println("*** fin serveur ***");
+
+			} catch (IOException e) {
+				System.err.println(e);
+
 			}
 		}
-		
-		// TODO boucle sur tout les client
-		// rŽcupre toute les valeurs
-		tampon = new byte[TAILLE_TAMPON];
-		paquet = new DatagramPacket(tampon, tampon.length);
-		socket.receive(paquet); // attend la requete du client
-		Integer ligneRecue = Integer.parseInt(new String(paquet.getData()).trim());
-		System.out.println("Recu ligne " + ligneRecue);
-		
-		for (short i=0; i<tailleMatrice; i++) {
-			paquet = new DatagramPacket(tampon, tampon.length);
-			socket.receive(paquet);
-			tabC[ligneRecue][i] = Integer.parseInt(new String(paquet.getData()).trim());
-		}
-		
-		// affiche les tableaux ainsi que le resultat calcule
-		System.out.println("Matrice A");
-		afficheMatrice(tabA);
-
-		System.out.println("Matrice B");
-		afficheMatrice(tabB);
-
-		System.out.println("Matrice C = A x B");
-		afficheMatrice(tabC);
-		
-		// calcul les valeurs localement, pour comparer avec les informatiosn recus des clients
-		for (short i=0; i<tailleMatrice; i++) { // i = ligne
-			for (short j=0; j<tailleMatrice; j++) { // j = colonne
-				// multiplie avec la colonne de la matrice B
-				tabC[i][j] = 0;
-				for (short k=0; k<tailleMatrice; k++) {
-					tabC[i][j] += tabA[i][k] * tabB[k][j];
-				}    		   
-			}
-		}
-		
-		System.out.println("Matrice C = A x B (local calcul)");
-		afficheMatrice(tabC);
-		
-		/* ComplŽmentaire : util ˆ la fin ?
-		socket.setSoTimeout(1000); // TODO gere les timeout de connection 
-		 */
-
-		socket.close();
-		System.out.println("*** fin serveur ***");
 	}
 }
 

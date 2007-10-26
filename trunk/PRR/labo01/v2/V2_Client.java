@@ -29,7 +29,7 @@ public class V2_Client {
 			byte[] tampon = new byte[TAILLE_TAMPON];
 			tampon = query.getBytes();
  
-			System.out.println("*** Cylient ***");
+			System.out.println("*** Client ***");
 			BufferedReader stdin= new BufferedReader(new InputStreamReader(System.in)); 
 			System.out.print("Appuyer sur une <enter> pour vous connecter au serveur"); 
 			stdin.readLine(); // attend touche <enter> 
@@ -48,7 +48,6 @@ public class V2_Client {
 			
 			// recoit les infos qui sont dans un seul character (deux nombre < 10)
 			Integer ligneACalculer = Integer.parseInt(new String(paquet.getData()).trim());
-			
 			socket.receive(paquet); 
 			Integer tailleMatrice = Integer.parseInt(new String(paquet.getData()).trim());
 			
@@ -75,7 +74,9 @@ public class V2_Client {
 			}
 			
 			// calcul les valeurs
-			ligneC[0] = 0; ligneC[1] = 0; ligneC[2] = 0; // TODO : autre moyen d'initialiser ces valeurs directement ?
+			for (short i=0; i<tailleMatrice;i++) 
+				ligneC[i] = 0; // TODO : autre moyen d'initialiser ces valeurs directement ?
+
 			for (short j=0; j<tailleMatrice; j++) { // j = colonne
 				// multiplie avec la colonne de la matrice B
 				for (short k=0; k<tailleMatrice; k++) {
