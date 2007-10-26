@@ -3,14 +3,13 @@ package v2;
 
 import java.net.*;
 import java.io.*;
-import java.util.*;
 
 public class V2_Client {	
 	
 	/* 
 	 * Affichage de la matrice passee en parametre (2D)
 	 */
-	private static void afficheMatrice(int [][] tableau) {
+	private static void afficheMatrice(Integer [][] tableau) {
 		for (short i=0; i<tableau.length; i++) {
 			for (short j=0; j<tableau.length; j++) {
 				System.out.print(tableau[i][j] + " ");
@@ -29,7 +28,7 @@ public class V2_Client {
 			byte[] tampon = new byte[TAILLE_TAMPON];
 			tampon = query.getBytes();
 
-			// introduction
+			// introduction 
 			// TODO : attente de pression clavier
 			//System.out.println("Appuyer sur une touche pour continuer .. ");
 			System.out.println("*** Client ***");
@@ -43,11 +42,7 @@ public class V2_Client {
 			DatagramPacket paquet = new DatagramPacket(tampon, tampon.length, address, port);
 			socket.send(paquet); // envoi du paquet a l'aide du socket
 			
-			
 			// recoit les infos du serveur
-			 	//int N = Integer.parseInt(packet.getData().toString()); // TODO : inutile ?
-				// obtenir un socket de datagramme
-				//System.out.println("Valeur de N : " + N + "\n");
 			tampon = new byte[TAILLE_TAMPON]; // reinit le tampon
 			paquet = new DatagramPacket(tampon, tampon.length);
 			socket.receive(paquet); 
@@ -65,20 +60,46 @@ public class V2_Client {
 			
 			System.out.println("ligneACalculer: " + ligneACalculer + "\ntailleMatrice: " + tailleMatrice);
 			
-			// variante 2 : recoit une ligne de la matrice A
-			//Integer[]  ligneA;
-			//tabB = new int[n][n];
+			Integer[] ligneA = new Integer[tailleMatrice];
+			Integer[][] tabB = new Integer[tailleMatrice][tailleMatrice];
 			
-			// recoit une ligne, un numŽro de ligne et la matrice B			
-			// on a besoin de : 
-			// N, ligne[], matB[][]
-
+			// recoit la ligne A
+			for (int i=0; i<tailleMatrice; i++) {
+				socket.receive(paquet);
+				Integer val = Integer.parseInt(new String(paquet.getData()).trim());
+				ligneA[i] = val;
+			}
+			
+			// recoit la matrice B
+			for (short i=0; i<tailleMatrice; i++) {
+				for (short j=0; j<tailleMatrice; j++) {
+					socket.receive(paquet);
+					Integer val = Integer.parseInt(new String(paquet.getData()).trim());
+					tabB[i][j] = val;
+				}
+			}
+			
+			System.out.println("Ligne de A a calculer");
+			for (int i=0; i<ligneA.length; i++) {
+				System.out.print(ligneA[i] + " ");
+			}
+			
+			System.out.println("\nMatrice B");
+			afficheMatrice(tabB);
+			
 			// calcul les valeurs
 
 			// renvoie les rŽsultats au serveur
 			//DatagramPacket paquet = new DatagramPacket(tampon, tampon.length, address, port);
 			//socket.send(paquet);
-
+			
+			/*
+			// en utilisant des Stream
+			Socket s = new Socket("localhost", 6000);
+			s.getInputStream();
+			s.getOutputStream();
+			*/
+			
 			// ferme la connection
 			socket.close();
 			System.out.println("fin client");
