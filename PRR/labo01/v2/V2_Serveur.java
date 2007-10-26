@@ -6,6 +6,7 @@ import java.io.*;
 
 public class V2_Serveur 
 {
+	// TODO passer en parametre
 	static int PORT = 6000;
 	static int N = 3;
 
@@ -33,7 +34,8 @@ public class V2_Serveur
 		tabA = new Integer[tailleMatrice][tailleMatrice];
 		tabB = new Integer[tailleMatrice][tailleMatrice];
 		tabC = new Integer[tailleMatrice][tailleMatrice];
-
+		
+		
 		// insertion de valeurs aleatoires dans le tableau
 		Random hasard = new Random();
 		// parcours les deux talbeaux et insere les valeurs aleatoires
@@ -47,6 +49,7 @@ public class V2_Serveur
 		// tampon utilisé pour la communication
 		byte[] tampon = new byte[TAILLE_TAMPON];
 
+		// ouverture d'un port en mode UDP
 		DatagramSocket socket = new DatagramSocket(PORT);
 		DatagramPacket paquet = new DatagramPacket(tampon, tampon.length);
 		System.out.println("*** Serveur démarré ***");
@@ -89,7 +92,19 @@ public class V2_Serveur
 			}
 		}
 		
+		// TODO boucle sur tout les client
 		// récupère toute les valeurs
+		tampon = new byte[TAILLE_TAMPON];
+		paquet = new DatagramPacket(tampon, tampon.length);
+		socket.receive(paquet); // attend la requete du client
+		Integer ligneRecue = Integer.parseInt(new String(paquet.getData()).trim());
+		System.out.println("Recu ligne " + ligneRecue);
+		
+		for (short i=0; i<tailleMatrice; i++) {
+			paquet = new DatagramPacket(tampon, tampon.length);
+			socket.receive(paquet);
+			tabC[ligneRecue][i] = Integer.parseInt(new String(paquet.getData()).trim());
+		}
 		
 		// affiche les tableaux ainsi que le resultat calcule
 		System.out.println("Matrice A");
@@ -101,13 +116,26 @@ public class V2_Serveur
 		System.out.println("Matrice C = A x B");
 		afficheMatrice(tabC);
 		
+		// calcul les valeurs localement, pour comparer avec les informatiosn recus des clients
+		for (short i=0; i<tailleMatrice; i++) { // i = ligne
+			for (short j=0; j<tailleMatrice; j++) { // j = colonne
+				// multiplie avec la colonne de la matrice B
+				tabC[i][j] = 0;
+				for (short k=0; k<tailleMatrice; k++) {
+					tabC[i][j] += tabA[i][k] * tabB[k][j];
+				}    		   
+			}
+		}
+		
+		System.out.println("Matrice C = A x B (local calcul)");
+		afficheMatrice(tabC);
 		
 		/* Complémentaire : util à la fin ?
 		socket.setSoTimeout(1000); // TODO gere les timeout de connection 
 		 */
 
 		socket.close();
-		System.out.println("fin serveur");
+		System.out.println("*** fin serveur ***");
 	}
 }
 

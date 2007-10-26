@@ -3,7 +3,7 @@ package v2;
 import java.net.*;
 import java.io.*;
 
-public class V2_Client
+public class V3_Client
 {	
 	public static void main (String args[]) throws IOException
 	{

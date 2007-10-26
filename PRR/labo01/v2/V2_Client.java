@@ -21,19 +21,17 @@ public class V2_Client {
 		try {
 			
 			Integer TAILLE_TAMPON = 10;
-			
-			// exemple de donnée
 			String query = "HELO";
 			byte[] tampon = new byte[TAILLE_TAMPON];
 			tampon = query.getBytes();
  
 			System.out.println("*** Client ***");
-			/* TODO : attente de pression clavier
-			BufferedReaderstdin= new BufferedReader( 
-			new InputStreamReader(System.in)); 
-			System.out.println("Appuyer sur une touche pour continuer .. "); 
+			/* TODO : attente de pression clavier */
+			BufferedReader stdin= new BufferedReader(new InputStreamReader(System.in)); 
+			System.out.println("Appuyer sur une <enter> pour vous connecter au serveur"); 
 			System.out.println(stdin.readLine()); 
-			 */
+			/* */
+			System.out.println("...");
 			
 			// parametre de la connexion
 			InetAddress address = InetAddress.getByName("localhost");
@@ -89,12 +87,18 @@ public class V2_Client {
 			}
 			
 			// renvoie les résultats au serveur
-			tampon = (ligneACalculer.toString()).getBytes();
-			socket = new DatagramSocket();
+			tampon = (ligneACalculer.toString()).getBytes(); // on declare son ID, la ligne calculee
+			// socket = new DatagramSocket();
 			paquet = new DatagramPacket(tampon, tampon.length, address, port);
 			socket.send(paquet); // envoi du paquet a l'aide du socket
-
 			
+			// envoie la ligne calculee au serveur
+			for (short i=0; i<tailleMatrice; i++) {
+				tampon = (ligneC[i].toString()).getBytes();
+				paquet = new DatagramPacket(tampon, tampon.length, address, port);
+				socket.send(paquet);
+			}
+
 			// affiche les resultats
 			System.out.println("Ligne de A a calculer");
 			for (int i=0; i<ligneA.length; i++) {
@@ -104,16 +108,10 @@ public class V2_Client {
 			System.out.println("\nMatrice B");
 			afficheMatrice(tabB);
 			
-			System.out.println("Ligne de B calculée");
+			System.out.println("Ligne de C calculée");
 			for (int i=0; i<ligneC.length; i++) {
 				System.out.print(ligneC[i] + " ");
 			}
-			
-			// calcul les valeurs
-			
-			// renvoie les résultats au serveur
-			//DatagramPacket paquet = new DatagramPacket(tampon, tampon.length, address, port);
-			//socket.send(paquet);
 			
 			/*
 			// en utilisant des Stream
@@ -124,7 +122,7 @@ public class V2_Client {
 			
 			// ferme la connection
 			socket.close();
-			System.out.println("fin client");
+			System.out.println("\n*** fin client ***");
 			
 		} catch (IOException e) {
 			System.err.println(e);
