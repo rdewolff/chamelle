@@ -66,21 +66,22 @@ public class V2_Serveur
 				nbClientConnecte++; // TODO: static dans classe client
 				System.out.println("client " + nbClientConnecte + " connecté");
 				// stock les information du client
+				
 				Clients clients = new Clients(nbClientConnecte, paquet.getAddress(), paquet.getPort());
 				// renvoie le numero au client, qui correspond à la ligne qu'il doit traiter ( 0 à N )
 				tampon = (nbClientConnecte.toString()).getBytes(); // met l'information a transmettre en octets
-				paquet = new DatagramPacket(tampon, tampon.length, clients.getAdresse(), clients.getPort());
+				paquet = new DatagramPacket(tampon, tampon.length, clients.getAddress(), clients.getPort());
 				socket.send(paquet); // envoie de l'ID qui correspond à la ligne à calculer
 
 				// renvoie la tailleMatrice
 				tampon = (tailleMatrice.toString()).getBytes();
-				paquet = new DatagramPacket(tampon, tampon.length, clients.getAdresse(), clients.getPort());
+				paquet = new DatagramPacket(tampon, tampon.length, clients.getAddress(), clients.getPort());
 				socket.send(paquet);
 
 				// envoie la ligne de la matrice A
 				for (short i=0; i<tailleMatrice; i++) {
 					tampon = (tabA[nbClientConnecte][i].toString()).getBytes();
-					paquet = new DatagramPacket(tampon, tampon.length, clients.getAdresse(), clients.getPort());
+					paquet = new DatagramPacket(tampon, tampon.length, clients.getAddress(), clients.getPort());
 					socket.send(paquet);
 				}
 
@@ -88,7 +89,7 @@ public class V2_Serveur
 				for (short i=0; i<tailleMatrice; i++) {
 					for (short j=0; j<tailleMatrice; j++) {
 						tampon = (tabB[i][j].toString()).getBytes();
-						paquet = new DatagramPacket(tampon, tampon.length, clients.getAdresse(), clients.getPort());
+						paquet = new DatagramPacket(tampon, tampon.length, clients.getAddress(), clients.getPort());
 						socket.send(paquet);
 					}
 				}
