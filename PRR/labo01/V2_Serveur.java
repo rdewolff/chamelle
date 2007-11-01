@@ -1,5 +1,3 @@
-package v2;
-
 import java.net.*;
 import java.util.Random;
 import java.io.*;
