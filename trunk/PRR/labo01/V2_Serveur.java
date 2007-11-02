@@ -2,10 +2,11 @@ import java.net.*;
 import java.util.Random;
 import java.io.*;
 
+// je suis une petite cochomme :P hÃ©hÃ©hÃ©
 public class V2_Serveur 
 {
 	/* 
-	 * Affichage de la matrice carrŽe passŽe en parametre (2 dimensions)
+	 * Affichage de la matrice carrï¿½e passï¿½e en parametre (2 dimensions)
 	 */
 	private static void afficheMatrice(Integer [][] tableau) {
 		for (short i=0; i<tableau.length; i++) {
@@ -23,7 +24,7 @@ public class V2_Serveur
 			System.out.println("Erreur, manque parametres : java serveur <tailleMatrice> <port>");
 		} else {
 			try {
-				// dŽclaration des variables
+				// dï¿½claration des variables
 				Integer TAILLE_TAMPON = 10; // Integer.MAX_VALUE = 2147483647 => 10 chars
 				Integer nbClientConnecte = -1; // de 0 a N-1
 				Integer tailleMatrice = Integer.parseInt(args[0]);
@@ -46,13 +47,13 @@ public class V2_Serveur
 					}
 				}
 
-				// tampon utilisŽ pour la communication
+				// tampon utilisï¿½ pour la communication
 				byte[] tampon = new byte[TAILLE_TAMPON];
 
 				// ouverture d'un port en mode UDP
 				DatagramSocket socket = new DatagramSocket(port);
 				DatagramPacket paquet = new DatagramPacket(tampon, tampon.length);
-				System.out.println("*** Serveur dŽmarrŽ ***");
+				System.out.println("*** Serveur dï¿½marrï¿½ ***");
 
 				// TODO : multi client WHILE ... n .. 
 				//while (nbClientConnecte < tailleMatrice-1) {
@@ -62,16 +63,16 @@ public class V2_Serveur
 				// attends tous les clients
 				socket.receive(paquet); // attend la requete du client
 				System.out.println("Recu : " + new String(paquet.getData()));
-				// leur envoie les donnŽes necessaires (N + ligne, numŽro de ligne et matrice B)
+				// leur envoie les donnï¿½es necessaires (N + ligne, numï¿½ro de ligne et matrice B)
 				nbClientConnecte++; // TODO: static dans classe client
-				System.out.println("client " + nbClientConnecte + " connectŽ");
+				System.out.println("client " + nbClientConnecte + " connectï¿½");
 				// stock les information du client
 				
 				Clients clients = new Clients(nbClientConnecte, paquet.getAddress(), paquet.getPort());
-				// renvoie le numero au client, qui correspond ˆ la ligne qu'il doit traiter ( 0 ˆ N )
+				// renvoie le numero au client, qui correspond ï¿½ la ligne qu'il doit traiter ( 0 ï¿½ N )
 				tampon = (nbClientConnecte.toString()).getBytes(); // met l'information a transmettre en octets
 				paquet = new DatagramPacket(tampon, tampon.length, clients.getAddress(), clients.getPort());
-				socket.send(paquet); // envoie de l'ID qui correspond ˆ la ligne ˆ calculer
+				socket.send(paquet); // envoie de l'ID qui correspond ï¿½ la ligne ï¿½ calculer
 
 				// renvoie la tailleMatrice
 				tampon = (tailleMatrice.toString()).getBytes();
@@ -95,7 +96,7 @@ public class V2_Serveur
 				}
 
 				// TODO boucle sur tout les client
-				// rŽcupre toute les valeurs
+				// rï¿½cupï¿½re toute les valeurs
 				tampon = new byte[TAILLE_TAMPON];
 				paquet = new DatagramPacket(tampon, tampon.length);
 				socket.receive(paquet); // attend la requete du client
@@ -132,7 +133,7 @@ public class V2_Serveur
 				System.out.println("Matrice C = A x B (local calcul)");
 				afficheMatrice(tabC);
 
-				/* ComplŽmentaire : util ˆ la fin ?
+				/* Complï¿½mentaire : util ï¿½ la fin ?
 				socket.setSoTimeout(1000); // TODO gere les timeout de connection 
 				 */
 
