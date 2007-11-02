@@ -60,10 +60,17 @@ class V1_Serveur {
 
 		// affiche info sur nom + ip serveur
 		System.out.println("Lancement du serveur sur " + InetAddress.getLocalHost());
-
-		// le premier parametre passe au programme correspond a la taille des matrices que 
-		// l'on va calculer
-		int n = Integer.decode( argv[0] ); 
+		int n = 0;
+		
+		try
+		{
+			// le premier parametre passe au programme correspond a la taille des matrices que 
+			// l'on va calculer
+			n = Integer.decode( argv[0] );
+		}
+		catch(NumberFormatException e)
+		{System.out.println("Valeur numerique attendue, 3 travailleurs par defaut");
+		 n = 3;}
 		// verification de la taille min et max et changement des valeurs si necessaire
 		if (n < 3) {
 			System.out.println("Parametre N trop petit, 3 defini par default.");
@@ -73,7 +80,7 @@ class V1_Serveur {
 			n = 5;
 		}
 
-		// creation des 2 tableaux sur lequelles on va faire des calculs
+		// creation des matrices sur lequelles on va faire des calculs
 		int[][]  tabA, tabB, tabC;
 		tabA = new int[n][n];
 		tabB = new int[n][n];
@@ -91,18 +98,18 @@ class V1_Serveur {
 
 		// TODO : remove this, c'est juste la methode de calcul
 		// calcul les valeurs
-		for (short i=0; i<n; i++) { // i = ligne
-			for (short j=0; j<n; j++) { // j = colonne
-				// multiplie avec la colonne de la matrice B
-				for (short k=0; k<n; k++) {
-					tabC[i][j] += tabA[i][k] * tabB[k][j];
-				}    		   
-			}
-		}
-
+//		for (short i=0; i<n; i++) { // i = ligne
+//			for (short j=0; j<n; j++) { // j = colonne
+//				// multiplie avec la colonne de la matrice B
+//				for (short k=0; k<n; k++) {
+//					tabC[i][j] += tabA[i][k] * tabB[k][j];
+//				}    		   
+//			}
+//		}
+		
 		// on lance les taches pour les 5 futurs connexions.
 		System.out.println("Attente de la connexion des " + n + " clients");
-	
+		
 		ServerSocket[] welcomeSocket = new ServerSocket[n];
 		Socket[] connectionSocket = new Socket[n];
 		
@@ -114,22 +121,29 @@ class V1_Serveur {
 		}
 		
 		System.out.println("Debut de la transmission...");
-
-		/*
+		
+		// envoi des tableaux
+		for (int i=0; i<n; i++) {
+			PrintWriter fluxSortie = new PrintWriter(connectionSocket[i].getOutputStream(),true);
+			connectionSocket[i] = welcomeSocket[i].accept();
+			System.out.println("Client " + (i+1) + " connecte.");
+		}
+		//BufferedReader fluxEntree = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		
 		// BufferedReader
-		BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream())); 
-		DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream()); 
+//		BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream())); 
+//		DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream()); 
+//
+//		phraseClient = inFromClient.readLine(); 
+//		phraseEnMaj = phraseClient.toUpperCase() + '\n'; 
+//		outToClient.writeBytes(phraseEnMaj); 
+//
+//		// fermeture des sockets
+//		welcomeSocket.close();
+//		connectionSocket.close();
+//		inFromClient.close();
+//		outToClient.close();
 
-		phraseClient = inFromClient.readLine(); 
-		phraseEnMaj = phraseClient.toUpperCase() + '\n'; 
-		outToClient.writeBytes(phraseEnMaj); 
-
-		// fermeture des sockets
-		welcomeSocket.close();
-		connectionSocket.close();
-		inFromClient.close();
-		outToClient.close();
-*/
 		// --------------------------------------------------------------------
 		// affiche les tableaux ainsi que le resultat calcule
 		System.out.println("Matrice A");
