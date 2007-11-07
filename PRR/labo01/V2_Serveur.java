@@ -66,7 +66,9 @@ public class V2_Serveur
 				// leur envoie les donnees necessaires (N + ligne, numero de ligne et matrice B)
 				nbClientConnecte++; // TODO: static dans classe client
 				System.out.println("client " + nbClientConnecte + " connecte");
-				// stock les information du client
+				// stock les informations du client
+				
+				IntToBytes.intToBytes()
 				
 				Clients clients = new Clients(nbClientConnecte, paquet.getAddress(), paquet.getPort());
 				// renvoie le numero au client, qui correspond a la ligne qu'il doit traiter ( 0 a N )
