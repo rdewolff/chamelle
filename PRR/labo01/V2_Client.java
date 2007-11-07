@@ -15,6 +15,9 @@ public class V2_Client {
 		}
 	}
 
+	/*
+	 * Methode principale contenatn tout le client
+	 */
 	public static void main (String args[]) throws IOException {
 		try {
 			
@@ -22,11 +25,11 @@ public class V2_Client {
 			InetAddress address = InetAddress.getByName(args[0]); 
 			int port = Integer.parseInt(args[1]); 
 			
-			Integer TAILLE_TAMPON = 10;
-			String query = "HELO";
+			Integer TAILLE_TAMPON = 52; // TODO : change en fonction des donn√©es max a transmettre (si N = 3 alors _Max_ = 52 octets)
+			String query = "HELO"; // pour se sychroniser avec le serveur
 			byte[] tampon = new byte[TAILLE_TAMPON];
 			tampon = query.getBytes();
- 
+			
 			System.out.println("*** Client ***");
 			BufferedReader stdin= new BufferedReader(new InputStreamReader(System.in)); 
 			System.out.print("Appuyer sur une <enter> pour vous connecter au serveur"); 
@@ -41,7 +44,7 @@ public class V2_Client {
 			tampon = new byte[TAILLE_TAMPON]; // reinit le tampon
 			paquet = new DatagramPacket(tampon, tampon.length);
 			socket.receive(paquet); 
-			// la connection est dès lors etablie, la communication fonctionne
+			// la connection est des lors etablie, la communication fonctionne
 			System.out.println("Connection avec le serveur etablie");
 			
 			// recoit les infos qui sont dans un seul character (deux nombre < 10)
