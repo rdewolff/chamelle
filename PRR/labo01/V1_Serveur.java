@@ -124,9 +124,9 @@ class V1_Serveur {
 		
 		// envoi des tableaux
 		for (int i=0; i<n; i++) {
-			PrintWriter fluxSortie = new PrintWriter(connectionSocket[i].getOutputStream(),true);
-			connectionSocket[i] = welcomeSocket[i].accept();
-			System.out.println("Client " + (i+1) + " connecte.");
+			DataOutputStream fluxSortie = new DataOutputStream(connectionSocket[i].getOutputStream());
+			fluxSortie.write(n);
+			System.out.println("Client " + (i+1) + " envoye");
 		}
 		//BufferedReader fluxEntree = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		

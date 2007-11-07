@@ -3,26 +3,30 @@
 import java.io.*; 
 import java.net.*; 
 
-// essai modif Eclipse - RDW - Pologne
-
+/**
+ * Client permettant de recevoir une ligne de matric et une matrice en TCP,
+ * puis de renvoyer la ligne multipliee au serveur
+ * 
+ * @author Simon Hintermann & Romain de Wolff
+ *
+ */
 class V1_Client { 
 
 	public static void main(String argv[]) throws Exception { 
 
 		while(true){
 			try {
+				/** Domaine dans lequel est le serveur */
 				String host = argv[0];
-				int port = (int)Integer.decode( argv[1] ); 
-				String phrase; 
-				String phraseModifiee;
-				BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in)); 
+				/** Le port sur lequel il faut se connecter au serveur */
+				int port = (int)Integer.decode( argv[1] );
+				/** Variable de lecture  */
+				int recept;
 				Socket clientSocket = new Socket(host, port); // connection en utilisant les parametre passe au lancement du client
 				DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream()); 
-				BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); 
-				phrase = inFromUser.readLine(); 
-				outToServer.writeBytes(phrase + '\n'); 
-				phraseModifiee = inFromServer.readLine(); 
-				System.out.println("DU SERVEUR: " + phraseModifiee);
+				DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
+				recept = inFromServer.read();
+				System.out.println("DU SERVEUR: " + recept);
 				clientSocket.close();
 				break;
 			} catch (IOException e) {
