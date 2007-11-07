@@ -25,17 +25,17 @@ public class V2_Serveur
 		} else {
 			try {
 				// déclaration des variables
-				Integer TAILLE_TAMPON = 10; // Integer.MAX_VALUE = 2147483647 => 10 chars
-				Integer nbClientConnecte = -1; // de 0 a N-1
+				Integer nbClientConnecte = 0;
 				Integer tailleMatrice = Integer.parseInt(args[0]);
 				Integer port = Integer.parseInt(args[1]);
+				Integer TAILLE_TAMPON = (tailleMatrice*(tailleMatrice+1)+1)*4; // TODO : change en fonction des données max a transmettre 
+				System.out.println("TailleTampon : " + TAILLE_TAMPON);
 				
 				// creation des 2 tableaux sur lequelles on va faire des calculs
 				Integer[][]  tabA, tabB, tabC;
 				tabA = new Integer[tailleMatrice][tailleMatrice];
 				tabB = new Integer[tailleMatrice][tailleMatrice];
 				tabC = new Integer[tailleMatrice][tailleMatrice];
-
 
 				// insertion de valeurs aleatoires dans le tableau
 				Random hasard = new Random();
@@ -109,7 +109,7 @@ public class V2_Serveur
 					tabC[ligneRecue][i] = Integer.parseInt(new String(paquet.getData()).trim());
 				}
 
-				// affiche les tableaux ainsi que le resultat calcule
+				// affiche les tableaux ainsi que le resultats calcules
 				System.out.println("Matrice A");
 				afficheMatrice(tabA);
 

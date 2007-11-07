@@ -20,12 +20,13 @@
 \geometry{a4paper}                        % ... or a4paper or a5paper or ... 
 %\geometry{landscape}                     % Activate for for rotated page geometry
 \usepackage[parfill]{parskip}            % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{longtable}
 %\usepackage{amssymb}
 %\usepackage{epstopdf}
 \geometry{ hmargin=1.8cm, vmargin=2.5cm } % marges
 
 % ------------------- TITRE ------------------------
-\title{\includegraphics[width=100px]{heig-vd-logo.pdf} \\ \vspace{4cm}
+\title{%\includegraphics[width=100px]{heig-vd-logo.pdf} \\ \vspace{4cm}
 \small{Laboratoire} \\ ASI : Applications et Services Internet \\ \vspace{2cm}
 \huge{Serveur Web Multi-Threadé en Java} \vspace{2cm}} \author{Romain \bsc{de
 Wolff} \\ IL2008 \\ \vspace{2cm} \\ Professeur M. Christian Buchs \vspace{2cm} }
@@ -37,129 +38,177 @@ Wolff} \\ IL2008 \\ \vspace{2cm} \\ Professeur M. Christian Buchs \vspace{2cm} }
 \newpage
 % ----------------- TABLE DES MATIERES ------------------------
 \tableofcontents
+%\newpage
+% pour faire les 6 premier chapitres manquant et pas a rendre
+\section{bidon}
+\section{bidon}
+\section{bidon}
+\section{bidon}
+\section{bidon}
+
+% TODO insérer le nombre de pages JUSTE comment avant
+
 \newpage
-% ------------------- DEBUT DU CONTENU ------------------------
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Introduction}
+\section*{2ème phase}
 
-Ce document contient les informations sur le déroulement du laboratoire
-d'Application et Services Internet (\textbf{ASI}) dans le cadre des cours de la
-formation d'ingénieur logiciel à la HEIG-VD. Ce laboratoire consiste à la
-création d'un \textbf{serveur web en Java}. Un spécifieur/testeur (nous) et un
-développeur (inconnu durant la première étape) allons devoir travailler
-ensemble. \\
+\section{Développeur}
 
-Dans une première partie, nous allons tout d'abord définir les démarches
-effectuées, les spécifications et les cas-tests. Viendront ensuite les éléments
-de la deuxième et dernière partie du rapport, qui comportera les informations
-sur le développeur , des informations plus complète sur les différents tests
-réalisés ainsi que des corrections. Nous répondrons aussi à quelques questions
-techniques, comme savoir si le serveur établit des connexions persistantes ou
-non.
+Le développeur est Cyril Maulini.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Démarche}
-Afin de définir les spécifications, nous commençons par lire la données du
-laboratoire une première fois. Ceci pour bien comprendre ce qu'on nous demande
-et d'avoir une vue globale du projet. \\
+\section{Tests de validation} 
 
-L'étape suivante consiste à relire la donnée une deuxième fois muni d'un
-marqueur afin de surligner les éléments importants. Nous cherchons tous les
-éléments qui nous permettent de donner des directives factuelles au développeur.
-Ceci afin de créer une liste de spécifications. Chacune de ces spécifications
-devra être testée. C'est la deuxième étape qui consiste à dresser la liste des
-\underline{cas-tests}. \\
+\subsection{Introduction}
+blabla
 
-Avant de faire la liste des cas-tests, nous avons relus les spécifications
-trouvées et les avons comparée avec la RFC 1945. Puis la même chose avec le
-support de cours de M. Buchs (slide de cours sur le \texttt{Protocole de
-transfert HTTP}). Ceci afin de vérifier si les éléments correspondent, ainsi que
-pour éviter des oublis. \\
+\subsection{Test 1: lundi 15 octobre 2007}
 
-Une fois la liste des spécifications terminée ainsi que la liste des cas-tests
-correspondant, nous avons relus le tout afin de bien vérifier que tous les
-éléments important y figurent, et que toutes les spécifications soient testées.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Spécifications}
-
-\begin{tabular}{ c | p{14cm} }
-Numéro & Description \\
+\subsubsection{Résultats des tests}
+\begin{longtable}{ c | c | p{14cm} | c}
+CT & Sp & Résultat attendu & OK \\
 \hline
 \hline
-1  & Le serveur web est réalisé en \textbf{Java} et il est multi-threadé \\
-2  & Il doit être capable de traiter plusieurs requêtes simultanément \\
-3  & Il répond aux connexions faites à l'aide d'un navigateur web \\
-4  & Des requêtes HTTP séparée sont envoyée pour chaque fichier\\
-5  & Le serveur écoute sur un port fixe défini à l'aide de la ligne de commande
-     lors du lancement du serveur. Le port spécifié doit être un \texttt{entier} 
-     et il doit être supérieur à 1024.\\
-6  & Quand le serveur reçoit une nouvelle demande de connexion, il établit une
-     nouvelle connexion et sert la réponse dans une \emph{thread} séparée. \\
-7  & Quand une erreur est rencontrée par le serveur, il renvoie un message 
-     d'erreur approprié au format HTML \\
-8  & Le serveur tourne indéfiniment, jusqu'à ce que la commande \texttt{CTRL+C}
-     soit effectuée au clavier. \\
-9  & Pour quitter le serveur, la commande \texttt{CTRL+C} est utilisée \\
-10 & Chaque ligne de message de réponse du serveur se termine avec un retour à
-     la ligne (\texttt{CR + LF}) \\
-11 & Il doit gérer les exceptions TODO \\
-12 & Le serveur affiche la ligne de statut ainsi que toutes les lignes d'en-tête 
-     à l'écran tout en respectant les normes d'affichages vu en cours \\
-13 & Uniquement la méthode \texttt{GET} est implémentée par le serveur (les autres
-     requêtes sont traitées comme si c'est un \texttt{GET}) \\
-14 & Le serveur renvoie les fichiers qui se trouve dans le même répertoire que lui
-     au client, qu'on appelera la racine du serveur. Par exemple 
-     \texttt{GET /index.html HTTP/1.1} \\
-15 & Vérifier si le fichier demandé par le client existe ou non. Si il n'existe 
-     pas, un message d'erreur doit apparaître chez le client. Le code de status
-     \texttt{404} et le \emph{Reason-Phrase} \texttt{Not Found} doit être 
-     retourné \\
-16 & Un message de réponse contient 3 parties : la ligne de statut, les lignes 
-     d'en-tête et le corps du message. La ligne de statut et les lignes d'en-tête
-     sont terminé par un retour à la ligne (\texttt{CR + LF}). \\
-17 & Le fichier d'erreur retourné si un fichier demandé n'existe pas est créé 
-     par le serveur et il est renvoyé au client \\
-18 & Le serveur renvoie les fichiers demandé par le client \\
-19 & Le serveur doit déterminer les types de fichier qu'il renvoie en fonction 
-     de son extension. \\
-20 & Les extensions reconnues par le serveur sont les suivante : HTML, HTM, JPG, 
-     JPEG et GIF.  Les types \textbf{MIME} correspondant retourné sont 
-     \texttt{text/html}, \texttt{image/gif}, \texttt{image/jpeg} \\
-21 & Si l'extension est inconnue, le serveur renvoie le type \textbf{MIME} suivant : 
-     \texttt{application/octet-stream} \\
-22 & Lorsque aucun fichier n'est demandé par le client, un fichier par défaut est
-     affiché \\
-23 & Si l'objet \texttt{/heig-vd.html} est demandé, effectuer une redirection
-     standard HTTP 301 vers le site \texttt{http://www.heig-vd.ch} \\
-24 & Le serveur doit mettre à disposition une adresse pour visualiser ses sources \\
-25 & Le serveur doit être compatible avec la \textbf{RFC 1945}. \\
+1 & 1 & Le serveur démarre et est accessible par plusieurs navigateurs en même temps & OK \\
+\hline
+2 & 2 & En même temps que le fichier volumineux se télécharge, le serveur doit répondre et renvoyer la page d'accueil dans la deuxième fenêtre & ERR \\
+\hline
+3 & 3 & Le serveur affiche la page de bienvenue dans le navigateur au format HTML & OK \\
+\hline
+4 & 4 & Uniquement le fichier demandé doit être retourné et la connexion terminée & OK \\
+\hline
+5 & 5 & Le serveur doit afficher des messages d'erreur quand le port est plus petit que 1024 ou plus grand que 65535. Sinon le serveur doit démarrer correctement et être accessible via le navigateur internet & OK \\
+\hline
+6 & 6 & Le compteur de \emph{threads} du processus serveur devrait augmenter en fonction du nombre de connexions que vous effectuez à l'aide du navigateur & OK \\
 
+7 & 7 & Un message affiché entre des balises HTML doit être retourné, informant que la méthode n'est pas implémentée & OK \\
 \hline
-\end{tabular}
+8 & 8 & Le navigateur doit afficher les pages correctement & OK \\
+\hline
+9 & 9 & Le serveur doit se terminer & OK \\
+\hline
+10 & 10 & La réponse du serveur doit comporter les champs suivant, affiché ligne par ligne : \texttt{Date}, \texttt{Server}, \texttt{Content-Length} et \texttt{Content-Type} & ERR \\
+\hline
+11 & 11 & L'analyse des trames dans Wireshark montre clairement qu'une connexion TCP par objet est créée & OK \\
+\hline
+12 & 12 & La fenêtre dans laquelle le serveur à été lancé doit afficher les informations qui sont envoyées au client exactement de la même manière que lors d'une connexion telnet & ERR \\
+\hline
+13 & 13 & Le contenu du fichier \texttt{index.html} doit être retourné & ERR \\
+\hline
+14 & 14 & Le fichier doit s'afficher dans le navigateur et son contenu être identique & ERR \\
+\hline
+15 & 15 & Le serveur doit retourner un message HTML personnalisé indiquant que la page n'existe pas. Cette page \underline{ne doit pas figurer} dans un fichier HTML contenu dans le même ou un sous répertoire que le serveur & OK \\
+\hline
+16 & 16 & La requête est affichée à l'écran suivi de l'en tête du message. Chaque information est affichée sur une nouvelle ligne & OK \\
+\hline
+17 & 17 & Le serveur doit afficher un message au format HTML. Vérifier qu'il n'existe pas de fichier HTML dans le dossier du serveur qui contient le texte affiché à l'écran & OK \\
+\hline
+18 & 18 & - & OK \\
+\hline
+19 & 19 & L'en-tête doit comporter le champs \texttt{Content-Type : text/html} & OK \\
+\hline
+20 & 20 & Le champs \texttt{Content-Type} doit retourner, dans l'ordre : \texttt{text/html}, \texttt{image/jpeg}, \texttt{image/gif} & OK \\
+\hline
+21 & 21 & L'en-tête doit comporter le champs \texttt{Content-Type : application/octet-stream} & OK \\
+\hline
+22 & 22 & Le fichier par défaut \texttt{index.html} doit être retourné & ERR \\
+\hline
+23 & 23 & Le navigateur va se retrouver à l'adresse \texttt{http://www.heig-vd.ch} & OK \\ 
+\hline
+24 & 24 & Les fichiers sources du serveur doivent y figurer et être visible en mode texte directement dans le navigateur & OK \\
+\hline % fin de la table
+\end{longtable}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Cas-tests}
 
-\begin{tabular}{ c | c | p{7cm} | p{6cm} | c }
-CT & Sp & Procédure & Résultat attentu & OK\\
+\subsubsection{Corrections à apporter}
+
+\begin{longtable}{ c | c | p{15.4cm}}
+N & CT & Remarque \\
 \hline
 \hline
-1 & 1 & Ouvrir la ligne de commande et lancer le serveur à l'aide de la commande 
-        \texttt{java nomServeur <port>}. Ouvrir 2 (ou plusieurs) navigateur et accéder
-        à l'adresse \texttt{http://localhost:<port>}.  
-        & Le serveur doit se lancer & \\
-2 & 17 & Ouvrir le navigateur et entrer le nom d'un fichier pas présent sur le
-         serveur. On peut par exemple
-         choisir le nom \texttt{fichierInexistant<datefutur>.html} 
-         & Le serveur doit afficher un message au format HTML. Vérifier qu'il 
-         n'existe pas de fichier HTML dans le dossier du serveur qui contient le 
-         texte affiché à l'écran. \\
-         
-        
+1 & 2 & Après avoir placé un fichier de 300 MB à télécharger, le serveur me propose de télécharger un fichier de taille erroné. Le fichier proposé fait \textbf{66 GO} d'après le serveur. Un fichier comportant un nom avec des espaces ne fonctionnera pas non plus. \\
 \hline
-\end{tabular}
+2 & 10 & Les champs \texttt{Date} et \texttt{Server} sont manquant. Le champs \texttt{Date} doit comporter la date et l'heure et le champs \texttt{Server} une information sur le nom et la version du serveur \\
+\hline
+3 & 12 & La console du serveur n'affiche pas les sorties HTML comme il le fait lors d'une connexion telnet \\
+\hline
+4 & 13 & Le serveur retourne une erreur alors qu'il devrait traiter la méthode \texttt{POST} comme la méthode \texttt{GET} \\
+\hline
+5 & 14 & Le serveur à défini un sous-répertoire pour y mettre les sources, parfait. Par contre son contenu est différent, une dernière ligne est affichée contenant \texttt{Content-Type : text/html} et \texttt{Content-Length : X} en trop \\
+\hline
+6 & 22 & Le serveur ne renvoie pas le document par défaut \texttt{index.html} \\
+\hline % fin de la table
+\end{longtable}
+
+
+\subsubsection{Tests des corrections}
+
+\begin{longtable}{ c | c | p{14 cm}|c}
+	N & CT & Remarque & OK\\
+	\hline
+	\hline
+	1 & 2 & Un fichier de grande taille est maintenant téléchargeable correctement & OK \\
+	\hline
+	2 & 10 & Les champs sont maintenant présent et affiché correctement & OK \\
+	\hline
+	3 & 12 &  Le contenu des fichiers HTML n'est toujours pas visible dans la console du serveur & (*) \\
+	\hline
+	4 & 13 & La méthode \texttt{POST} est bien reconnue comme un \texttt{GET} & OK \\
+	\hline
+	5 & 14 & Problème non résolu. Cf. erratum & (*) \\
+	\hline
+	6 & 22 & Le serveur renvoie le document par défaut \texttt{index.htm} à l'aide de la commande \texttt{GET HTTP1.0} & OK \\
+	\hline % fin de la table
+\end{longtable}
+
+(*) Se référer à la section \texttt{Erratum} pour plus d'information.
+
+\subsubsection{Tests de non-régression}
+
+Les tests de non-régressions se sont déroulé sans aucun problème.
+
+\subsubsection{Analyse et synthèse}
+
+	Le déroulement du projet c'est passé en plusieurs étapes dont voici une description plus complète.
+	
+	- Réalisation des tests: chaque élément de la liste est testé soigneusement. En fonction des résultats obtenus, on valide, ou pas, le résultat \\
+	
+	- Commentaires: les tests invalides sont décrit de manière plus précise afin que le développeur puisse à son tour le reproduire et le corriger \\
+	
+	A ce moment, les résultats intermédiaires sont renvoyés au développer. Celui-ci nous retourne les corrections que l'on va valider. \\
+	
+	- Tests des corrections: les tests invalides sont testé encore une fois. 
+	
+	- Test de régression : Le premier cycle de test touche à sa fin.
+	
+\subsection{Conclusion}
+
+Un seul cycle de tests fut nécessaire.
+
+\section{Réponses aux questions}
+
+	Q: Le serveur établis-il des connections persistantes ou non-persistantes? \\
+	R: 
+	
+	Q:
+	R:
+	
+	Q: Des connections parallèles sont utilisées par le serveur? \\
+	R: 
+	
+\section{Erratum}
+
+Les spécifications contiennent des erreurs. C'est lors de la discussion avec le développeur ayant reçu la même donnée que nous, que nous nous en sommes rendu compte. 
+
+
+
+\section{Annexes}
+
+Code sources % TODO code source du dév ?
+
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
