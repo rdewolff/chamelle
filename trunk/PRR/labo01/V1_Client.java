@@ -10,19 +10,11 @@ import java.net.*;
  * @author Simon Hintermann & Romain de Wolff
  *
  */
-class V1_Client { 
-	
-	private static void afficheMatrice(int [][] tableau) {
-		for (short i=0; i<tableau.length; i++) {
-			for (short j=0; j<tableau.length; j++) {
-				System.out.print(tableau[i][j] + " ");
-			}
-			System.out.print('\n');
-		}
-	}
+class V1_Client {
 	
 	public static void main(String argv[]) throws Exception { 
 		
+		/** La taille d'un integer en bytes */
 		final int tailleInt = 4;
 		
 		while(true){
@@ -78,18 +70,14 @@ class V1_Client {
 					for(short j=0; j<n; j++)
 						ligneRetour[i] += mat[j][i] * ligne[j];
 				
-				afficheMatrice(mat);
-				
-				System.out.println("\n" + ligne[0] + " " +ligne[1]+ " " +ligne[2]+ " " +ligne[3]);
-				
-				System.out.println("\n" + ligneRetour[0] + " " +ligneRetour[1]+ " " +ligneRetour[2]+ " " +ligneRetour[3]);
-				
 				// Creation du tableau de bytes a renvoyer au serveur
 				for(short i=0; i<n; i++)
 					IntToBytes.intToBytes(ligneRetour[i], byteRetour, i*tailleInt);
 				
+				// Retour de la ligne calculee
 				outToServer.write(byteRetour, 0, tailleInt*n);
 				
+				// Fermeture de la connexion
 				clientSocket.close();
 				break;
 			} catch (IOException e) {
