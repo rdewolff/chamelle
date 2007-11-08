@@ -4,8 +4,13 @@ import java.util.Random;
 
 public class V4_Serveur
 {
-	static int startPort = 4446;
-	static int receivePort = 4445;
+	// Port UDP
+	static final int portUDP = 4447;
+	// Port multicast source
+	static final int startPort = 4446;
+	// Port multicast destination
+	static final int receivePort = 4445;
+	// Taille d'un integer en bytes
 	static final int tailleInt = 4;
 	
 	/* 
@@ -22,15 +27,13 @@ public class V4_Serveur
 	
 	public static void main(String[] args) throws IOException
 	{
+		// Le nombre de travailleurs
 		int n = 0;
-		
-		// creation des matrices sur lequelles on va faire des calculs
+		// Les matrices a traiter
 		int[][]  matA, matB, matC;
 		
-		try
-		{
-			// le premier parametre passe au programme correspond a la taille des matrices que 
-			// l'on va calculer
+		try {
+			// le premier parametre passe au programme correspond au nombre de travailleurs
 			n = Integer.decode( args[0] );
 		}
 		catch(NumberFormatException e)
@@ -45,13 +48,13 @@ public class V4_Serveur
 			n = 5;
 		}
 		
+		// Initialisation des dimensions des matrices
 		matA = new int[n][n];
 		matB = new int[n][n];
 		matC = new int[n][n];
 		
-//		 insertion de valeurs aleatoire dans le tableau
+		// Insertion de valeurs aleatoire dans le tableau
 		Random hasard = new Random();
-		// parcours les deux tableaux et insere les valeurs aleatoires
 		for (short i=0; i<n; i++) {
 			for (short j=0; j<n; j++) {
 				matA[i][j] = hasard.nextInt(10);
@@ -59,49 +62,39 @@ public class V4_Serveur
 			}
 		}
 		
-		String message = "Allo";
-		byte[] tampon = new byte[1];
-		
-		/** Associer un port de communication a un groupe */
+		// Parametres du multicast
 		InetAddress groupe = InetAddress.getByName("228.5.6.7");
-		/** La socket de communication de groupe */
 		MulticastSocket socket = new MulticastSocket(startPort);
-		
-		tampon = message.getBytes();
+		// Variables pour la connexion d'un client
+		byte[] tampon = new byte[1];
 		DatagramPacket paquet = new DatagramPacket(tampon,tampon.length,groupe,receivePort);
+		// Parametres pour la communication UDP
+		DatagramSocket socketS = new DatagramSocket(portUDP);
+		DatagramPacket paquetUDP = new DatagramPacket(tampon, tampon.length);
+		byte[] tamponUDP = new byte[tailleInt*2];
 		
-		DatagramSocket socketS = new DatagramSocket(startPort+1);
-		byte[] tamponDim = new byte[4];
-		IntToBytes.intToBytes(n, tamponDim, 0);
-		
-		/** Tableau des clients a connecter */
+		// Tableau des clients a connecter
 		Clients[] clients = new Clients[n];
+		// Communications initiales client-serveur (UDP)
 		for(short i=0; i<n; i++) 
 		{
-			// tampon utilise pour la communication lors de la synchro
-			byte[] tamponS = new byte[1];
-			DatagramPacket paquetS = new DatagramPacket(tamponS, tamponS.length);
-			// synchronisation avec les clients
-			socketS.receive(paquetS); // attend la requete du client 
-			// stocke les informations du client dans un objet prevu a cet effet			
-			clients[i] = new Clients(i, paquetS.getAddress(), paquetS.getPort());
-			tamponS = new byte[tailleInt*2];
-			IntToBytes.intToBytes(n, tamponS, 0);
-			IntToBytes.intToBytes(i, tamponS, tailleInt);
-			paquetS = new DatagramPacket(tamponS, tamponS.length, clients[i].getAddress(), clients[i].getPort());
-			socketS.send(paquetS);
-			System.out.println("Client " + (i+1) + " connecte"); // afiche qu'un client est connecte
+			// Synchronisation avec les clients
+			socketS.receive(paquetUDP);
+			// Stocke les informations du client dans un objet prevu a cet effet			
+			clients[i] = new Clients(i, paquetUDP.getAddress(), paquetUDP.getPort());
+			// Envoie le nombre de travailleurs et le numero de travailleur
+			IntToBytes.intToBytes(n, tamponUDP, 0);
+			IntToBytes.intToBytes(i, tamponUDP, tailleInt);
+			paquetUDP = new DatagramPacket(tamponUDP, tamponUDP.length, clients[i].getAddress(), clients[i].getPort());
+			socketS.send(paquetUDP);
+			System.out.println("Client " + (i+1) + " connecte");
 		}
 		
-		// Envoyer les deux matrices aux clients en multicast
-		afficheMatrice(matA);
-		afficheMatrice(matB);
 		// Creation du message a diffuser aux clients
 		tampon = new byte[(n*n + n*n)*tailleInt];
-		
 		int offset = 0;
 		
-		// La matrice A
+		// Insertion de la matrice A
 		for(short i=0; i<n; i++)
 			for(short j=0; j<n; j++)
 			{
@@ -109,7 +102,7 @@ public class V4_Serveur
 				offset++;
 			}
 		
-		// La matrice B
+		// Insertion de la matrice B
 		for(int i=0; i<n; i++)
 			for(int j=0; j<n; j++)
 			{
@@ -117,44 +110,53 @@ public class V4_Serveur
 				offset++;
 			}
 		
+		// Envoi des deux matrices aux clients en multicast
 		paquet = new DatagramPacket(tampon,tampon.length,groupe,receivePort);
 		socket.send(paquet);
 		
+		// Reception des lignes calculees des clients
 		for(short i=0; i<n; i++) 
 		{
-			// tampon utilise pour la communication lors de la synchro
-			byte[] tamponS = new byte[n*tailleInt + tailleInt];
-			DatagramPacket paquetS = new DatagramPacket(tamponS, tamponS.length);
-			// synchronisation avec les clients
-			socketS.receive(paquetS); // attend la requete du client
-			byte[] ligneRecue = paquetS.getData();
+			tamponUDP = new byte[n*tailleInt + tailleInt];
+			paquetUDP = new DatagramPacket(tamponUDP, tamponUDP.length);
+			socketS.receive(paquetUDP);
+			byte[] ligneRecue = paquetUDP.getData();
+			// Le premier int represente le numero du client
 			int noClient = IntToBytes.bytesToInt(ligneRecue, 0);
-			System.out.println(noClient);
+			// Mise a jour de la matrice C
 			for(int j=0; j<n; j++)
 				matC[noClient][j] = IntToBytes.bytesToInt(ligneRecue, j*tailleInt + tailleInt);
 		}
 		
-		System.out.println("Matrice recue: ");
+		System.out.println("Matrice A: ");
 		afficheMatrice(matC);
+		
+		System.out.println("\nMatrice B: ");
+		afficheMatrice(matC);
+		
+		System.out.println("\nMatrice recue: ");
+		afficheMatrice(matC);
+		
+		// Reinitialisation de la matrice C
 		for(int i=0; i<n; i++)
 			for(int j=0; j<n; j++)
 				matC[i][j] = 0;
 		
-		// calcul les valeurs localement, pour comparer avec les informatiosn recus des clients
-		for (short i=0; i<n; i++) { // i = ligne
-			for (short j=0; j<n; j++) { // j = colonne
-				// multiplie avec la colonne de la matrice B
+		// Calcul les valeurs localement, pour comparer avec les informations recues des clients
+		for (short i=0; i<n; i++) { 
+			for (short j=0; j<n; j++) { 
 				for (short k=0; k<n; k++) {
 					matC[i][j] += matA[i][k] * matB[k][j];
 				}    		   
 			}
 		}
 		
-		// affiche la matrice C calculee en local pour comparaison
-		System.out.println("Matrice C = A x B (local calcul)");
+		// Affiche la matrice C calculee en local pour comparaison
+		System.out.println("\nMatrice C = A x B (calcul local)");
 		afficheMatrice(matC);
 
 		socket.close();
-		System.out.println("yop");
+		socketS.close();
+		System.out.println("\n*** Serveur termine ***");
 	}
 }
