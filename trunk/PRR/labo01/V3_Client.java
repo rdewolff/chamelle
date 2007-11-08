@@ -18,6 +18,8 @@ public class V3_Client {
 	/*
 	 * Methode principale contenatn tout le client
 	 */
+	
+	static final int tailleInt = 4;
 	public static void main (String args[]) throws IOException {
 		try {
 			
@@ -41,80 +43,59 @@ public class V3_Client {
 			DatagramPacket paquet = new DatagramPacket(tampon, tampon.length, address, port);
 			socket.send(paquet); // envoi du paquet a l'aide du socket
 			
-			System.out.println("1");
+			// reception de la taille des matrices
+			// TODO : minimiser la taille du tampon 
+			paquet = new DatagramPacket(tampon, tampon.length); 
+			socket.receive(paquet);
+			int tailleMatrice = IntToBytes.bytesToInt(tampon, 0);
+			System.out.println(tailleMatrice);
+			
 			// rejoint le groupe de diffusion
 			MulticastSocket socketMulti = new MulticastSocket(port+2);
-			System.out.println("2");
 			InetAddress groupe = InetAddress.getByName("230.230.230.230");  // TODO : placer dans config avec le serveur ?
-			System.out.println("3");
 			socketMulti.joinGroup(groupe);
-			System.out.println("4");
 			
 			// recoit la matrice B de serveur en diffusion
-			tampon = new byte[3*3*4];
-			System.out.println("5");
+			tampon = new byte[tailleMatrice*tailleMatrice*tailleInt];
 			paquet = new DatagramPacket(tampon, tampon.length);
-			System.out.println("6");
 			socketMulti.receive(paquet); 
 			
 			System.out.println("Matrice B recue du serveur!");
 			
-			// on a fini avec le groupe de diffusion, on peut quitter le groupe
-			
-			// ensuite on recupere le num de 
-		
-			
-			
-			
+			// reconstruit la matrice B
 			int offset = 0;
 			int[][] tabB = new int[3][3];
-			// reconstruit la matrice B
 			for (short i=0; i<3; i++) {
 				for (short j=0; j<3; j++) {
-					tabB[i][j] = IntToBytes.bytesToInt(tampon, offset*4);
+					tabB[i][j] = IntToBytes.bytesToInt(tampon, offset*tailleInt);
 					offset++;
 				}
 			}
+
+			//TODO : on a fini avec le groupe de diffusion, on peut quitter le groupe
 			
-			// 
-			afficheMatrice(tabB);
-			
-			
-			// recoit les infos du serveur
-			tampon = new byte[TAILLE_TAMPON]; // reinit le tampon avec la bonne taille
+			// recoit l'indice de B et la ligne de A
+			int[] ligneA = new int[tailleMatrice];
+			int[] ligneC = new int[tailleMatrice];
+			tampon = new byte[(tailleMatrice*tailleMatrice+1)*tailleInt]; // reinit le tampon avec la bonne taille
 			paquet = new DatagramPacket(tampon, tampon.length);
 			socket.receive(paquet); 
 			
-			// la connection est des lors etablie, la communication fonctionne
-			System.out.println("Connection avec le serveur etablie");
-			
-			// décomponse les elements recus par le serveur
-		    offset = 0; 
-			// recoit les infos qui sont dans un seul character (deux nombre < 10)
+			// recupere l'indice de B qui est dans le tampon
+			offset = 0; 
 			int ligneACalculer = IntToBytes.bytesToInt(tampon, offset);
 			offset++;
-			int tailleMatrice = IntToBytes.bytesToInt(tampon, offset*4);
-			offset++;
 			
-			System.out.println("ligneACalculer: " + ligneACalculer + "\ntailleMatrice: " + tailleMatrice);
-			
-			int[] ligneA = new int[tailleMatrice];
-			int[] ligneC = new int[tailleMatrice];			
-			//int[][] tabB = new int[tailleMatrice][tailleMatrice];
-			
-			// reconstruit la ligne A
+			// idem avec la ligne A
 			for (short i=0; i<tailleMatrice; i++) {
-				ligneA[i] = IntToBytes.bytesToInt(tampon, offset*4);
+				ligneA[i] = IntToBytes.bytesToInt(tampon, offset*tailleInt);
 				offset++;
 			}
 			
-			// reconstruit la matrice B
-			for (short i=0; i<tailleMatrice; i++) {
-				for (short j=0; j<tailleMatrice; j++) {
-					tabB[i][j] = IntToBytes.bytesToInt(tampon, offset*4);
-					offset++;
-				}
-			}
+			// matrice
+			afficheMatrice(tabB);
+
+			System.out.println("ligneACalculer: " + ligneACalculer + "\ntailleMatrice: " + tailleMatrice);
 			
 			// calcul les valeurs
 			for (short j=0; j<tailleMatrice; j++) { // j = colonne
@@ -126,14 +107,14 @@ public class V3_Client {
 			
 			// reset la décalage
 			offset = 0;  
-
+			tampon = new byte[(tailleMatrice*tailleMatrice+1)*4];
 			// renvoie les resultats au serveur
 			IntToBytes.intToBytes(ligneACalculer, tampon, offset);
 			offset++;
 			
 			// envoie la ligne calculee au serveur
 			for (short i=0; i<tailleMatrice; i++) {
-				IntToBytes.intToBytes(ligneC[i], tampon, offset*4);
+				IntToBytes.intToBytes(ligneC[i], tampon, offset*tailleInt);
 				offset++;
 			}
 

@@ -43,7 +43,7 @@ public class V3_Serveur
 				int tailleMatrice = Integer.parseInt(args[0]);
 				int port = Integer.parseInt(args[1]);
 				// defini la taille du tampon de communication (pour synchronisation et utilisation)
-				int TAILLE_TAMPON = (2+tailleMatrice*tailleMatrice+tailleMatrice)*4;
+				//int TAILLE_TAMPON = (2+tailleMatrice*tailleMatrice+tailleMatrice)*4;
 				int TAILLE_TAMPON_SYNCHRO = 8; // message recu : "HELO"
 				
 				// creation des tableaux sur lequelles on va faire les calculs
@@ -67,19 +67,25 @@ public class V3_Serveur
 
 				// ouverture d'un port en mode UDP
 				DatagramSocket socket = new DatagramSocket(port);
-				DatagramPacket paquet = new DatagramPacket(tampon, tampon.length);
+				DatagramPacket paquet; // = new DatagramPacket(tampon, tampon.length);
 				System.out.println("*** Serveur demarre ***");
 
-				// attends que tous les clients soient connecté
+				// attends que tous les clients soient connecté et stock leur information
 				Clients[] clients = new Clients[tailleMatrice];
+				// synchronisation avec tous les clients
 				while (nbClientConnecte < tailleMatrice) 
 				{
-					// synchronisation avec les clients
+					paquet = new DatagramPacket(tampon, tampon.length); // paquet de reception reception
 					socket.receive(paquet); // attend la requete du client 
 					// stock les informations du client dans un objet prevu a cet effet			
 					clients[nbClientConnecte] = new Clients(nbClientConnecte, paquet.getAddress(), paquet.getPort());
 					nbClientConnecte++;
 					System.out.println("Client " + nbClientConnecte + " connecte"); // afiche qu'un client est connecte
+					
+					// renvoie la taille des matrice au client connecte
+					IntToBytes.intToBytes(tailleMatrice, tampon, 0);
+					paquet = new DatagramPacket(tampon, tampon.length, paquet.getAddress(), paquet.getPort()); // paquet d'envoi
+					socket.send(paquet);
 				}
 				
 				// associe un port de communication a un groupe
@@ -96,53 +102,51 @@ public class V3_Serveur
 					}
 				}
 				
-				// diffuse la matrice B
-				paquet = new DatagramPacket(tampon, tampon.length, groupe, port);
+				// diffuse la matrice B a tout le groupe
+				paquet = new DatagramPacket(tampon, tampon.length, groupe, port+2);
 				socketMulti.send(paquet);
 				System.out.println("Matrice B difusee");
-						
-				// TODO: envoie a chaque client la ligne qu'il doit calculer de la matrice A
-				// ainsi que l'indice
+				
+				// envoie a chaque client l'indice de la ligne a calculer et la ligne A
+				tampon = new byte[(tailleMatrice+1)*4];
+				for (short i=0; i<tailleMatrice; i++) {
+					offset = 0; // reinitialise le pointeur d'insertion
+					// insere la ligne a calculer dans le tampon 
+					IntToBytes.intToBytes(i, tampon, offset++);
+					// insere la ligne de A dans le tampon
+					for (short j=0; j<tailleMatrice; j++)
+						IntToBytes.intToBytes(tabA[i][j], tampon, (offset++)*4);
+					paquet = new DatagramPacket(tampon, tampon.length, clients[i].getAddress(), clients[i].getPort()); // preparation du paquet d'envoi
+					socket.send(paquet); // envoie le paquet au client
+				}
+				
 				
 				/*
-				
-				System.out.println("Envoie des donnees a tout les clients en meme temps clients");
-				// envoie les donnees a tous les clients
-				tampon = new byte[TAILLE_TAMPON]; // redefini la taille du tampon 
-				offset = 0; // variable utilisee pour savoir ou on en est dans le tambon
-				//for (short k=0; k<tailleMatrice; k++) {
-					//offset = 0;
+				while (nbClientConnecte < tailleMatrice)
+				{
+					paquet = new DatagramPacket(tampon, tampon.length); // paquet de reception reception
+					// synchronisation avec les clients
+					socket.receive(paquet); // attend la requete du client 
+					// stock les informations du client dans un objet prevu a cet effet			
+					clients[nbClientConnecte] = new Clients(nbClientConnecte, paquet.getAddress(), paquet.getPort());
+					nbClientConnecte++;
+					System.out.println("Client " + nbClientConnecte + " connecte"); // afiche qu'un client est connecte
 					
-					// insere la taille des matrices dans le tampon
-					IntToBytes.intToBytes(tailleMatrice, tampon, offset*4);
-					offset++;
-
-					// insere la matrice A dans le tampon
-					for (short i=0; i<tailleMatrice; i++) {
-						IntToBytes.intToBytes(tabA[k][i], tampon, offset*4);
-						offset++;
-					}
-
-					// insere la matrice B dans le tampon
-					for (short i=0; i<tailleMatrice; i++) {
-						for (short j=0; j<tailleMatrice; j++) {
-							IntToBytes.intToBytes(tabB[i][j], tampon, offset*4);
-							offset++;
-						}
-					}
-
-					// envoie le paquet "tampon" contenant la taille des matrices ainsi que la ligne de A et la matrice B
-					paquet = new DatagramPacket(tampon, tampon.length, clients[k].getAddress(), clients[k].getPort());
+					// renvoie la taille des matrice au client connecte
+					IntToBytes.intToBytes(tailleMatrice, tampon, 0);
+					paquet = new DatagramPacket(tampon, tampon.length, paquet.getAddress(), paquet.getPort()); // paquet d'envoi
 					socket.send(paquet);
-				//}		
+				}
+				*/
 				
-				*/		
 				
 				// TODO : envoie a chaque client individuellement la ligne qu'il va devoir traiter
 			
-				/*
+				//System.out.println("1");
 				// recupere les valeurs calculees par les clients
+				tampon = new byte[(tailleMatrice*tailleMatrice+1)*4];
 				for (short k=0; k<tailleMatrice; k++) {
+					//System.out.println(k);
 					offset = 0; // reset la position ou on se trouve dans le tampon
 					paquet = new DatagramPacket(tampon, tampon.length);
 					socket.receive(paquet); // attend la requete du client
@@ -153,7 +157,7 @@ public class V3_Serveur
 						offset++;
 					}
 				}
-				*/
+				
 				 
 				System.out.println("Toutes les lignes ont ete recues");
 				
