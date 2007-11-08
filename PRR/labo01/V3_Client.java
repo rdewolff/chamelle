@@ -58,6 +58,7 @@ public class V3_Client {
 			 * - la ligne de A 
 			 */
 			// reception de la taille des matrices
+			tampon = new byte[tailleInt]; // recoit un int, qui fait 4 bytes
 			paquet = new DatagramPacket(tampon, tampon.length); 
 			socket.receive(paquet);
 			int tailleMatrice = IntToBytes.bytesToInt(tampon, 0);
@@ -68,7 +69,7 @@ public class V3_Client {
 			InetAddress groupe = InetAddress.getByName(adresseGroupe);
 			socketMulti.joinGroup(groupe);
 			
-			// recoit la matrice B de serveur en diffusion
+			// recoit la matrice B du serveur en diffusion
 			tampon = new byte[tailleMatrice*tailleMatrice*tailleInt];
 			paquet = new DatagramPacket(tampon, tampon.length);
 			socketMulti.receive(paquet); 
@@ -77,9 +78,9 @@ public class V3_Client {
 			
 			// reconstruit la matrice B
 			int offset = 0;
-			int[][] tabB = new int[3][3];
-			for (short i=0; i<3; i++) {
-				for (short j=0; j<3; j++) {
+			int[][] tabB = new int[tailleMatrice][tailleMatrice];
+			for (short i=0; i<tailleMatrice; i++) {
+				for (short j=0; j<tailleMatrice; j++) {
 					tabB[i][j] = IntToBytes.bytesToInt(tampon, offset*tailleInt);
 					offset++;
 				}
@@ -88,7 +89,8 @@ public class V3_Client {
 			// recoit l'indice de B et la ligne de A
 			int[] ligneA = new int[tailleMatrice];
 			int[] ligneC = new int[tailleMatrice];
-			tampon = new byte[(tailleMatrice*tailleMatrice+1)*tailleInt]; // reinit le tampon avec la bonne taille
+			// redefini le tampon avec la bonne taille
+			tampon = new byte[(tailleMatrice*tailleMatrice+1)*tailleInt]; 
 			paquet = new DatagramPacket(tampon, tampon.length);
 			socket.receive(paquet); 
 			
@@ -103,9 +105,9 @@ public class V3_Client {
 				offset++;
 			}
 			
-			// matrice
+			// affiche la matrice
 			afficheMatrice(tabB);
-
+			// et la ligne a calculer
 			System.out.println("Ligne a calculer : " + ligneACalculer);
 			
 			/*
