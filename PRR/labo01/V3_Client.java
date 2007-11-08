@@ -19,7 +19,9 @@ public class V3_Client {
 	 * Methode principale contenatn tout le client
 	 */
 	
+	// Constante
 	static final int tailleInt = 4;
+	
 	public static void main (String args[]) throws IOException {
 		try {
 			
@@ -112,12 +114,16 @@ public class V3_Client {
 			IntToBytes.intToBytes(ligneACalculer, tampon, offset);
 			offset++;
 			
-			// envoie la ligne calculee au serveur
+			// met la ligne calculee dans le tampon d'envoi
 			for (short i=0; i<tailleMatrice; i++) {
 				IntToBytes.intToBytes(ligneC[i], tampon, offset*tailleInt);
 				offset++;
 			}
 
+			// envoie tout
+			paquet = new DatagramPacket(tampon, tampon.length, address, port);
+			socket.send(paquet); // envoi du paquet a l'aide du socket
+			
 			// affiche les resultats
 			System.out.println("Ligne de A");
 			for (int i=0; i<ligneA.length; i++) {
@@ -134,13 +140,11 @@ public class V3_Client {
 				System.out.print(ligneC[i] + " ");
 			}
 			
-			// envoie tout
-			paquet = new DatagramPacket(tampon, tampon.length, address, port);
-			socket.send(paquet); // envoi du paquet a l'aide du socket
-			
 			// ferme les connections
 			socketMulti.leaveGroup(groupe); // serveur de diffusion
 			socket.close();
+			socketMulti.close();
+			
 			System.out.println("\n*** fin client ***");
 			
 		} catch (IOException e) {
