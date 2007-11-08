@@ -38,6 +38,8 @@ import java.util.*;
 class V1_Serveur { 
 
 	static int startPort = 8000;
+	// Taile d'un integer en bytes
+	static final int tailleInt = 4;
 
 	/* 
 	 * Affichage de la matrice passee en parametre (2D)
@@ -56,8 +58,7 @@ class V1_Serveur {
 	 */
 	public static void main(String argv[]) throws Exception {
 		
-		// Taile d'un integer en bytes
-		final int tailleInt = 4;
+		
 		
 		// affiche info sur nom + ip serveur
 		System.out.println("Lancement du serveur sur " + InetAddress.getLocalHost());
