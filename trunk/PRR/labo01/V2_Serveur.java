@@ -30,14 +30,15 @@ public class V2_Serveur
 		if (args.length < 2) {
 			System.out.println("Erreur, manque parametres : java serveur <tailleMatrice> <port>");
 		} else if (args.length > 2) {
-			System.out.println("Trop de parametres : java serveur <tailleMatrice> <port>")
+			System.out.println("Trop de parametres : java serveur <tailleMatrice> <port>");
 		} else {
 			try {
 				// declaration des variables
 				int nbClientConnecte = 0;
 				int tailleMatrice = Integer.parseInt(args[0]);
 				int port = Integer.parseInt(args[1]);
-				int TAILLE_TAMPON = (2+tailleMatrice*tailleMatrice+tailleMatrice)*4; // TODO : change en fonction des données max a transmettre 
+				// defini la taille du tampon de communication en 
+				int TAILLE_TAMPON = (2+tailleMatrice*tailleMatrice+tailleMatrice)*4;
 				System.out.println("Taille du tampon : " + TAILLE_TAMPON);
 				
 				// creation des 2 tableaux sur lequelles on va faire des calculs
