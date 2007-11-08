@@ -39,8 +39,8 @@ public class V2_Serveur
 				int tailleMatrice = Integer.parseInt(args[0]);
 				int port = Integer.parseInt(args[1]);
 				// defini la taille du tampon de communication (pour synchronisation et utilisation)
-				int TAILLE_TAMPON = (2+tailleMatrice*tailleMatrice+tailleMatrice)*4;
-				int TAILLE_TAMPON_SYNCHRO = 8; // message recu : "HELO"
+				final int TAILLE_TAMPON = (2+tailleMatrice*tailleMatrice+tailleMatrice)*4; // TODO : 
+				final int TAILLE_TAMPON_SYNCHRO = 8; // message recu : "HELO"
 				
 				// creation des tableaux sur lequelles on va faire les calculs
 				int[][]  tabA, tabB, tabC;
@@ -83,7 +83,7 @@ public class V2_Serveur
 				tampon = new byte[TAILLE_TAMPON]; // redefini la taille du tampon 
 				int offset = 0; // variable utilisee pour savoir ou on en est dans le tambon
 				for (short k=0; k<tailleMatrice; k++) {
-					offset = 0;
+					offset = 0; // reinitialise pour chaque client la position dans le tampon
 					// met le numero au client en premier dans le tampon d'envoie,ce qui correspond a la ligne qu'il doit traiter ( 0 a N )
 					IntToBytes.intToBytes(k, tampon, offset);
 					offset++;

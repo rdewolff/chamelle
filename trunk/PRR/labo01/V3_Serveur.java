@@ -10,8 +10,12 @@ import java.io.*;
  * @author Romain de Wolff
  * @author Simon Hintermann
  */
-
-public class V2_Serveur 
+/* Ports utilisé : 6000 étant la valeur d'exemple passée en parametre
+ * 6000 UDP basic
+ * 6001 UDP Multicast (groupe) 
+ * 6002 UDP Multicast (transmission)
+ */
+public class V3_Serveur 
 {
 	/** 
 	 * Affichage de la matrice carrée passée en parametre (2 dimensions)
@@ -77,22 +81,43 @@ public class V2_Serveur
 					nbClientConnecte++;
 					System.out.println("Client " + nbClientConnecte + " connecte"); // afiche qu'un client est connecte
 				}
-
-				System.out.println("Envoie des donnees aux clients");
-				// envoie les donnees a chaque client
+				
+				// associe un port de communication a un groupe
+				InetAddress groupe = InetAddress.getByName("230.230.230.230");
+				MulticastSocket socketMulti = new MulticastSocket(port+1);
+				
+				// met la matrice B dans un tampon pour l'envoyer par la suite
+				tampon = new byte[tailleMatrice*tailleMatrice*4]; // le tampon fait une taille de tailleMatrice^2
+				int offset = 0; // le pointeur d'insertion dans le tableau de byte 
+				for (short i=0; i<tailleMatrice; i++) {
+					for (short j=0; j<tailleMatrice; j++) {
+						IntToBytes.intToBytes(tabB[i][j], tampon, offset*4);
+						offset++;
+					}
+				}
+				
+				// diffuse la matrice B
+				paquet = new DatagramPacket(tampon, tampon.length, groupe, port);
+				socketMulti.send(paquet);
+				System.out.println("Matrice B difusee");
+						
+				// TODO: envoie a chaque client la ligne qu'il doit calculer de la matrice A
+				// ainsi que l'indice
+				
+				/*
+				
+				System.out.println("Envoie des donnees a tout les clients en meme temps clients");
+				// envoie les donnees a tous les clients
 				tampon = new byte[TAILLE_TAMPON]; // redefini la taille du tampon 
-				int offset = 0; // variable utilisee pour savoir ou on en est dans le tambon
-				for (short k=0; k<tailleMatrice; k++) {
-					offset = 0;
-					// met le numero au client en premier dans le tampon d'envoie,ce qui correspond a la ligne qu'il doit traiter ( 0 a N )
-					IntToBytes.intToBytes(k, tampon, offset);
-					offset++;
-
+				offset = 0; // variable utilisee pour savoir ou on en est dans le tambon
+				//for (short k=0; k<tailleMatrice; k++) {
+					//offset = 0;
+					
 					// insere la taille des matrices dans le tampon
 					IntToBytes.intToBytes(tailleMatrice, tampon, offset*4);
 					offset++;
 
-					// insere la ligne de la matrice A dans le tampon
+					// insere la matrice A dans le tampon
 					for (short i=0; i<tailleMatrice; i++) {
 						IntToBytes.intToBytes(tabA[k][i], tampon, offset*4);
 						offset++;
@@ -109,8 +134,13 @@ public class V2_Serveur
 					// envoie le paquet "tampon" contenant la taille des matrices ainsi que la ligne de A et la matrice B
 					paquet = new DatagramPacket(tampon, tampon.length, clients[k].getAddress(), clients[k].getPort());
 					socket.send(paquet);
-				}				
+				//}		
 				
+				*/		
+				
+				// TODO : envoie a chaque client individuellement la ligne qu'il va devoir traiter
+			
+				/*
 				// recupere les valeurs calculees par les clients
 				for (short k=0; k<tailleMatrice; k++) {
 					offset = 0; // reset la position ou on se trouve dans le tampon
@@ -123,6 +153,7 @@ public class V2_Serveur
 						offset++;
 					}
 				}
+				*/
 				 
 				System.out.println("Toutes les lignes ont ete recues");
 				
