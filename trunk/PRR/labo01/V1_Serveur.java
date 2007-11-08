@@ -57,7 +57,9 @@ class V1_Serveur {
 	 * Programme principal
 	 */
 	public static void main(String argv[]) throws Exception {
-
+		
+		final int tailleInt = 4;
+		
 		// affiche info sur nom + ip serveur
 		System.out.println("Lancement du serveur sur " + InetAddress.getLocalHost());
 		int n = 0;
@@ -81,31 +83,20 @@ class V1_Serveur {
 		}
 
 		// creation des matrices sur lequelles on va faire des calculs
-		int[][]  tabA, tabB, tabC;
-		tabA = new int[n][n];
-		tabB = new int[n][n];
-		tabC = new int[n][n];
+		int[][]  matA, matB, matC;
+		matA = new int[n][n];
+		matB = new int[n][n];
+		matC = new int[n][n];
 
 		// insertion de valeurs aleatoire dans le tableau
 		Random hasard = new Random();
 		// parcours les deux talbeaux et insere les valeurs aleatoires
 		for (short i=0; i<n; i++) {
 			for (short j=0; j<n; j++) {
-				tabA[i][j] = hasard.nextInt(10);
-				tabB[i][j] = hasard.nextInt(10);
+				matA[i][j] = hasard.nextInt(10);
+				matB[i][j] = hasard.nextInt(10);
 			}
 		}
-
-		// TODO : remove this, c'est juste la methode de calcul
-		// calcul les valeurs
-//		for (short i=0; i<n; i++) { // i = ligne
-//			for (short j=0; j<n; j++) { // j = colonne
-//				// multiplie avec la colonne de la matrice B
-//				for (short k=0; k<n; k++) {
-//					tabC[i][j] += tabA[i][k] * tabB[k][j];
-//				}    		   
-//			}
-//		}
 		
 		// on lance les taches pour les 5 futurs connexions.
 		System.out.println("Attente de la connexion des " + n + " clients");
@@ -121,39 +112,47 @@ class V1_Serveur {
 		}
 		
 		System.out.println("Debut de la transmission...");
-		
+		int dimTab = tailleInt + (n*tailleInt) + (n*n*tailleInt);
+		/** Tableau de bytes d'envoi des informations */
+		byte[] out = new byte[dimTab];
 		// envoi des tableaux
-		for (int i=0; i<n; i++) {
+		for (int i=0; i<n; i++) 
+		{
 			DataOutputStream fluxSortie = new DataOutputStream(connectionSocket[i].getOutputStream());
-			fluxSortie.write(n);
+			/** Envoi du nombre de travailleurs (dimension matrice) */
+			IntToBytes.intToBytes(n, out, 0);
+			for(int j=0; j<n; j++)
+				IntToBytes.intToBytes(matA[i][j], out, (j*tailleInt + tailleInt));
+			for(int j=0; j<n; j++)
+				for(int k=0; k<n; k++)
+					IntToBytes.intToBytes(matB[j][k], out, (j*tailleInt + k*n*tailleInt + tailleInt + n*tailleInt));
+			fluxSortie.write(out, 0, dimTab);
 			System.out.println("Client " + (i+1) + " envoye");
 		}
-		//BufferedReader fluxEntree = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		
-		// BufferedReader
-//		BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream())); 
-//		DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream()); 
-//
-//		phraseClient = inFromClient.readLine(); 
-//		phraseEnMaj = phraseClient.toUpperCase() + '\n'; 
-//		outToClient.writeBytes(phraseEnMaj); 
-//
-//		// fermeture des sockets
-//		welcomeSocket.close();
-//		connectionSocket.close();
-//		inFromClient.close();
-//		outToClient.close();
+		byte[] in = new byte[tailleInt];
+		
+		for(int i=0; i<n; i++)
+		{
+			DataInputStream fluxEntree = new DataInputStream(connectionSocket[i].getInputStream());
+			for(int j=0; j<n; j++)
+			{
+				for(int k=0; k<tailleInt; k++)
+					in[k] = fluxEntree.readByte();
+				matC[i][j] = IntToBytes.bytesToInt(in, 0);
+			}
+		}
 
 		// --------------------------------------------------------------------
 		// affiche les tableaux ainsi que le resultat calcule
 		System.out.println("Matrice A");
-		afficheMatrice(tabA);
+		afficheMatrice(matA);
 
 		System.out.println("Matrice B");
-		afficheMatrice(tabB);
+		afficheMatrice(matB);
 
 		System.out.println("Matrice C = A x B");
-		afficheMatrice(tabC);
+		afficheMatrice(matC);
 
 		// fin de l'execution du serveur
 		System.out.println("Fin de l'execution du serveur.");
