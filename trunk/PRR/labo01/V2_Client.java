@@ -25,9 +25,10 @@ public class V2_Client {
 			InetAddress address = InetAddress.getByName(args[0]); 
 			int port = Integer.parseInt(args[1]); 
 			
-			int TAILLE_TAMPON = 56; // TODO : change en fonction des données max
 			String query = "HELO"; // pour se sychroniser avec le serveur
-			byte[] tampon = new byte[query.length()*2]; // defini la taille miniumm necessaire. Un char = 2 bytes
+			int TAILLE_TAMPON = 56;
+			int TAILLE_TAMPON_SYNCHRO = query.length()*2; // message recu : "HELO"
+			byte[] tampon = new byte[TAILLE_TAMPON_SYNCHRO]; // defini la taille miniumm necessaire. Un char = 2 bytes
 			tampon = query.getBytes();
 			
 			System.out.println("*** Client ***");
@@ -41,14 +42,14 @@ public class V2_Client {
 			socket.send(paquet); // envoi du paquet a l'aide du socket
 			
 			// recoit les infos du serveur
-			tampon = new byte[TAILLE_TAMPON]; // reinit le tampon
+			tampon = new byte[TAILLE_TAMPON]; // reinit le tampon avec la bonne taille
 			paquet = new DatagramPacket(tampon, tampon.length);
 			socket.receive(paquet); 
 			
 			// la connection est des lors etablie, la communication fonctionne
 			System.out.println("Connection avec le serveur etablie");
 			
-			// décomponse les element recu par le serveur
+			// décomponse les elements recus par le serveur
 			int offset = 0; 
 			// recoit les infos qui sont dans un seul character (deux nombre < 10)
 			int ligneACalculer = IntToBytes.bytesToInt(tampon, offset);
@@ -84,10 +85,9 @@ public class V2_Client {
 				}    		   
 			}
 			
-			// recréer un nouveau tampon de la bonne taille
-			tampon = new byte[TAILLE_TAMPON]; // reinit le tampon
-			offset = 0; // reset la variable
-			
+			// reset la décalage
+			offset = 0;  
+
 			// renvoie les resultats au serveur
 			IntToBytes.intToBytes(ligneACalculer, tampon, offset);
 			offset++;
@@ -104,9 +104,11 @@ public class V2_Client {
 				System.out.print(ligneA[i] + " ");
 			}
 			
+			// affiche la matrice B
 			System.out.println("\nMatrice B");
 			afficheMatrice(tabB);
 			
+			// affiche la ligne C calculee par ce client
 			System.out.println("Ligne de C calculee");
 			for (int i=0; i<ligneC.length; i++) {
 				System.out.print(ligneC[i] + " ");
@@ -115,13 +117,6 @@ public class V2_Client {
 			// envoie tout
 			paquet = new DatagramPacket(tampon, tampon.length, address, port);
 			socket.send(paquet); // envoi du paquet a l'aide du socket
-			
-			/*
-			// en utilisant des Stream
-			Socket s = new Socket("localhost", 6000);
-			s.getInputStream();
-			s.getOutputStream();
-			*/
 			
 			// ferme la connection
 			socket.close();
