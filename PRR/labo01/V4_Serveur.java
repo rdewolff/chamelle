@@ -6,6 +6,7 @@ public class V4_Serveur
 {
 	static int startPort = 4446;
 	static int receivePort = 4445;
+	static final int tailleInt = 4;
 	
 	/* 
 	 * Affichage de la matrice passee en parametre (2D)
@@ -25,19 +26,6 @@ public class V4_Serveur
 		
 		// creation des matrices sur lequelles on va faire des calculs
 		int[][]  matA, matB, matC;
-		matA = new int[n][n];
-		matB = new int[n][n];
-		matC = new int[n][n];
-		
-		// insertion de valeurs aleatoire dans le tableau
-		Random hasard = new Random();
-		// parcours les deux tableaux et insere les valeurs aleatoires
-		for (short i=0; i<n; i++) {
-			for (short j=0; j<n; j++) {
-				matA[i][j] = hasard.nextInt(10);
-				matB[i][j] = hasard.nextInt(10);
-			}
-		}
 		
 		try
 		{
@@ -57,53 +45,115 @@ public class V4_Serveur
 			n = 5;
 		}
 		
-		String[] message = {"Allo","ed","ad"};
-		byte[] tampon = new byte[256];
-		/** Le tableau des sockets de multicast */
-		MulticastSocket socket;
-		InetAddress groupes;
+		matA = new int[n][n];
+		matB = new int[n][n];
+		matC = new int[n][n];
 		
-		// Associer un port de communication a un groupe
-		groupes = InetAddress.getByName("228.5.6.7");
-		socket = new MulticastSocket(startPort);
-
+//		 insertion de valeurs aleatoire dans le tableau
+		Random hasard = new Random();
+		// parcours les deux tableaux et insere les valeurs aleatoires
+		for (short i=0; i<n; i++) {
+			for (short j=0; j<n; j++) {
+				matA[i][j] = hasard.nextInt(10);
+				matB[i][j] = hasard.nextInt(10);
+			}
+		}
 		
-		short nbClientConnecte=0;
+		String message = "Allo";
+		byte[] tampon = new byte[1];
+		
+		/** Associer un port de communication a un groupe */
+		InetAddress groupe = InetAddress.getByName("228.5.6.7");
+		/** La socket de communication de groupe */
+		MulticastSocket socket = new MulticastSocket(startPort);
+		
+		tampon = message.getBytes();
+		DatagramPacket paquet = new DatagramPacket(tampon,tampon.length,groupe,receivePort);
+		
+		DatagramSocket socketS = new DatagramSocket(startPort+1);
+		byte[] tamponDim = new byte[4];
+		IntToBytes.intToBytes(n, tamponDim, 0);
+		
+		/** Tableau des clients a connecter */
 		Clients[] clients = new Clients[n];
-		while (nbClientConnecte < n) 
+		for(short i=0; i<n; i++) 
 		{
 			// tampon utilise pour la communication lors de la synchro
-			byte[] tamponS = new byte[8];
-			DatagramPacket paquet = new DatagramPacket(tamponS, tamponS.length);
+			byte[] tamponS = new byte[1];
+			DatagramPacket paquetS = new DatagramPacket(tamponS, tamponS.length);
 			// synchronisation avec les clients
-			socket.receive(paquet); // attend la requete du client 
-			// stock les informations du client dans un objet prevu a cet effet			
-			clients[nbClientConnecte] = new Clients(nbClientConnecte, paquet.getAddress(), paquet.getPort());
-			nbClientConnecte++;
-			System.out.println("Client " + nbClientConnecte + " connecte"); // afiche qu'un client est connecte
+			socketS.receive(paquetS); // attend la requete du client 
+			// stocke les informations du client dans un objet prevu a cet effet			
+			clients[i] = new Clients(i, paquetS.getAddress(), paquetS.getPort());
+			tamponS = new byte[tailleInt*2];
+			IntToBytes.intToBytes(n, tamponS, 0);
+			IntToBytes.intToBytes(i, tamponS, tailleInt);
+			paquetS = new DatagramPacket(tamponS, tamponS.length, clients[i].getAddress(), clients[i].getPort());
+			socketS.send(paquetS);
+			System.out.println("Client " + (i+1) + " connecte"); // afiche qu'un client est connecte
 		}
 		
-		/** Tampon de lecture du clavier */
-		BufferedReader inFromUser = 
-			new BufferedReader(new InputStreamReader(System.in));
-		try
-		{
-			Integer.valueOf(inFromUser.readLine());
-		}
-		// En cas d'erreur de format ou de bornes, on signale l'erreur
-		catch(NumberFormatException e)
-		{System.out.println("Veuillez entrer un nombr");}
-		catch(IOException e)
-		{System.out.println("IO exception");}
+		// Envoyer les deux matrices aux clients en multicast
+		afficheMatrice(matA);
+		afficheMatrice(matB);
+		// Creation du message a diffuser aux clients
+		tampon = new byte[(n*n + n*n)*tailleInt];
 		
-		//Envoyer le message aux membres du groupe
+		int offset = 0;
+		
+		// La matrice A
 		for(short i=0; i<n; i++)
+			for(short j=0; j<n; j++)
+			{
+				IntToBytes.intToBytes(matA[i][j], tampon, offset*tailleInt);
+				offset++;
+			}
+		
+		// La matrice B
+		for(int i=0; i<n; i++)
+			for(int j=0; j<n; j++)
+			{
+				IntToBytes.intToBytes(matB[i][j], tampon, offset*tailleInt);
+				offset++;
+			}
+		
+		paquet = new DatagramPacket(tampon,tampon.length,groupe,receivePort);
+		socket.send(paquet);
+		
+		for(short i=0; i<n; i++) 
 		{
-			// Creation du message a diffuser aux clients
-			tampon = message[i].getBytes();
-			DatagramPacket paquet = new DatagramPacket(tampon,tampon.length,groupes,receivePort);
-			socket.send(paquet);
+			// tampon utilise pour la communication lors de la synchro
+			byte[] tamponS = new byte[n*tailleInt + tailleInt];
+			DatagramPacket paquetS = new DatagramPacket(tamponS, tamponS.length);
+			// synchronisation avec les clients
+			socketS.receive(paquetS); // attend la requete du client
+			byte[] ligneRecue = paquetS.getData();
+			int noClient = IntToBytes.bytesToInt(ligneRecue, 0);
+			System.out.println(noClient);
+			for(int j=0; j<n; j++)
+				matC[noClient][j] = IntToBytes.bytesToInt(ligneRecue, j*tailleInt + tailleInt);
 		}
+		
+		System.out.println("Matrice recue: ");
+		afficheMatrice(matC);
+		for(int i=0; i<n; i++)
+			for(int j=0; j<n; j++)
+				matC[i][j] = 0;
+		
+		// calcul les valeurs localement, pour comparer avec les informatiosn recus des clients
+		for (short i=0; i<n; i++) { // i = ligne
+			for (short j=0; j<n; j++) { // j = colonne
+				// multiplie avec la colonne de la matrice B
+				for (short k=0; k<n; k++) {
+					matC[i][j] += matA[i][k] * matB[k][j];
+				}    		   
+			}
+		}
+		
+		// affiche la matrice C calculee en local pour comparaison
+		System.out.println("Matrice C = A x B (local calcul)");
+		afficheMatrice(matC);
+
 		socket.close();
 		System.out.println("yop");
 	}
