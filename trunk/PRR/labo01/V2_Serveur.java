@@ -28,6 +28,7 @@ public class V2_Serveur
 
 	public static void main (String args[]) throws IOException, SocketException 
 	{
+		// verifie si le nombre de parametres est juste
 		if (args.length < 2) {
 			System.out.println("Erreur, manque parametres : java serveur <tailleMatrice> <port>");
 		} else if (args.length > 2) {
@@ -39,7 +40,7 @@ public class V2_Serveur
 				int tailleMatrice = Integer.parseInt(args[0]);
 				int port = Integer.parseInt(args[1]);
 				// defini la taille du tampon de communication (pour synchronisation et utilisation)
-				final int TAILLE_TAMPON = (2+tailleMatrice*tailleMatrice+tailleMatrice)*4; // TODO : 
+				final int TAILLE_TAMPON = (2+tailleMatrice*tailleMatrice+tailleMatrice)*4;
 				final int TAILLE_TAMPON_SYNCHRO = 8; // message recu : "HELO"
 				
 				// creation des tableaux sur lequelles on va faire les calculs
@@ -66,6 +67,9 @@ public class V2_Serveur
 				DatagramPacket paquet = new DatagramPacket(tampon, tampon.length);
 				System.out.println("*** Serveur demarre ***");
 
+				/*
+				 * Attends que les n travailleurs se presentent
+				 */
 				// attends que tous les clients soient connecté
 				Clients[] clients = new Clients[tailleMatrice];
 				while (nbClientConnecte < tailleMatrice) 
@@ -77,9 +81,11 @@ public class V2_Serveur
 					nbClientConnecte++;
 					System.out.println("Client " + nbClientConnecte + " connecte"); // afiche qu'un client est connecte
 				}
-
+				
+				/*
+				 * Emet une ligne de A et la matrice B a chaque travailleur
+				 */
 				System.out.println("Envoie des donnees aux clients");
-				// envoie les donnees a chaque client
 				tampon = new byte[TAILLE_TAMPON]; // redefini la taille du tampon 
 				int offset = 0; // variable utilisee pour savoir ou on en est dans le tambon
 				for (short k=0; k<tailleMatrice; k++) {
@@ -111,7 +117,9 @@ public class V2_Serveur
 					socket.send(paquet);
 				}				
 				
-				// recupere les valeurs calculees par les clients
+				/*
+				 * Attends les n lignes de C
+				 */
 				for (short k=0; k<tailleMatrice; k++) {
 					offset = 0; // reset la position ou on se trouve dans le tampon
 					paquet = new DatagramPacket(tampon, tampon.length);
@@ -128,7 +136,9 @@ public class V2_Serveur
 				
 				System.out.println("Affichages des matrices");
 				
-				// affiche les tableaux ainsi que le resultats calcules
+				/*
+				 * Affiche la matrice
+				 */
 				System.out.println("Matrice A");
 				afficheMatrice(tabA);
 

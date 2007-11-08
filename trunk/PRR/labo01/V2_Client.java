@@ -16,7 +16,7 @@ public class V2_Client {
 	}
 
 	/*
-	 * Methode principale contenatn tout le client
+	 * Methode principale contenant tout le client
 	 */
 	public static void main (String args[]) throws IOException {
 		try {
@@ -25,8 +25,9 @@ public class V2_Client {
 			InetAddress address = InetAddress.getByName(args[0]); 
 			int port = Integer.parseInt(args[1]); 
 			
-			String query = "HELO"; // pour se sychroniser avec le serveur
-			int TAILLE_TAMPON = 56;
+			 // synchronisation avec le serveur
+			String query = "HELO";
+			int TAILLE_TAMPON = 56; // TODO : dynamique ?
 			int TAILLE_TAMPON_SYNCHRO = query.length()*2; // message recu : "HELO"
 			byte[] tampon = new byte[TAILLE_TAMPON_SYNCHRO]; // defini la taille miniumm necessaire. Un char = 2 bytes
 			tampon = query.getBytes();
@@ -41,7 +42,9 @@ public class V2_Client {
 			DatagramPacket paquet = new DatagramPacket(tampon, tampon.length, address, port);
 			socket.send(paquet); // envoi du paquet a l'aide du socket
 			
-			// recoit les infos du serveur
+			/* 
+			 * Recoit les infos du serveur
+			 */
 			tampon = new byte[TAILLE_TAMPON]; // reinit le tampon avec la bonne taille
 			paquet = new DatagramPacket(tampon, tampon.length);
 			socket.receive(paquet); 
@@ -77,7 +80,9 @@ public class V2_Client {
 				}
 			}
 			
-			// calcul les valeurs
+			/*
+			 * Calcul la ligne correspondante de C
+			 */
 			for (short j=0; j<tailleMatrice; j++) { // j = colonne
 				// multiplie avec la colonne de la matrice B
 				for (short k=0; k<tailleMatrice; k++) {
@@ -88,7 +93,9 @@ public class V2_Client {
 			// reset la décalage
 			offset = 0;  
 
-			// renvoie les resultats au serveur
+			/* 
+			 * Emet la ligne calculee au coordinateur
+			 */
 			IntToBytes.intToBytes(ligneACalculer, tampon, offset);
 			offset++;
 			
