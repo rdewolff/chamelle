@@ -57,8 +57,7 @@ public class V3_Serveur
 				int nbClientConnecte = 0;
 				int tailleMatrice = Integer.parseInt(args[0]);
 				int port = Integer.parseInt(args[1]);
-				// defini la taille du tampon de communication (pour synchronisation et utilisation)
-				//int TAILLE_TAMPON = (2+tailleMatrice*tailleMatrice+tailleMatrice)*4;
+				// defini la taille du tampon de communication pour synchronisation
 				int TAILLE_TAMPON_SYNCHRO = 8; // message recu : "HELO"
 				
 				// creation des tableaux sur lequelles on va faire les calculs
@@ -118,8 +117,7 @@ public class V3_Serveur
 				int offset = 0; // le pointeur d'insertion dans le tableau de byte 
 				for (short i=0; i<tailleMatrice; i++) {
 					for (short j=0; j<tailleMatrice; j++) {
-						IntToBytes.intToBytes(tabB[i][j], tampon, offset*4);
-						offset++;
+						IntToBytes.intToBytes(tabB[i][j], tampon, (offset++)*4);
 					}
 				}
 				
@@ -153,6 +151,7 @@ public class V3_Serveur
 					paquet = new DatagramPacket(tampon, tampon.length);	
 					socket.receive(paquet); // attend la requete du client
 					int ligneRecue = IntToBytes.bytesToInt(tampon, (offset++)*4);
+					System.out.println("Ligne recue : " + ligneRecue);
 					for (short i=0; i<tailleMatrice; i++) {
 						tabC[ligneRecue][i] = IntToBytes.bytesToInt(tampon, (offset++)*4);
 					}
