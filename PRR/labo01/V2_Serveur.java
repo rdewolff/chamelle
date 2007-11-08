@@ -10,6 +10,7 @@ import java.io.*;
  * @author Romain de Wolff
  * @author Simon Hintermann
  */
+
 public class V2_Serveur 
 {
 	/** 
@@ -37,11 +38,11 @@ public class V2_Serveur
 				int nbClientConnecte = 0;
 				int tailleMatrice = Integer.parseInt(args[0]);
 				int port = Integer.parseInt(args[1]);
-				// defini la taille du tampon de communication en 
+				// defini la taille du tampon de communication (pour synchronisation et utilisation)
 				int TAILLE_TAMPON = (2+tailleMatrice*tailleMatrice+tailleMatrice)*4;
-				System.out.println("Taille du tampon : " + TAILLE_TAMPON);
+				int TAILLE_TAMPON_SYNCHRO = 8; // message recu : "HELO"
 				
-				// creation des 2 tableaux sur lequelles on va faire des calculs
+				// creation des tableaux sur lequelles on va faire les calculs
 				int[][]  tabA, tabB, tabC;
 				tabA = new int[tailleMatrice][tailleMatrice];
 				tabB = new int[tailleMatrice][tailleMatrice];
@@ -57,12 +58,12 @@ public class V2_Serveur
 					}
 				}
 
-				// tampon utilise pour la communication
-				byte[] tampon = new byte[TAILLE_TAMPON];
+				// tampon utilise pour la communication lors de la synchro
+				byte[] tampon = new byte[TAILLE_TAMPON_SYNCHRO];
 
 				// ouverture d'un port en mode UDP
 				DatagramSocket socket = new DatagramSocket(port);
-				DatagramPacket paquet = new DatagramPacket(tampon, tampon.length); // TODO : mettre taille minimum pour synchro
+				DatagramPacket paquet = new DatagramPacket(tampon, tampon.length);
 				System.out.println("*** Serveur demarre ***");
 
 				// attends que tous les clients soient connecté
@@ -71,14 +72,15 @@ public class V2_Serveur
 				{
 					// synchronisation avec les clients
 					socket.receive(paquet); // attend la requete du client 
-					// leur envoie les donnees necessaires (N + ligne, numero de ligne et matrice B)
-					System.out.println("Client " + nbClientConnecte + " connecte"); // afiche qu'un client est connecte
 					// stock les informations du client dans un objet prevu a cet effet			
 					clients[nbClientConnecte] = new Clients(nbClientConnecte, paquet.getAddress(), paquet.getPort());
-					nbClientConnecte++; // TODO: mettre en static dans la classe client
+					nbClientConnecte++;
+					System.out.println("Client " + nbClientConnecte + " connecte"); // afiche qu'un client est connecte
 				}
 
+				System.out.println("Envoie des donnees aux clients");
 				// envoie les donnees a chaque client
+				tampon = new byte[TAILLE_TAMPON]; // redefini la taille du tampon 
 				int offset = 0; // variable utilisee pour savoir ou on en est dans le tambon
 				for (short k=0; k<tailleMatrice; k++) {
 					offset = 0;
@@ -111,13 +113,11 @@ public class V2_Serveur
 				
 				// recupere les valeurs calculees par les clients
 				for (short k=0; k<tailleMatrice; k++) {
-					tampon = new byte[TAILLE_TAMPON];
 					offset = 0; // reset la position ou on se trouve dans le tampon
 					paquet = new DatagramPacket(tampon, tampon.length);
 					socket.receive(paquet); // attend la requete du client
 					int ligneRecue = IntToBytes.bytesToInt(tampon, offset*4);
 					offset++;
-					// System.out.println("Ligne " + ligneRecue + " recue");
 					for (short i=0; i<tailleMatrice; i++) {
 						tabC[ligneRecue][i] = IntToBytes.bytesToInt(tampon, offset*4);
 						offset++;
@@ -125,6 +125,8 @@ public class V2_Serveur
 				}
 				 
 				System.out.println("Toutes les lignes ont ete recues");
+				
+				System.out.println("Affichages des matrices");
 				
 				// affiche les tableaux ainsi que le resultats calcules
 				System.out.println("Matrice A");
@@ -136,7 +138,7 @@ public class V2_Serveur
 				System.out.println("Matrice C = A x B (recue ligne par ligne)");
 				afficheMatrice(tabC);
 
-				
+				// pour la verification, on recalcul la matrice localement
 				// reinit la matrice avant le calcul local
 				for (short i=0; i<tailleMatrice; i++) { // i = ligne
 					for (short j=0; j<tailleMatrice; j++) { // j = colonne
@@ -154,14 +156,10 @@ public class V2_Serveur
 					}
 				}
 				
-
+				// affiche la matrice C calculee en local pour comparaison
 				System.out.println("Matrice C = A x B (local calcul)");
 				afficheMatrice(tabC);
 
-				/* Complementaire : util a la fin ?
-				socket.setSoTimeout(1000); // TODO gere les timeout de connection 
-				 */
-				
 				// ferme le socket de connexion
 				socket.close();
 				System.out.println("*** fin serveur ***");
