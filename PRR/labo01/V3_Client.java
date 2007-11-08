@@ -1,7 +1,7 @@
 import java.net.*;
 import java.io.*;
 
-public class V2_Client {	
+public class V3_Client {	
 	
 	/* 
 	 * Affichage de la matrice passee en parametre (2D)
@@ -41,6 +41,45 @@ public class V2_Client {
 			DatagramPacket paquet = new DatagramPacket(tampon, tampon.length, address, port);
 			socket.send(paquet); // envoi du paquet a l'aide du socket
 			
+			System.out.println("1");
+			// rejoint le groupe de diffusion
+			MulticastSocket socketMulti = new MulticastSocket(port+2);
+			System.out.println("2");
+			InetAddress groupe = InetAddress.getByName("230.230.230.230");  // TODO : placer dans config avec le serveur ?
+			System.out.println("3");
+			socketMulti.joinGroup(groupe);
+			System.out.println("4");
+			
+			// recoit la matrice B de serveur en diffusion
+			tampon = new byte[3*3*4];
+			System.out.println("5");
+			paquet = new DatagramPacket(tampon, tampon.length);
+			System.out.println("6");
+			socketMulti.receive(paquet); 
+			
+			System.out.println("Matrice B recue du serveur!");
+			
+			// on a fini avec le groupe de diffusion, on peut quitter le groupe
+			
+			// ensuite on recupere le num de 
+		
+			
+			
+			
+			int offset = 0;
+			int[][] tabB = new int[3][3];
+			// reconstruit la matrice B
+			for (short i=0; i<3; i++) {
+				for (short j=0; j<3; j++) {
+					tabB[i][j] = IntToBytes.bytesToInt(tampon, offset*4);
+					offset++;
+				}
+			}
+			
+			// 
+			afficheMatrice(tabB);
+			
+			
 			// recoit les infos du serveur
 			tampon = new byte[TAILLE_TAMPON]; // reinit le tampon avec la bonne taille
 			paquet = new DatagramPacket(tampon, tampon.length);
@@ -50,7 +89,7 @@ public class V2_Client {
 			System.out.println("Connection avec le serveur etablie");
 			
 			// décomponse les elements recus par le serveur
-			int offset = 0; 
+		    offset = 0; 
 			// recoit les infos qui sont dans un seul character (deux nombre < 10)
 			int ligneACalculer = IntToBytes.bytesToInt(tampon, offset);
 			offset++;
@@ -61,7 +100,7 @@ public class V2_Client {
 			
 			int[] ligneA = new int[tailleMatrice];
 			int[] ligneC = new int[tailleMatrice];			
-			int[][] tabB = new int[tailleMatrice][tailleMatrice];
+			//int[][] tabB = new int[tailleMatrice][tailleMatrice];
 			
 			// reconstruit la ligne A
 			for (short i=0; i<tailleMatrice; i++) {
@@ -118,7 +157,8 @@ public class V2_Client {
 			paquet = new DatagramPacket(tampon, tampon.length, address, port);
 			socket.send(paquet); // envoi du paquet a l'aide du socket
 			
-			// ferme la connection
+			// ferme les connections
+			socketMulti.leaveGroup(groupe); // serveur de diffusion
 			socket.close();
 			System.out.println("\n*** fin client ***");
 			

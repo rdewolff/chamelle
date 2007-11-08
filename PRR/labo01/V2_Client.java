@@ -50,7 +50,7 @@ public class V2_Client {
 			System.out.println("Connection avec le serveur etablie");
 			
 			// décomponse les elements recus par le serveur
-			int offset = 0; 
+			int offset = 0; // le pointeur d'insertion dans le tableau de byte
 			// recoit les infos qui sont dans un seul character (deux nombre < 10)
 			int ligneACalculer = IntToBytes.bytesToInt(tampon, offset);
 			offset++;
