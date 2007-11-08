@@ -1,7 +1,7 @@
 
 
 public class IntToBytes {
-	/*
+	/**
 	 * Converti un entier 32 bits en une chaine d'octets.
 	 * 
 	 * param in l'entier a convertir; 
@@ -17,7 +17,7 @@ public class IntToBytes {
 		return 4;
 	}
 
-	/*
+	/**
 	 * Converti les 4 premiers octets une chaine d'octets depuis un decalage en
 	 * un entier 32 bits.
 	 * 
