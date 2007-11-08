@@ -2,16 +2,24 @@ import java.net.*;
 import java.util.Random;
 import java.io.*;
 
-// je suis une petite cochomme :P héhéhé
+
+/**
+ * Communication UDP avec un serveur et N clients.
+ * 
+ * @param x <code>int</code> un entier qui représente le nombre de lignes à calculer ainsi que le nombre de clients qu'il sera necessaire pour calculer la matrice
+ * @author Romain de Wolff
+ * @author Simon Hintermann
+ */
 public class V2_Serveur 
 {
-	/* 
+	/** 
 	 * Affichage de la matrice carrée passée en parametre (2 dimensions)
+	 * @param int [] [] tableau
 	 */
 	private static void afficheMatrice(int [][] tableau) {
 		for (short i=0; i<tableau.length; i++) {
 			for (short j=0; j<tableau.length; j++) {
-				System.out.print(tableau[i][j] + " ");
+				System.out.print(tableau[i][j] + " "); 
 			}
 			System.out.print('\n');
 		}
@@ -19,12 +27,13 @@ public class V2_Serveur
 
 	public static void main (String args[]) throws IOException, SocketException 
 	{
-		// TODO check valeur de N entre 3 et 5
 		if (args.length < 2) {
 			System.out.println("Erreur, manque parametres : java serveur <tailleMatrice> <port>");
+		} else if (args.length > 2) {
+			System.out.println("Trop de parametres : java serveur <tailleMatrice> <port>")
 		} else {
 			try {
-				// déclaration des variables
+				// declaration des variables
 				int nbClientConnecte = 0;
 				int tailleMatrice = Integer.parseInt(args[0]);
 				int port = Integer.parseInt(args[1]);
@@ -60,8 +69,7 @@ public class V2_Serveur
 				while (nbClientConnecte < tailleMatrice) 
 				{
 					// synchronisation avec les clients
-					socket.receive(paquet); // attend la requete du client
-					System.out.println("Recu : " + new String(paquet.getData())); // affiche 
+					socket.receive(paquet); // attend la requete du client 
 					// leur envoie les donnees necessaires (N + ligne, numero de ligne et matrice B)
 					System.out.println("Client " + nbClientConnecte + " connecte"); // afiche qu'un client est connecte
 					// stock les informations du client dans un objet prevu a cet effet			
@@ -108,13 +116,14 @@ public class V2_Serveur
 					socket.receive(paquet); // attend la requete du client
 					int ligneRecue = IntToBytes.bytesToInt(tampon, offset*4);
 					offset++;
-					System.out.println("Recu ligne " + ligneRecue);
-
+					// System.out.println("Ligne " + ligneRecue + " recue");
 					for (short i=0; i<tailleMatrice; i++) {
 						tabC[ligneRecue][i] = IntToBytes.bytesToInt(tampon, offset*4);
 						offset++;
 					}
 				}
+				 
+				System.out.println("Toutes les lignes ont ete recues");
 				
 				// affiche les tableaux ainsi que le resultats calcules
 				System.out.println("Matrice A");
@@ -123,10 +132,17 @@ public class V2_Serveur
 				System.out.println("Matrice B");
 				afficheMatrice(tabB);
 
-				System.out.println("Matrice C = A x B");
+				System.out.println("Matrice C = A x B (recue ligne par ligne)");
 				afficheMatrice(tabC);
 
-				/*
+				
+				// reinit la matrice avant le calcul local
+				for (short i=0; i<tailleMatrice; i++) { // i = ligne
+					for (short j=0; j<tailleMatrice; j++) { // j = colonne
+						tabC[i][j] = 0;
+					}
+				}
+				
 				// calcul les valeurs localement, pour comparer avec les informatiosn recus des clients
 				for (short i=0; i<tailleMatrice; i++) { // i = ligne
 					for (short j=0; j<tailleMatrice; j++) { // j = colonne
@@ -136,7 +152,7 @@ public class V2_Serveur
 						}    		   
 					}
 				}
-				*/
+				
 
 				System.out.println("Matrice C = A x B (local calcul)");
 				afficheMatrice(tabC);
@@ -144,7 +160,8 @@ public class V2_Serveur
 				/* Complementaire : util a la fin ?
 				socket.setSoTimeout(1000); // TODO gere les timeout de connection 
 				 */
-
+				
+				// ferme le socket de connexion
 				socket.close();
 				System.out.println("*** fin serveur ***");
 
