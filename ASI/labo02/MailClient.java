@@ -7,7 +7,7 @@ import java.awt.event.*;
  * Un simple client mail avec une GUI pour envoyer des emails.
  */
 public class MailClient extends Frame {
-    /* Eléments du GUI. */
+    /* Elements du GUI. */
     private Button btSend = new Button("Envoyer");
     private Button btClear = new Button("Effacer");
     private Button btQuit = new Button("Quitter");
@@ -23,14 +23,14 @@ public class MailClient extends Frame {
     private TextArea messageText = new TextArea(10, 40);
 
     /**
-     * Construire la frame avec les différents champs
+     * Construire la frame avec les diffï¿½rents champs
      * (Serveur SMTP, De, A, Sujet et message).
      */
     public MailClient() {
 	super("Java Mailclient");
 	
-	/* Créer les panneaux pour contenir les champs.
-	   Un panneau supplémentaire est créé pour contenir les
+	/* Creer les panneaux pour contenir les champs.
+	   Un panneau supplï¿½mentaire est crï¿½ï¿½ pour contenir les
 	   panneaux enfant. */
 	Panel SMTPServerPanel = new Panel(new BorderLayout());
 	Panel fromPanel = new Panel(new BorderLayout());
@@ -53,8 +53,8 @@ public class MailClient extends Frame {
 	fieldPanel.add(toPanel);
 	fieldPanel.add(subjectPanel);
 
-	/* Créer un panneau pour les boutons et ajouter les
-	   écouteurs aux boutons. */
+	/* Crï¿½er un panneau pour les boutons et ajouter les
+	   ï¿½couteurs aux boutons. */
 	Panel buttonPanel = new Panel(new GridLayout(1, 0));
 	btSend.addActionListener(new SendListener());
 	btClear.addActionListener(new ClearListener());
@@ -80,7 +80,7 @@ public class MailClient extends Frame {
 	public void actionPerformed(ActionEvent event) {
 	    System.out.println("Envoi de l'email");
 
-	    /* Premièrement, vérifier que nous avons le serveur
+	    /* Premiï¿½rement, vï¿½rifier que nous avons le serveur
 	       SMTP et les adresses emails source et destination.*/
 	    if((SMTPServerField.getText()).equals("")) {
 		System.out.println("Pas de SMTP Server!");
@@ -95,19 +95,19 @@ public class MailClient extends Frame {
 		return;
 	    }
 	    
-	    /* Créer le message */
+	    /* Crï¿½er le message */
 	    Message mailMessage = new Message(SMTPServerField.getText(),
 	    				      fromField.getText(), 
 					      toField.getText(), 
 					      subjectField.getText(), 
 					      messageText.getText());
 
-	    /* Contrôler que le message est valide (cf classe Message).*/
+	    /* Contrï¿½ler que le message est valide (cf classe Message).*/
 	    if(!mailMessage.isValid()) {
 		return;
 	    }
 	    
-	    /* Créer l'enveloppe, ouvrir la connexion et tenter
+	    /* Crï¿½er l'enveloppe, ouvrir la connexion et tenter
 	       d'envoyer le message. */
 	    Envelope envelope = new Envelope(mailMessage);
 	    System.out.println(envelope.toString());

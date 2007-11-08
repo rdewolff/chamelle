@@ -6,7 +6,7 @@ public class V2_Client {
 	/* 
 	 * Affichage de la matrice passee en parametre (2D)
 	 */
-	private static void afficheMatrice(Integer [][] tableau) {
+	private static void afficheMatrice(int [][] tableau) {
 		for (short i=0; i<tableau.length; i++) {
 			for (short j=0; j<tableau.length; j++) {
 				System.out.print(tableau[i][j] + " ");
@@ -25,9 +25,9 @@ public class V2_Client {
 			InetAddress address = InetAddress.getByName(args[0]); 
 			int port = Integer.parseInt(args[1]); 
 			
-			Integer TAILLE_TAMPON = 52; // TODO : change en fonction des données max a transmettre (si N = 3 alors _Max_ = 52 octets)
+			int TAILLE_TAMPON = 56; // TODO : change en fonction des données max
 			String query = "HELO"; // pour se sychroniser avec le serveur
-			byte[] tampon = new byte[TAILLE_TAMPON];
+			byte[] tampon = new byte[query.length()*2]; // defini la taille miniumm necessaire. Un char = 2 bytes
 			tampon = query.getBytes();
 			
 			System.out.println("*** Client ***");
@@ -35,7 +35,7 @@ public class V2_Client {
 			System.out.print("Appuyer sur une <enter> pour vous connecter au serveur"); 
 			stdin.readLine(); // attend touche <enter> 
 			
-			// envoie au serveur un paquet de requete, pour qu'il sache qu'il est connecte
+			// synchronisation avec le serveur : envoie au serveur un paquet de requete, pour qu'il sache qu'il est connecte
 			DatagramSocket socket = new DatagramSocket();
 			DatagramPacket paquet = new DatagramPacket(tampon, tampon.length, address, port);
 			socket.send(paquet); // envoi du paquet a l'aide du socket
@@ -44,40 +44,39 @@ public class V2_Client {
 			tampon = new byte[TAILLE_TAMPON]; // reinit le tampon
 			paquet = new DatagramPacket(tampon, tampon.length);
 			socket.receive(paquet); 
+			
 			// la connection est des lors etablie, la communication fonctionne
 			System.out.println("Connection avec le serveur etablie");
 			
+			// décomponse les element recu par le serveur
+			int offset = 0; 
 			// recoit les infos qui sont dans un seul character (deux nombre < 10)
-			Integer ligneACalculer = Integer.parseInt(new String(paquet.getData()).trim());
-			socket.receive(paquet); 
-			Integer tailleMatrice = Integer.parseInt(new String(paquet.getData()).trim());
+			int ligneACalculer = IntToBytes.bytesToInt(tampon, offset);
+			offset++;
+			int tailleMatrice = IntToBytes.bytesToInt(tampon, offset*4);
+			offset++;
 			
 			System.out.println("ligneACalculer: " + ligneACalculer + "\ntailleMatrice: " + tailleMatrice);
 			
-			Integer[] ligneA = new Integer[tailleMatrice];
-			Integer[] ligneC = new Integer[tailleMatrice];			
-			Integer[][] tabB = new Integer[tailleMatrice][tailleMatrice];
+			int[] ligneA = new int[tailleMatrice];
+			int[] ligneC = new int[tailleMatrice];			
+			int[][] tabB = new int[tailleMatrice][tailleMatrice];
 			
-			// recoit la ligne A
+			// reconstruit la ligne A
 			for (short i=0; i<tailleMatrice; i++) {
-				socket.receive(paquet);
-				Integer val = Integer.parseInt(new String(paquet.getData()).trim());
-				ligneA[i] = val;
+				ligneA[i] = IntToBytes.bytesToInt(tampon, offset*4);
+				offset++;
 			}
 			
-			// recoit la matrice B
+			// reconstruit la matrice B
 			for (short i=0; i<tailleMatrice; i++) {
 				for (short j=0; j<tailleMatrice; j++) {
-					socket.receive(paquet);
-					Integer val = Integer.parseInt(new String(paquet.getData()).trim());
-					tabB[i][j] = val;
+					tabB[i][j] = IntToBytes.bytesToInt(tampon, offset*4);
+					offset++;
 				}
 			}
 			
 			// calcul les valeurs
-			for (short i=0; i<tailleMatrice;i++) 
-				ligneC[i] = 0; // TODO : autre moyen d'initialiser ces valeurs directement ?
-
 			for (short j=0; j<tailleMatrice; j++) { // j = colonne
 				// multiplie avec la colonne de la matrice B
 				for (short k=0; k<tailleMatrice; k++) {
@@ -85,17 +84,18 @@ public class V2_Client {
 				}    		   
 			}
 			
+			// recréer un nouveau tampon de la bonne taille
+			tampon = new byte[TAILLE_TAMPON]; // reinit le tampon
+			offset = 0; // reset la variable
+			
 			// renvoie les resultats au serveur
-			tampon = (ligneACalculer.toString()).getBytes(); // on declare son ID, la ligne calculee
-			// socket = new DatagramSocket();
-			paquet = new DatagramPacket(tampon, tampon.length, address, port);
-			socket.send(paquet); // envoi du paquet a l'aide du socket
+			IntToBytes.intToBytes(ligneACalculer, tampon, offset);
+			offset++;
 			
 			// envoie la ligne calculee au serveur
 			for (short i=0; i<tailleMatrice; i++) {
-				tampon = (ligneC[i].toString()).getBytes();
-				paquet = new DatagramPacket(tampon, tampon.length, address, port);
-				socket.send(paquet);
+				IntToBytes.intToBytes(ligneC[i], tampon, offset*4);
+				offset++;
 			}
 
 			// affiche les resultats
@@ -111,6 +111,10 @@ public class V2_Client {
 			for (int i=0; i<ligneC.length; i++) {
 				System.out.print(ligneC[i] + " ");
 			}
+			
+			// envoie tout
+			paquet = new DatagramPacket(tampon, tampon.length, address, port);
+			socket.send(paquet); // envoi du paquet a l'aide du socket
 			
 			/*
 			// en utilisant des Stream

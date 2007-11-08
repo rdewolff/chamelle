@@ -8,7 +8,7 @@ public class V2_Serveur
 	/* 
 	 * Affichage de la matrice carrée passée en parametre (2 dimensions)
 	 */
-	private static void afficheMatrice(Integer [][] tableau) {
+	private static void afficheMatrice(int [][] tableau) {
 		for (short i=0; i<tableau.length; i++) {
 			for (short j=0; j<tableau.length; j++) {
 				System.out.print(tableau[i][j] + " ");
@@ -25,17 +25,17 @@ public class V2_Serveur
 		} else {
 			try {
 				// déclaration des variables
-				Integer nbClientConnecte = 0;
-				Integer tailleMatrice = Integer.parseInt(args[0]);
-				Integer port = Integer.parseInt(args[1]);
-				Integer TAILLE_TAMPON = (tailleMatrice*(tailleMatrice+1)+1)*4; // TODO : change en fonction des données max a transmettre 
-				System.out.println("TailleTampon : " + TAILLE_TAMPON);
+				int nbClientConnecte = 0;
+				int tailleMatrice = Integer.parseInt(args[0]);
+				int port = Integer.parseInt(args[1]);
+				int TAILLE_TAMPON = (2+tailleMatrice*tailleMatrice+tailleMatrice)*4; // TODO : change en fonction des données max a transmettre 
+				System.out.println("Taille du tampon : " + TAILLE_TAMPON);
 				
 				// creation des 2 tableaux sur lequelles on va faire des calculs
-				Integer[][]  tabA, tabB, tabC;
-				tabA = new Integer[tailleMatrice][tailleMatrice];
-				tabB = new Integer[tailleMatrice][tailleMatrice];
-				tabC = new Integer[tailleMatrice][tailleMatrice];
+				int[][]  tabA, tabB, tabC;
+				tabA = new int[tailleMatrice][tailleMatrice];
+				tabB = new int[tailleMatrice][tailleMatrice];
+				tabC = new int[tailleMatrice][tailleMatrice];
 
 				// insertion de valeurs aleatoires dans le tableau
 				Random hasard = new Random();
@@ -47,70 +47,75 @@ public class V2_Serveur
 					}
 				}
 
-				// tampon utilisé pour la communication
+				// tampon utilise pour la communication
 				byte[] tampon = new byte[TAILLE_TAMPON];
 
 				// ouverture d'un port en mode UDP
 				DatagramSocket socket = new DatagramSocket(port);
-				DatagramPacket paquet = new DatagramPacket(tampon, tampon.length);
+				DatagramPacket paquet = new DatagramPacket(tampon, tampon.length); // TODO : mettre taille minimum pour synchro
 				System.out.println("*** Serveur demarre ***");
 
-				// TODO : multi client WHILE ... n .. 
-				//while (nbClientConnecte < tailleMatrice-1) {
-					
-				//}
-				
-				// attends tous les clients
-				socket.receive(paquet); // attend la requete du client
-				System.out.println("Recu : " + new String(paquet.getData()));
-				// leur envoie les donnees necessaires (N + ligne, numero de ligne et matrice B)
-				nbClientConnecte++; // TODO: static dans classe client
-				System.out.println("client " + nbClientConnecte + " connecte");
-				// stock les informations du client
-				
-				IntToBytes.intToBytes()
-				
-				Clients clients = new Clients(nbClientConnecte, paquet.getAddress(), paquet.getPort());
-				// renvoie le numero au client, qui correspond a la ligne qu'il doit traiter ( 0 a N )
-				tampon = (nbClientConnecte.toString()).getBytes(); // met l'information a transmettre en octets
-				paquet = new DatagramPacket(tampon, tampon.length, clients.getAddress(), clients.getPort());
-				socket.send(paquet); // envoie de l'ID qui correspond a la ligne a calculer
-
-				// renvoie la tailleMatrice
-				tampon = (tailleMatrice.toString()).getBytes();
-				paquet = new DatagramPacket(tampon, tampon.length, clients.getAddress(), clients.getPort());
-				socket.send(paquet);
-
-				// envoie la ligne de la matrice A
-				for (short i=0; i<tailleMatrice; i++) {
-					tampon = (tabA[nbClientConnecte][i].toString()).getBytes();
-					paquet = new DatagramPacket(tampon, tampon.length, clients.getAddress(), clients.getPort());
-					socket.send(paquet);
+				// attends que tous les clients soient connecté
+				Clients[] clients = new Clients[tailleMatrice];
+				while (nbClientConnecte < tailleMatrice) 
+				{
+					// synchronisation avec les clients
+					socket.receive(paquet); // attend la requete du client
+					System.out.println("Recu : " + new String(paquet.getData())); // affiche 
+					// leur envoie les donnees necessaires (N + ligne, numero de ligne et matrice B)
+					System.out.println("Client " + nbClientConnecte + " connecte"); // afiche qu'un client est connecte
+					// stock les informations du client dans un objet prevu a cet effet			
+					clients[nbClientConnecte] = new Clients(nbClientConnecte, paquet.getAddress(), paquet.getPort());
+					nbClientConnecte++; // TODO: mettre en static dans la classe client
 				}
 
-				// envoie la matrice B
-				for (short i=0; i<tailleMatrice; i++) {
-					for (short j=0; j<tailleMatrice; j++) {
-						tampon = (tabB[i][j].toString()).getBytes();
-						paquet = new DatagramPacket(tampon, tampon.length, clients.getAddress(), clients.getPort());
-						socket.send(paquet);
+				// envoie les donnees a chaque client
+				int offset = 0; // variable utilisee pour savoir ou on en est dans le tambon
+				for (short k=0; k<tailleMatrice; k++) {
+					offset = 0;
+					// met le numero au client en premier dans le tampon d'envoie,ce qui correspond a la ligne qu'il doit traiter ( 0 a N )
+					IntToBytes.intToBytes(k, tampon, offset);
+					offset++;
+
+					// insere la taille des matrices dans le tampon
+					IntToBytes.intToBytes(tailleMatrice, tampon, offset*4);
+					offset++;
+
+					// insere la ligne de la matrice A dans le tampon
+					for (short i=0; i<tailleMatrice; i++) {
+						IntToBytes.intToBytes(tabA[k][i], tampon, offset*4);
+						offset++;
+					}
+
+					// insere la matrice B dans le tampon
+					for (short i=0; i<tailleMatrice; i++) {
+						for (short j=0; j<tailleMatrice; j++) {
+							IntToBytes.intToBytes(tabB[i][j], tampon, offset*4);
+							offset++;
+						}
+					}
+
+					// envoie le paquet "tampon" contenant la taille des matrices ainsi que la ligne de A et la matrice B
+					paquet = new DatagramPacket(tampon, tampon.length, clients[k].getAddress(), clients[k].getPort());
+					socket.send(paquet);
+				}				
+				
+				// recupere les valeurs calculees par les clients
+				for (short k=0; k<tailleMatrice; k++) {
+					tampon = new byte[TAILLE_TAMPON];
+					offset = 0; // reset la position ou on se trouve dans le tampon
+					paquet = new DatagramPacket(tampon, tampon.length);
+					socket.receive(paquet); // attend la requete du client
+					int ligneRecue = IntToBytes.bytesToInt(tampon, offset*4);
+					offset++;
+					System.out.println("Recu ligne " + ligneRecue);
+
+					for (short i=0; i<tailleMatrice; i++) {
+						tabC[ligneRecue][i] = IntToBytes.bytesToInt(tampon, offset*4);
+						offset++;
 					}
 				}
-
-				// TODO boucle sur tout les client
-				// recupere toute les valeurs
-				tampon = new byte[TAILLE_TAMPON];
-				paquet = new DatagramPacket(tampon, tampon.length);
-				socket.receive(paquet); // attend la requete du client
-				Integer ligneRecue = Integer.parseInt(new String(paquet.getData()).trim());
-				System.out.println("Recu ligne " + ligneRecue);
-
-				for (short i=0; i<tailleMatrice; i++) {
-					paquet = new DatagramPacket(tampon, tampon.length);
-					socket.receive(paquet);
-					tabC[ligneRecue][i] = Integer.parseInt(new String(paquet.getData()).trim());
-				}
-
+				
 				// affiche les tableaux ainsi que le resultats calcules
 				System.out.println("Matrice A");
 				afficheMatrice(tabA);
@@ -121,16 +126,17 @@ public class V2_Serveur
 				System.out.println("Matrice C = A x B");
 				afficheMatrice(tabC);
 
+				/*
 				// calcul les valeurs localement, pour comparer avec les informatiosn recus des clients
 				for (short i=0; i<tailleMatrice; i++) { // i = ligne
 					for (short j=0; j<tailleMatrice; j++) { // j = colonne
 						// multiplie avec la colonne de la matrice B
-						tabC[i][j] = 0;
 						for (short k=0; k<tailleMatrice; k++) {
 							tabC[i][j] += tabA[i][k] * tabB[k][j];
 						}    		   
 					}
 				}
+				*/
 
 				System.out.println("Matrice C = A x B (local calcul)");
 				afficheMatrice(tabC);
