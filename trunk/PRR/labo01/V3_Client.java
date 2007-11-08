@@ -24,7 +24,9 @@ public class V3_Client {
 	
 	public static void main (String args[]) throws IOException {
 		try {
-			
+			/* 
+			 * Déclarations et initialisations
+			 */
 			// adresse et port de connexion passe en parametre
 			InetAddress address = InetAddress.getByName(args[0]); 
 			int port = Integer.parseInt(args[1]); 
@@ -36,6 +38,8 @@ public class V3_Client {
 			tampon = query.getBytes();
 			
 			System.out.println("*** Client ***");
+			// Evite que le client se connecte au lancement, la touche
+			// enter est requise pour continuer l'execution du client
 			BufferedReader stdin= new BufferedReader(new InputStreamReader(System.in)); 
 			System.out.print("Appuyer sur une <enter> pour vous connecter au serveur"); 
 			stdin.readLine(); // attend touche <enter> 
@@ -45,6 +49,13 @@ public class V3_Client {
 			DatagramPacket paquet = new DatagramPacket(tampon, tampon.length, address, port);
 			socket.send(paquet); // envoi du paquet a l'aide du socket
 			
+			/*
+			 * Recoit les informations du serveur
+			 * - la taille des matrices a traiter
+			 * - la matrice B
+			 * - l'indice de B a calculer
+			 * - la ligne de A 
+			 */
 			// reception de la taille des matrices
 			// TODO : minimiser la taille du tampon 
 			paquet = new DatagramPacket(tampon, tampon.length); 
@@ -73,8 +84,6 @@ public class V3_Client {
 					offset++;
 				}
 			}
-
-			//TODO : on a fini avec le groupe de diffusion, on peut quitter le groupe
 			
 			// recoit l'indice de B et la ligne de A
 			int[] ligneA = new int[tailleMatrice];
@@ -99,6 +108,9 @@ public class V3_Client {
 
 			System.out.println("ligneACalculer: " + ligneACalculer + "\ntailleMatrice: " + tailleMatrice);
 			
+			/*
+			 * Calcul la ligne correspondante de C
+			 */
 			// calcul les valeurs
 			for (short j=0; j<tailleMatrice; j++) { // j = colonne
 				// multiplie avec la colonne de la matrice B
@@ -106,11 +118,13 @@ public class V3_Client {
 					ligneC[j] += ligneA[k] * tabB[k][j];
 				}    		   
 			}
-			
 			// reset la décalage
 			offset = 0;  
 			tampon = new byte[(tailleMatrice*tailleMatrice+1)*4];
-			// renvoie les resultats au serveur
+			
+			/*
+			 * Emet la ligne calculee au serveur/coordinateur
+			 */
 			IntToBytes.intToBytes(ligneACalculer, tampon, offset);
 			offset++;
 			
@@ -124,7 +138,9 @@ public class V3_Client {
 			paquet = new DatagramPacket(tampon, tampon.length, address, port);
 			socket.send(paquet); // envoi du paquet a l'aide du socket
 			
-			// affiche les resultats
+			/*
+			 * Affiche les resultats a titre informatif
+			 */
 			System.out.println("Ligne de A");
 			for (int i=0; i<ligneA.length; i++) {
 				System.out.print(ligneA[i] + " ");
