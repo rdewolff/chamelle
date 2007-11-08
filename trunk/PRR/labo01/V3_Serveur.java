@@ -33,9 +33,9 @@ public class V3_Serveur
 	public static void main (String args[]) throws IOException, SocketException 
 	{
 		if (args.length < 2) {
-			System.out.println("Erreur, manque parametres : java serveur <tailleMatrice> <port>");
+			System.out.println("Erreur, manque parametres\nSyntaxe: java serveur <tailleMatrice> <port>");
 		} else if (args.length > 2) {
-			System.out.println("Trop de parametres : java serveur <tailleMatrice> <port>");
+			System.out.println("Trop de parametres\nSyntaxe: java serveur <tailleMatrice> <port>");
 		} else {
 			try {
 				// declaration des variables
@@ -70,7 +70,7 @@ public class V3_Serveur
 				DatagramPacket paquet; // = new DatagramPacket(tampon, tampon.length);
 				System.out.println("*** Serveur demarre ***");
 
-				// attends que tous les clients soient connecté et stock leur information
+				// attends que tous les clients soient connectes et stock leur information
 				Clients[] clients = new Clients[tailleMatrice];
 				// synchronisation avec tous les clients
 				while (nbClientConnecte < tailleMatrice) 
@@ -81,18 +81,17 @@ public class V3_Serveur
 					clients[nbClientConnecte] = new Clients(nbClientConnecte, paquet.getAddress(), paquet.getPort());
 					nbClientConnecte++;
 					System.out.println("Client " + nbClientConnecte + " connecte"); // afiche qu'un client est connecte
-					
-					// renvoie la taille des matrice au client connecte
+					// renvoie la taille des matrices au client qui vient de se connecte
 					IntToBytes.intToBytes(tailleMatrice, tampon, 0);
 					paquet = new DatagramPacket(tampon, tampon.length, paquet.getAddress(), paquet.getPort()); // paquet d'envoi
 					socket.send(paquet);
 				}
 				
-				// associe un port de communication a un groupe
+				// associe un port de communication au groupe
 				InetAddress groupe = InetAddress.getByName("230.230.230.230");
 				MulticastSocket socketMulti = new MulticastSocket(port+1);
 				
-				// met la matrice B dans un tampon pour l'envoyer par la suite
+				// met la matrice B dans un tampon pour la diffusion par la suite
 				tampon = new byte[tailleMatrice*tailleMatrice*4]; // le tampon fait une taille de tailleMatrice^2
 				int offset = 0; // le pointeur d'insertion dans le tableau de byte 
 				for (short i=0; i<tailleMatrice; i++) {
@@ -120,46 +119,19 @@ public class V3_Serveur
 					socket.send(paquet); // envoie le paquet au client
 				}
 				
-				
-				/*
-				while (nbClientConnecte < tailleMatrice)
-				{
-					paquet = new DatagramPacket(tampon, tampon.length); // paquet de reception reception
-					// synchronisation avec les clients
-					socket.receive(paquet); // attend la requete du client 
-					// stock les informations du client dans un objet prevu a cet effet			
-					clients[nbClientConnecte] = new Clients(nbClientConnecte, paquet.getAddress(), paquet.getPort());
-					nbClientConnecte++;
-					System.out.println("Client " + nbClientConnecte + " connecte"); // afiche qu'un client est connecte
-					
-					// renvoie la taille des matrice au client connecte
-					IntToBytes.intToBytes(tailleMatrice, tampon, 0);
-					paquet = new DatagramPacket(tampon, tampon.length, paquet.getAddress(), paquet.getPort()); // paquet d'envoi
-					socket.send(paquet);
-				}
-				*/
-				
-				
 				// TODO : envoie a chaque client individuellement la ligne qu'il va devoir traiter
 			
-				//System.out.println("1");
 				// recupere les valeurs calculees par les clients
 				tampon = new byte[(tailleMatrice*tailleMatrice+1)*4];
 				for (short k=0; k<tailleMatrice; k++) {
-					//System.out.println(k);
 					offset = 0; // reset la position ou on se trouve dans le tampon
-					paquet = new DatagramPacket(tampon, tampon.length);
+					paquet = new DatagramPacket(tampon, tampon.length);	
 					socket.receive(paquet); // attend la requete du client
-					int ligneRecue = IntToBytes.bytesToInt(tampon, offset*4);
-					offset++;
+					int ligneRecue = IntToBytes.bytesToInt(tampon, (offset++)*4);
 					for (short i=0; i<tailleMatrice; i++) {
-						tabC[ligneRecue][i] = IntToBytes.bytesToInt(tampon, offset*4);
-						offset++;
+						tabC[ligneRecue][i] = IntToBytes.bytesToInt(tampon, (offset++)*4);
 					}
 				}
-				
-				 
-				System.out.println("Toutes les lignes ont ete recues");
 				
 				System.out.println("Affichages des matrices");
 				
@@ -181,7 +153,7 @@ public class V3_Serveur
 					}
 				}
 				
-				// calcul les valeurs localement, pour comparer avec les informatiosn recus des clients
+				// calcul les valeurs localement, pour comparer avec les informations recus des clients
 				for (short i=0; i<tailleMatrice; i++) { // i = ligne
 					for (short j=0; j<tailleMatrice; j++) { // j = colonne
 						// multiplie avec la colonne de la matrice B
@@ -196,7 +168,9 @@ public class V3_Serveur
 				afficheMatrice(tabC);
 
 				// ferme le socket de connexion
+				socketMulti.close();
 				socket.close();
+				
 				System.out.println("*** fin serveur ***");
 
 			} catch (IOException e) {
