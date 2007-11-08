@@ -38,7 +38,10 @@ public class V3_Serveur
 			System.out.println("Trop de parametres\nSyntaxe: java serveur <tailleMatrice> <port>");
 		} else {
 			try {
-				// declaration des variables
+				
+				/* 
+				 * Déclarations et initialisations
+				 */
 				int nbClientConnecte = 0;
 				int tailleMatrice = Integer.parseInt(args[0]);
 				int port = Integer.parseInt(args[1]);
@@ -65,6 +68,9 @@ public class V3_Serveur
 				// tampon utilise pour la communication lors de la synchro
 				byte[] tampon = new byte[TAILLE_TAMPON_SYNCHRO];
 
+				/*
+				 * Attend que les n travailleurs se présentent
+				 */
 				// ouverture d'un port en mode UDP
 				DatagramSocket socket = new DatagramSocket(port);
 				DatagramPacket paquet; // = new DatagramPacket(tampon, tampon.length);
@@ -91,6 +97,9 @@ public class V3_Serveur
 				InetAddress groupe = InetAddress.getByName("230.230.230.230");
 				MulticastSocket socketMulti = new MulticastSocket(port+1);
 				
+				/* 
+				 * Diffusion de la matrice B a tout les clients
+				 */
 				// met la matrice B dans un tampon pour la diffusion par la suite
 				tampon = new byte[tailleMatrice*tailleMatrice*4]; // le tampon fait une taille de tailleMatrice^2
 				int offset = 0; // le pointeur d'insertion dans le tableau de byte 
@@ -106,7 +115,10 @@ public class V3_Serveur
 				socketMulti.send(paquet);
 				System.out.println("Matrice B difusee");
 				
-				// envoie a chaque client l'indice de la ligne a calculer et la ligne A
+				/*
+				 * Envoie a chaque travailleur/client l'indice de la ligne a 
+				 * calculer et la ligne A 
+				 */
 				tampon = new byte[(tailleMatrice+1)*4];
 				for (short i=0; i<tailleMatrice; i++) {
 					offset = 0; // reinitialise le pointeur d'insertion
@@ -119,10 +131,10 @@ public class V3_Serveur
 					socket.send(paquet); // envoie le paquet au client
 				}
 				
-				// TODO : envoie a chaque client individuellement la ligne qu'il va devoir traiter
-			
-				// recupere les valeurs calculees par les clients
-				tampon = new byte[(tailleMatrice*tailleMatrice+1)*4];
+				/*
+				 * Attends les n lignes de C
+				 */
+				tampon = new byte[(tailleMatrice*tailleMatrice+1)*4]; // redefini la taille du tampon
 				for (short k=0; k<tailleMatrice; k++) {
 					offset = 0; // reset la position ou on se trouve dans le tampon
 					paquet = new DatagramPacket(tampon, tampon.length);	
@@ -133,12 +145,14 @@ public class V3_Serveur
 					}
 				}
 				
+				/*
+				 * Affiche les resultats
+				 */
 				System.out.println("Affichages des matrices");
-				
 				// affiche les tableaux ainsi que le resultats calcules
 				System.out.println("Matrice A");
 				afficheMatrice(tabA);
-
+				
 				System.out.println("Matrice B");
 				afficheMatrice(tabB);
 
@@ -152,7 +166,6 @@ public class V3_Serveur
 						tabC[i][j] = 0;
 					}
 				}
-				
 				// calcul les valeurs localement, pour comparer avec les informations recus des clients
 				for (short i=0; i<tailleMatrice; i++) { // i = ligne
 					for (short j=0; j<tailleMatrice; j++) { // j = colonne
