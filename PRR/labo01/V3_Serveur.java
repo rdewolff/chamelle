@@ -2,18 +2,27 @@ import java.net.*;
 import java.util.Random;
 import java.io.*;
 
-
 /**
  * Communication UDP avec un serveur et N clients.
  * 
- * @param x <code>int</code> un entier qui représente le nombre de lignes à calculer ainsi que le nombre de clients qu'il sera necessaire pour calculer la matrice
+ * Ce programme va multiplier deux matrices contenant N x N nombres entiers
+ * 
+ * Le coordinateur (serveur) va envoyer à chaque travailleur (client) une ligne 
+ * de la matrice A et la matrice B.
+ * 
+ * Chaque travailleur va calculer la ligne de C et la remettre au travailleur.
+ * 
+ * Si le port utilise est X, alors UDP utilisera X, le groupe multicast X+1 et
+ * la transmission multicast s'effectuera sur X+2
+ * 
+ * @param n		un entier qui représente le nombre de lignes à 
+ * calculer ainsi que le nombre de clients qu'il sera necessaire pour 
+ * calculer la matrice
+ * @param port	le port que le serveur va utiliser. Le client 
+ * doit utiliser le meme port pour se connecter
+ * 
  * @author Romain de Wolff
  * @author Simon Hintermann
- */
-/* Ports utilisé : 6000 étant la valeur d'exemple passée en parametre
- * 6000 UDP basic
- * 6001 UDP Multicast (groupe) 
- * 6002 UDP Multicast (transmission)
  */
 public class V3_Serveur 
 {
@@ -29,16 +38,19 @@ public class V3_Serveur
 			System.out.print('\n');
 		}
 	}
-
+	
+	/** 
+	 * Programme principal
+	 */
 	public static void main (String args[]) throws IOException, SocketException 
 	{
+		// verifie si le nombre de parametres est juste
 		if (args.length < 2) {
 			System.out.println("Erreur, manque parametres\nSyntaxe: java serveur <tailleMatrice> <port>");
 		} else if (args.length > 2) {
 			System.out.println("Trop de parametres\nSyntaxe: java serveur <tailleMatrice> <port>");
 		} else {
 			try {
-				
 				/* 
 				 * Déclarations et initialisations
 				 */
@@ -75,7 +87,8 @@ public class V3_Serveur
 				DatagramSocket socket = new DatagramSocket(port);
 				DatagramPacket paquet; // = new DatagramPacket(tampon, tampon.length);
 				System.out.println("*** Serveur demarre ***");
-
+				System.out.println("Attends que les travailleurs se presentent");
+				
 				// attends que tous les clients soient connectes et stock leur information
 				Clients[] clients = new Clients[tailleMatrice];
 				// synchronisation avec tous les clients
@@ -86,7 +99,7 @@ public class V3_Serveur
 					// stock les informations du client dans un objet prevu a cet effet			
 					clients[nbClientConnecte] = new Clients(nbClientConnecte, paquet.getAddress(), paquet.getPort());
 					nbClientConnecte++;
-					System.out.println("Client " + nbClientConnecte + " connecte"); // afiche qu'un client est connecte
+					System.out.println("Client n. " + nbClientConnecte + " synchronise "); // afiche qu'un client est connecte
 					// renvoie la taille des matrices au client qui vient de se connecte
 					IntToBytes.intToBytes(tailleMatrice, tampon, 0);
 					paquet = new DatagramPacket(tampon, tampon.length, paquet.getAddress(), paquet.getPort()); // paquet d'envoi

@@ -87,7 +87,7 @@ class TCPServer {
 			}
 		}
 
-		// TODO : remove this, c'est juste la methode de calcul
+		
 		// calcul les valeurs
 		for (short i=0; i<n; i++) { // i = ligne
 			for (short j=0; j<n; j++) { // j = colonne

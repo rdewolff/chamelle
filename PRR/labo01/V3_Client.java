@@ -21,6 +21,7 @@ public class V3_Client {
 	
 	// Constante
 	static final int tailleInt = 4;
+	static final String adresseGroupe = "230.230.230.230";
 	
 	public static void main (String args[]) throws IOException {
 		try {
@@ -32,7 +33,7 @@ public class V3_Client {
 			int port = Integer.parseInt(args[1]); 
 			
 			String query = "HELO"; // pour se sychroniser avec le serveur
-			int TAILLE_TAMPON = 56;
+			// int TAILLE_TAMPON = 56; TODO: taille tampon dynamique ?
 			int TAILLE_TAMPON_SYNCHRO = query.length()*2; // message recu : "HELO"
 			byte[] tampon = new byte[TAILLE_TAMPON_SYNCHRO]; // defini la taille miniumm necessaire. Un char = 2 bytes
 			tampon = query.getBytes();
@@ -57,15 +58,14 @@ public class V3_Client {
 			 * - la ligne de A 
 			 */
 			// reception de la taille des matrices
-			// TODO : minimiser la taille du tampon 
 			paquet = new DatagramPacket(tampon, tampon.length); 
 			socket.receive(paquet);
 			int tailleMatrice = IntToBytes.bytesToInt(tampon, 0);
-			System.out.println(tailleMatrice);
+			System.out.println("Taille de la matrice : " + tailleMatrice);
 			
 			// rejoint le groupe de diffusion
 			MulticastSocket socketMulti = new MulticastSocket(port+2);
-			InetAddress groupe = InetAddress.getByName("230.230.230.230");  // TODO : placer dans config avec le serveur ?
+			InetAddress groupe = InetAddress.getByName(adresseGroupe);
 			socketMulti.joinGroup(groupe);
 			
 			// recoit la matrice B de serveur en diffusion
@@ -106,7 +106,7 @@ public class V3_Client {
 			// matrice
 			afficheMatrice(tabB);
 
-			System.out.println("ligneACalculer: " + ligneACalculer + "\ntailleMatrice: " + tailleMatrice);
+			System.out.println("Ligne a calculer : " + ligneACalculer);
 			
 			/*
 			 * Calcul la ligne correspondante de C
