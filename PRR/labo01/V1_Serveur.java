@@ -16,7 +16,7 @@ import java.util.*;
  * @author rdewolff
  * @date  5.10.2007
  */
- 
+
 /**
  * 
  * On va departager les differentes taches du serveur 
@@ -35,7 +35,8 @@ import java.util.*;
  * Serveur acceptant n connexions (3-5)
  * 
  * */
-class V1_Serveur { 
+class V1_Serveur 
+{ 
 
 	static int startPort = 8000;
 	// Taile d'un integer en bytes
@@ -57,13 +58,11 @@ class V1_Serveur {
 	 * Programme principal
 	 */
 	public static void main(String argv[]) throws Exception {
-		
-		
-		
-		// affiche info sur nom + ip serveur
+
+		// affiche info sur serveur
 		System.out.println("Lancement du serveur sur " + InetAddress.getLocalHost());
 		int n = 0;
-		
+
 		try
 		{
 			// le premier parametre passe au programme correspond a la taille des matrices que 
@@ -72,7 +71,7 @@ class V1_Serveur {
 		}
 		catch(NumberFormatException e)
 		{System.out.println("Valeur numerique attendue, 3 travailleurs par defaut");
-		 n = 3;}
+		n = 3;}
 		// verification de la taille min et max et changement des valeurs si necessaire
 		if (n < 3) {
 			System.out.println("Parametre N trop petit, 3 defini par default.");
@@ -97,20 +96,20 @@ class V1_Serveur {
 				matB[i][j] = hasard.nextInt(10);
 			}
 		}
-		
+
 		// on lance les taches pour les 5 futures connexions.
 		System.out.println("Attente de la connexion des " + n + " clients");
-		
+
 		ServerSocket[] welcomeSocket = new ServerSocket[n];
 		Socket[] connectionSocket = new Socket[n];
-		
+
 		// Attente des connexions
 		for (int i=0; i<n; i++) {
 			welcomeSocket[i] = new ServerSocket(startPort+i);
 			connectionSocket[i] = welcomeSocket[i].accept();
 			System.out.println("Client " + (i+1) + " connecte.");
 		}
-		
+
 		System.out.println("Debut de la transmission...");
 		/** La taille du tableau de bytes a envoyer a chaque client */
 		int dimTab = tailleInt + (n*tailleInt) + (n*n*tailleInt);
@@ -134,10 +133,10 @@ class V1_Serveur {
 			fluxSortie.write(out, 0, dimTab);
 			System.out.println("Client " + (i+1) + " envoye");
 		}
-		
+
 		/** Variable de lecture */
 		byte[] in = new byte[tailleInt];
-		
+
 		// Lecture des reponses des clients
 		for(int i=0; i<n; i++)
 		{
@@ -152,7 +151,6 @@ class V1_Serveur {
 			}
 		}
 
-		// --------------------------------------------------------------------
 		// affiche les tableaux ainsi que le resultat calcule
 		System.out.println("Matrice A");
 		afficheMatrice(matA);
