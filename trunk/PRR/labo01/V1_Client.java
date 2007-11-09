@@ -10,44 +10,53 @@ import java.net.*;
  * @author Simon Hintermann & Romain de Wolff
  *
  */
-class V1_Client {
-	
+class V1_Client extends Config
+{
+
 	public static void main(String argv[]) throws Exception { 
-		
-		/** La taille d'un integer en bytes */
+
+		// la taille d'un integer en bytes
 		final int tailleInt = 4;
-		
+
 		while(true){
 			try {
-				/** Domaine dans lequel est le serveur */
+
+				/*
+				 * Initialisations
+				 */
+				// Adresse du serveur auquel se connecter
 				String host = argv[0];
-				/** Le port sur lequel il faut se connecter au serveur */
+				// Le port sur lequel se connecter au serveur
 				int port = (int)Integer.decode( argv[1] );
-				/** Dimension de la matrice  */
+				// Dimension de la matrice
 				int n;
-				/** Le tableau de bytes de lecture d'un int */
+				// Le tableau de bytes de lecture d'un int
 				byte[] in = new byte[tailleInt];
-				/** Connection au serveur en utilisant les parametre passe au lancement du client */
+				// Connection au serveur en utilisant les parametre passe au lancement du client
 				Socket clientSocket = new Socket(host, port);
-				/** Flux de donnees vers le serveur */
+				// Flux de donnees vers le serveur
 				DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream()); 
-				/** Flux de donnees du serveur */
+				// Flux de donnees du serveur
 				DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
-				
+
+				/*
+				 * Recuperation des donnees envoyee par le serveur
+				 */
+
 				// Recuperation de la dimension de la matrice
 				for(short i=0; i<tailleInt; i++)
 					in[i] = inFromServer.readByte();
 				n = IntToBytes.bytesToInt(in, 0);
-				
-				/** Matrice recuperee par le client */
+
+				// Matrice recuperee par le client
 				int[][] mat = new int[n][n];
-				/** Ligne recuperee par le client */
+				// Ligne recuperee par le client
 				int[] ligne = new int[n];
-				/** La ligne resultat de la multiplication */
+				// La ligne resultat de la multiplication
 				int[] ligneRetour = new int[n];
-				/** La ligne a renvoyer sous forme de tableau de bytes */
+				// La ligne a renvoyer sous forme de tableau de bytes
 				byte[] byteRetour = new byte[n*tailleInt];
-				
+
 				// Recuperation de la ligne
 				for(short i=0; i<n; i++)
 				{
@@ -55,7 +64,7 @@ class V1_Client {
 						in[j] = inFromServer.readByte();
 					ligne[i] = IntToBytes.bytesToInt(in, 0);
 				}
-				
+
 				// Recuperation de la matrice
 				for(short i=0; i<n; i++)
 					for(short j=0; j<n; j++)
@@ -64,19 +73,24 @@ class V1_Client {
 							in[k] = inFromServer.readByte();
 						mat[j][i] = IntToBytes.bytesToInt(in, 0);
 					}
-				
-				// Calcul de la ligne a renvoyer
+
+				/*
+				 * Calcul la ligne correspondante de C
+				 */
+
 				for (short i=0; i<n; i++) 
 					for(short j=0; j<n; j++)
 						ligneRetour[i] += mat[j][i] * ligne[j];
-				
+
 				// Creation du tableau de bytes a renvoyer au serveur
 				for(short i=0; i<n; i++)
 					IntToBytes.intToBytes(ligneRetour[i], byteRetour, i*tailleInt);
-				
-				// Retour de la ligne calculee
+
+				/*
+				 * Emet la ligne calculee au coordinateur/serveur
+				 */
 				outToServer.write(byteRetour, 0, tailleInt*n);
-				
+
 				// Fermeture de la connexion
 				clientSocket.close();
 				break;
