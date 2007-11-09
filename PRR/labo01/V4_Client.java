@@ -1,7 +1,28 @@
 import java.net.*;
 import java.io.*;
 
-
+/**
+ * Communication TCP avec un serveur et N clients.
+ * 
+ * Ce programme va multiplier deux matrices contenant N x N nombres entiers
+ * 
+ * La classe abstraite Config permet de recuperer les parametres de ports et
+ * le nombre de travailleurs, mais le client recuperera le nombre de travailleurs
+ * avec un message du serveur, pour avoir un peu de souplesse.
+ * 
+ * Le coordinateur (serveur) va envoyer à chaque travailleur (client) une ligne 
+ * de la matrice A et la matrice B.
+ * 
+ * Chaque travailleur va calculer la ligne de C et la remettre au travailleur.
+ * 
+ * Le serveur utilise la parametre PORT de la classe Config, et il faut lancer les
+ * clients avec PORT, PORT + 1 ... PORT + n-1 en parametre.
+ * 
+ * 
+ * @author Romain de Wolff
+ * @author Simon Hintermann
+ * @date 26 octobre 2007
+ */
 public class V4_Client extends Config
 {
 

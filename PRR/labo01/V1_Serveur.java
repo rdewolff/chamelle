@@ -5,32 +5,27 @@ import java.net.*;
 import java.util.*;
 
 /**
- * PRR - Laboratoire 1 - Implemnation N 1
- * Romain de Wolff et Simon Hintermann
+ * Communication TCP avec un serveur et N clients.
  * 
- * Le client se lance avec 2 arguments :
- *  - 1 : l'adresse du serveur
- *  - 2 : le port sur lequel se connecter
+ * Ce programme va multiplier deux matrices contenant N x N nombres entiers
  * 
- * Premiere implementation 
- * @author rdewolff
- * @date  5.10.2007
+ * La classe abstraite Config permet de recuperer les parametres de ports et
+ * le nombre de travailleurs, mais le client recuperera le nombre de travailleurs
+ * avec un message du serveur, pour avoir un peu de souplesse.
+ * 
+ * Le coordinateur (serveur) va envoyer à chaque travailleur (client) une ligne 
+ * de la matrice A et la matrice B.
+ * 
+ * Chaque travailleur va calculer la ligne de C et la remettre au travailleur.
+ * 
+ * Le serveur utilise la parametre PORT de la classe Config, et il faut lancer les
+ * clients avec PORT, PORT + 1 ... PORT + n-1 en parametre.
+ * 
+ * 
+ * @author Romain de Wolff
+ * @author Simon Hintermann
+ * @date 26 otcobre 2007
  */
-
-/**
- * 
- * On va departager les differentes taches du serveur 
- * selon la donnee du laboratoire. 
- * Ceci autant pour le serveur que pour le client.
- * 
- * -- UDP Datagrames - String to Bytes ^^
- * String dString = "Es-tu la?";
-       byte[] buf = dString.getBytes();
-       DatagramPacket packet = new DatagramPacket(buf, buf.length, group, 4446);
-       socket.send(packet);
- * 
- */
-
 class V1_Serveur extends Config
 { 
 
@@ -144,7 +139,6 @@ class V1_Serveur extends Config
 		/*
 		 * Affiche la matrice C
 		 */
-		
 		System.out.println("Matrice C = A x B");
 		afficheMatrice(matC);
 		
