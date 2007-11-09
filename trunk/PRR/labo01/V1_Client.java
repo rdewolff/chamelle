@@ -15,25 +15,22 @@ class V1_Client extends Config
 
 	public static void main(String argv[]) throws Exception { 
 
-		// la taille d'un integer en bytes
-		final int tailleInt = 4;
-
-		while(true){
+		while(true){ // TODO : trop rapide!!!!
 			try {
 
 				/*
 				 * Initialisations
 				 */
-				// Adresse du serveur auquel se connecter
-				String host = argv[0];
-				// Le port sur lequel se connecter au serveur
-				int port = (int)Integer.decode( argv[1] );
+
+				// Le port sur lequel se connecter au serveur 
+				// (chaque client utilise un port different)
+				int port = (int)Integer.decode( argv[0] );
 				// Dimension de la matrice
 				int n;
 				// Le tableau de bytes de lecture d'un int
-				byte[] in = new byte[tailleInt];
+				byte[] in = new byte[TAILLE_INT];
 				// Connection au serveur en utilisant les parametre passe au lancement du client
-				Socket clientSocket = new Socket(host, port);
+				Socket clientSocket = new Socket(HOST, port);
 				// Flux de donnees vers le serveur
 				DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream()); 
 				// Flux de donnees du serveur
@@ -44,7 +41,7 @@ class V1_Client extends Config
 				 */
 
 				// Recuperation de la dimension de la matrice
-				for(short i=0; i<tailleInt; i++)
+				for(short i=0; i<TAILLE_INT; i++)
 					in[i] = inFromServer.readByte();
 				n = IntToBytes.bytesToInt(in, 0);
 
@@ -55,12 +52,12 @@ class V1_Client extends Config
 				// La ligne resultat de la multiplication
 				int[] ligneRetour = new int[n];
 				// La ligne a renvoyer sous forme de tableau de bytes
-				byte[] byteRetour = new byte[n*tailleInt];
+				byte[] byteRetour = new byte[n*TAILLE_INT];
 
 				// Recuperation de la ligne
 				for(short i=0; i<n; i++)
 				{
-					for(short j=0; j<tailleInt; j++)
+					for(short j=0; j<TAILLE_INT; j++)
 						in[j] = inFromServer.readByte();
 					ligne[i] = IntToBytes.bytesToInt(in, 0);
 				}
@@ -69,7 +66,7 @@ class V1_Client extends Config
 				for(short i=0; i<n; i++)
 					for(short j=0; j<n; j++)
 					{
-						for(short k=0; k<tailleInt; k++)
+						for(short k=0; k<TAILLE_INT; k++)
 							in[k] = inFromServer.readByte();
 						mat[j][i] = IntToBytes.bytesToInt(in, 0);
 					}
@@ -84,15 +81,17 @@ class V1_Client extends Config
 
 				// Creation du tableau de bytes a renvoyer au serveur
 				for(short i=0; i<n; i++)
-					IntToBytes.intToBytes(ligneRetour[i], byteRetour, i*tailleInt);
+					IntToBytes.intToBytes(ligneRetour[i], byteRetour, i*TAILLE_INT);
 
 				/*
 				 * Emet la ligne calculee au coordinateur/serveur
 				 */
-				outToServer.write(byteRetour, 0, tailleInt*n);
+				outToServer.write(byteRetour, 0, TAILLE_INT*n);
 
 				// Fermeture de la connexion
 				clientSocket.close();
+				
+				System.out.println("*** Client termine ***");
 				break;
 			} catch (IOException e) {
 				System.out.println(e); 
