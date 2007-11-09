@@ -69,14 +69,17 @@ class V1_Serveur extends Config
 				matB[i][j] = hasard.nextInt(10);
 			}
 		}
-
+		
 		// on lance les taches pour les 5 futures connexions.
 		System.out.println("Attente de la connexion des " + N + " clients");
 
 		ServerSocket[] welcomeSocket = new ServerSocket[N];
 		Socket[] connectionSocket = new Socket[N];
 
-		// Attente des connexions
+		/*
+		 * Attend que les N travailleurs se presentent
+		 */
+		
 		for (int i=0; i<N; i++) {
 			welcomeSocket[i] = new ServerSocket(PORT+i);
 			connectionSocket[i] = welcomeSocket[i].accept();
@@ -88,7 +91,11 @@ class V1_Serveur extends Config
 		int dimTab = TAILLE_INT + (N*TAILLE_INT) + (N*N*TAILLE_INT);
 		// Tableau de bytes d'envoi des informations
 		byte[] out = new byte[dimTab];
-		// envoi des tableaux
+		
+		/*
+		 *  Emet une ligne et la matrice B a chaque travailleur
+		 */
+		
 		for (int i=0; i<N; i++) 
 		{
 			// Le flux de donnees sortantes vers les clients */
@@ -109,8 +116,11 @@ class V1_Serveur extends Config
 
 		// Variable de lecture
 		byte[] in = new byte[TAILLE_INT];
-
-		// Lecture des reponses des clients
+		
+		/*
+		 * Attend les n lignes des clients
+		 */
+		
 		for(int i=0; i<N; i++)
 		{
 			// Flux des donnees recues des clients
@@ -130,7 +140,11 @@ class V1_Serveur extends Config
 
 		System.out.println("Matrice B");
 		afficheMatrice(matB);
-
+		
+		/*
+		 * Affiche la matrice C
+		 */
+		
 		System.out.println("Matrice C = A x B");
 		afficheMatrice(matC);
 		

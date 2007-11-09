@@ -3,11 +3,30 @@ import java.io.*;
 import java.net.*; 
 
 /**
- * Client permettant de recevoir une ligne de matric et une matrice en TCP,
- * puis de renvoyer la ligne multipliee au serveur
+ * Communication TCP avec un serveur et N clients.
  * 
- * @author Simon Hintermann & Romain de Wolff
- *
+ * Ce programme va multiplier deux matrices contenant N x N nombres entiers
+ * 
+ * La classe abstraite Config permet de recuperer les parametres de ports et
+ * le nombre de travailleurs, mais le client recuperera le nombre de travailleurs
+ * avec un message du serveur, pour avoir un peu de souplesse.
+ * 
+ * Le coordinateur (serveur) va envoyer à chaque travailleur (client) une ligne 
+ * de la matrice A et la matrice B.
+ * 
+ * Chaque travailleur va calculer la ligne de C et la remettre au travailleur.
+ * 
+ * Si le port utilise est X, alors UDP utilisera X, le groupe multicast X+1 et
+ * la transmission multicast s'effectuera sur X+2
+ * 
+ * @param n		un entier qui représente le nombre de lignes à 
+ * calculer ainsi que le nombre de clients qu'il sera necessaire pour 
+ * calculer la matrice
+ * @param port	le port que le serveur va utiliser. Le client 
+ * doit utiliser le meme port pour se connecter
+ * 
+ * @author Romain de Wolff
+ * @author Simon Hintermann
  */
 class V1_Client extends Config
 {
