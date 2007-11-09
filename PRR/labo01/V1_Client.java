@@ -8,16 +8,16 @@ import java.net.*;
  * Ce programme va multiplier deux matrices contenant N x N nombres entiers
  * 
  * La classe abstraite Config permet de recuperer les parametres de ports et
- * le nombre de travailleurs, mais le client recuperera le nombre de travailleurs
- * avec un message du serveur, pour avoir un peu de souplesse.
+ * le nombre de travailleurs, mais le client recuperera le nombre de 
+ * travailleurs avec un message du serveur, pour avoir un peu de souplesse.
  * 
  * Le coordinateur (serveur) va envoyer à chaque travailleur (client) une ligne 
  * de la matrice A et la matrice B.
  * 
  * Chaque client va calculer la ligne de C et la remettre au serveur.
  * 
- * Le serveur utilise la parametre PORT de la classe Config, et il faut lancer les
- * clients avec PORT, PORT + 1 ... PORT + n-1 en parametre.
+ * Le serveur utilise la parametre PORT de la classe Config, et il faut lancer 
+ * les clients avec PORT, PORT + 1 ... PORT + n-1 en parametre.
  * 
  * Note: Les clients peuvent etre lances avant le serveur.
  * 
@@ -41,7 +41,8 @@ class V1_Client extends Config
 		int n;
 		// Le tableau de bytes de lecture d'un int
 		byte[] in = new byte[TAILLE_INT];
-		// Connection au serveur en utilisant les parametre passe au lancement du client
+		// Connection au serveur en utilisant les parametre passe au lancement 
+		// du client
 		Socket clientSocket;
 		// Flux de donnees vers le serveur
 		DataOutputStream outToServer;
@@ -55,8 +56,10 @@ class V1_Client extends Config
 				 * Recuperation des donnees envoyee par le serveur
 				 */
 				clientSocket = new Socket(HOST, port);
-				outToServer = new DataOutputStream(clientSocket.getOutputStream()); 
-				inFromServer = new DataInputStream(clientSocket.getInputStream());
+				outToServer = 
+					new DataOutputStream(clientSocket.getOutputStream()); 
+				inFromServer = 
+					new DataInputStream(clientSocket.getInputStream());
 				// Recuperation de la dimension de la matrice
 				for(short i=0; i<TAILLE_INT; i++)
 					in[i] = inFromServer.readByte();

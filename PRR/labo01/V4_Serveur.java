@@ -3,24 +3,26 @@ import java.net.*;
 import java.util.Random;
 
 /**
- * Communication Multicast entre un serveur et N clients (avec UDP pour la synchro).
+ * Communication Multicast entre un serveur et N clients 
+ * (avec UDP pour la synchro).
  * 
  * Ce programme va multiplier deux matrices contenant N x N nombres entiers
  * 
  * La classe abstraite Config permet de recuperer les parametres de ports et
- * le nombre de travailleurs, mais le client recuperera le nombre de travailleurs
- * avec un message du serveur, pour avoir un peu de souplesse.
+ * le nombre de travailleurs, mais le client recuperera le nombre de 
+ * travailleurs avec un message du serveur, pour avoir un peu de souplesse.
  * 
- * Le client va utiliser PORT(Config) pour son socket multicast, GROUPE(Config) pour l'adresse
- * de multicast ou il va s'abonner, et PORT_UDP(Config) pour communiquer en UDP avec le
- * serveur. Son port de communication UDP sera recupere par le serveur pour
- * pouvoir communiquer.
+ * Le client va utiliser PORT(Config) pour son socket multicast, GROUPE(Config) 
+ * pour l'adresse de multicast ou il va s'abonner, et PORT_UDP(Config) pour 
+ * communiquer en UDP avec le serveur. Son port de communication UDP sera 
+ * recupere par le serveur pour pouvoir communiquer.
  * 
- * Le coordinateur (serveur) va envoyer à chaque travailleur (client) leurs numero
- * respectifs en UDP, par un socket UDP sur le port PORT_UDP(Config) -en recuperant leur 
- * adresse et port avec le paquet de connexion qu'il a recu pour router le paquet qu'il 
- * doit leur renvoyer-, puis il va leur envoyer les deux matrices a l'adresse GROUPE(Config) 
- * sur son port multicast PORT_MULTICAST(Config).
+ * Le coordinateur (serveur) va envoyer à chaque travailleur (client) leurs 
+ * numero respectifs en UDP, par un socket UDP sur le port PORT_UDP(Config) 
+ * -en recuperant leur adresse et port avec le paquet de connexion qu'il a recu 
+ * pour router le paquet qu'il doit leur renvoyer-, puis il va leur envoyer les 
+ * deux matrices a l'adresse GROUPE(Config) sur son port multicast 
+ * PORT_MULTICAST(Config).
  * 
  * Chaque client va calculer la ligne de C et la remettre au serveur.
  * 
@@ -81,7 +83,8 @@ public class V4_Serveur extends Config
 		
 		// Variables pour la connexion d'un client
 		byte[] tampon = new byte[1];
-		DatagramPacket paquet = new DatagramPacket(tampon,tampon.length,groupe,PORT);
+		DatagramPacket paquet = new DatagramPacket(tampon,
+								tampon.length,groupe,PORT);
 		
 		// Parametres pour la communication UDP
 		DatagramSocket socketS = new DatagramSocket(PORT_UDP);
@@ -97,14 +100,16 @@ public class V4_Serveur extends Config
 		// Communications initiales client-serveur (UDP)
 		for(short i=0; i<N; i++) 
 		{
-			// Synchronisation avec les clients
+			//Synchronisation avec les clients
 			socketS.receive(paquetUDP);
-			// Stocke les informations du client dans un objet prevu a cet effet			
-			clients[i] = new Clients(i, paquetUDP.getAddress(), paquetUDP.getPort());
-			// Envoie le nombre de travailleurs et le numero de travailleur
+			//Stocke les informations du client dans un objet prevu a cet effet			
+			clients[i] = new Clients(i, paquetUDP.getAddress(), 
+								     paquetUDP.getPort());
+			//Envoie le nombre de travailleurs et le numero de travailleur
 			IntToBytes.intToBytes(N, tamponUDP, 0);
 			IntToBytes.intToBytes(i, tamponUDP, TAILLE_INT);
-			paquetUDP = new DatagramPacket(tamponUDP, tamponUDP.length, clients[i].getAddress(), clients[i].getPort());
+			paquetUDP = new DatagramPacket(tamponUDP, tamponUDP.length, 
+						clients[i].getAddress(), clients[i].getPort());
 			socketS.send(paquetUDP);
 			System.out.println("Client " + (i+1) + " connecte");
 		}
@@ -152,7 +157,8 @@ public class V4_Serveur extends Config
 			int noClient = IntToBytes.bytesToInt(ligneRecue, 0);
 			// Mise a jour de la matrice C
 			for(int j=0; j<N; j++)
-				matC[noClient][j] = IntToBytes.bytesToInt(ligneRecue, j*TAILLE_INT + TAILLE_INT);
+				matC[noClient][j] = IntToBytes.bytesToInt(ligneRecue, 
+									j*TAILLE_INT + TAILLE_INT);
 		}
 		
 		/*
