@@ -23,14 +23,14 @@ public class MailClient extends Frame {
     private TextArea messageText = new TextArea(10, 40);
 
     /**
-     * Construire la frame avec les diff�rents champs
+     * Construire la frame avec les differents champs
      * (Serveur SMTP, De, A, Sujet et message).
      */
     public MailClient() {
 	super("Java Mailclient");
 	
 	/* Creer les panneaux pour contenir les champs.
-	   Un panneau suppl�mentaire est cr�� pour contenir les
+	   Un panneau supplémentaire est créé pour contenir les
 	   panneaux enfant. */
 	Panel SMTPServerPanel = new Panel(new BorderLayout());
 	Panel fromPanel = new Panel(new BorderLayout());
@@ -53,8 +53,8 @@ public class MailClient extends Frame {
 	fieldPanel.add(toPanel);
 	fieldPanel.add(subjectPanel);
 
-	/* Cr�er un panneau pour les boutons et ajouter les
-	   �couteurs aux boutons. */
+	/* Créer un panneau pour les boutons et ajouter les
+	   écouteurs aux boutons. */
 	Panel buttonPanel = new Panel(new GridLayout(1, 0));
 	btSend.addActionListener(new SendListener());
 	btClear.addActionListener(new ClearListener());
@@ -80,7 +80,7 @@ public class MailClient extends Frame {
 	public void actionPerformed(ActionEvent event) {
 	    System.out.println("Envoi de l'email");
 
-	    /* Premi�rement, v�rifier que nous avons le serveur
+	    /* Premièrement, vérifier que nous avons le serveur
 	       SMTP et les adresses emails source et destination.*/
 	    if((SMTPServerField.getText()).equals("")) {
 		System.out.println("Pas de SMTP Server!");
@@ -95,19 +95,19 @@ public class MailClient extends Frame {
 		return;
 	    }
 	    
-	    /* Cr�er le message */
+	    /* Créer le message */
 	    Message mailMessage = new Message(SMTPServerField.getText(),
 	    				      fromField.getText(), 
 					      toField.getText(), 
 					      subjectField.getText(), 
 					      messageText.getText());
 
-	    /* Contr�ler que le message est valide (cf classe Message).*/
+	    /* Contrôler que le message est valide (cf classe Message).*/
 	    if(!mailMessage.isValid()) {
 		return;
 	    }
 	    
-	    /* Cr�er l'enveloppe, ouvrir la connexion et tenter
+	    /* Créer l'enveloppe, ouvrir la connexion et tenter
 	       d'envoyer le message. */
 	    Envelope envelope = new Envelope(mailMessage);
 	    System.out.println(envelope.toString());
