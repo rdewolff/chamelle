@@ -16,17 +16,13 @@ import java.net.*;
  * 
  * Chaque travailleur va calculer la ligne de C et la remettre au travailleur.
  * 
- * Si le port utilise est X, alors UDP utilisera X, le groupe multicast X+1 et
- * la transmission multicast s'effectuera sur X+2
+ * Le serveur utilise la parametre PORT de la classe Config, et il faut lancer les
+ * clients avec PORT, PORT + 1 ... PORT + n-1 en parametre.
  * 
- * @param n		un entier qui représente le nombre de lignes à 
- * calculer ainsi que le nombre de clients qu'il sera necessaire pour 
- * calculer la matrice
- * @param port	le port que le serveur va utiliser. Le client 
- * doit utiliser le meme port pour se connecter
  * 
  * @author Romain de Wolff
  * @author Simon Hintermann
+ * @date 26 octobre 2007
  */
 class V1_Client extends Config
 {
