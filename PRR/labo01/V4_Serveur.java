@@ -3,7 +3,7 @@ import java.net.*;
 import java.util.Random;
 
 /**
- * Communication Multicast entre un serveur et N clients 
+ * Communication UDP Multicast entre un serveur et N clients 
  * (avec UDP pour la synchro).
  * 
  * Ce programme va multiplier deux matrices contenant N x N nombres entiers
