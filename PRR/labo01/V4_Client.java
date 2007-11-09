@@ -1,6 +1,7 @@
 import java.net.*;
 import java.io.*;
 
+
 public class V4_Client
 {
 	// Le port utilise pour le multicast
@@ -9,18 +10,6 @@ public class V4_Client
 	static final int portUDP = 4447;
 	// Taille d'un integer en bytes
 	static final int tailleInt = 4;
-	
-	/* 
-	 * Affichage de la matrice passee en parametre (2D)
-	 */
-	private static void afficheMatrice(int [][] tableau) {
-		for (short i=0; i<tableau.length; i++) {
-			for (short j=0; j<tableau.length; j++) {
-				System.out.print(tableau[i][j] + " ");
-			}
-			System.out.print('\n');
-		}
-	}
 	
 	public static void main(String args[]) throws IOException
 	{
