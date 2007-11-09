@@ -1,4 +1,12 @@
-
+/**
+ * Outils pour afficher des matrices et pour gerer des conversions bytes-int
+ * 
+ * Note: methodes de gestion des conversions fournies par m. Evequoz
+ * 
+ * @author Romain de Wolff
+ * @author Simon Hintermann
+ * @date 26 octobre 2007
+ */
 public class Outils {
 
 	/**
