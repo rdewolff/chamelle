@@ -27,7 +27,7 @@ public class V2_Client {
 			
 			 // synchronisation avec le serveur
 			String query = "HELO";
-			int TAILLE_TAMPON = 56; // TODO : dynamique ?
+			int TAILLE_TAMPON = 4;
 			int TAILLE_TAMPON_SYNCHRO = query.length()*2; // message recu : "HELO"
 			byte[] tampon = new byte[TAILLE_TAMPON_SYNCHRO]; // defini la taille miniumm necessaire. Un char = 2 bytes
 			tampon = query.getBytes();
@@ -45,6 +45,7 @@ public class V2_Client {
 			/* 
 			 * Recoit les infos du serveur
 			 */
+			TAILLE_TAMPON = (5*5+2)*4;
 			tampon = new byte[TAILLE_TAMPON]; // reinit le tampon avec la bonne taille
 			paquet = new DatagramPacket(tampon, tampon.length);
 			socket.receive(paquet); 
@@ -55,10 +56,8 @@ public class V2_Client {
 			// décomponse les elements recus par le serveur
 			int offset = 0; // le pointeur d'insertion dans le tableau de byte
 			// recoit les infos qui sont dans un seul character (deux nombre < 10)
-			int ligneACalculer = IntToBytes.bytesToInt(tampon, offset);
-			offset++;
-			int tailleMatrice = IntToBytes.bytesToInt(tampon, offset*4);
-			offset++;
+			int ligneACalculer = IntToBytes.bytesToInt(tampon, (offset++));
+			int tailleMatrice = IntToBytes.bytesToInt(tampon, (offset++)*4);
 			
 			System.out.println("ligneACalculer: " + ligneACalculer + "\ntailleMatrice: " + tailleMatrice);
 			
@@ -68,15 +67,13 @@ public class V2_Client {
 			
 			// reconstruit la ligne A
 			for (short i=0; i<tailleMatrice; i++) {
-				ligneA[i] = IntToBytes.bytesToInt(tampon, offset*4);
-				offset++;
+				ligneA[i] = IntToBytes.bytesToInt(tampon, (offset++)*4);
 			}
 			
 			// reconstruit la matrice B
 			for (short i=0; i<tailleMatrice; i++) {
 				for (short j=0; j<tailleMatrice; j++) {
-					tabB[i][j] = IntToBytes.bytesToInt(tampon, offset*4);
-					offset++;
+					tabB[i][j] = IntToBytes.bytesToInt(tampon, (offset++)*4);
 				}
 			}
 			
@@ -96,13 +93,11 @@ public class V2_Client {
 			/* 
 			 * Emet la ligne calculee au coordinateur
 			 */
-			IntToBytes.intToBytes(ligneACalculer, tampon, offset);
-			offset++;
+			IntToBytes.intToBytes(ligneACalculer, tampon, (offset++));
 			
 			// envoie la ligne calculee au serveur
 			for (short i=0; i<tailleMatrice; i++) {
-				IntToBytes.intToBytes(ligneC[i], tampon, offset*4);
-				offset++;
+				IntToBytes.intToBytes(ligneC[i], tampon, (offset++)*4);
 			}
 
 			// affiche les resultats

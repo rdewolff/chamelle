@@ -129,7 +129,6 @@ public class V3_Serveur
 				/*
 				 * Envoie a chaque travailleur/client l'indice de la ligne a 
 				 * calculer et la ligne A 
-				 * TODO : MERDE!
 				 */
 				// defini le tampon a la taille de la ligne de A
 				tampon = new byte[(tailleMatrice+1)*4]; 
