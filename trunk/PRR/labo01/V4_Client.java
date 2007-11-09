@@ -2,24 +2,26 @@ import java.net.*;
 import java.io.*;
 
 /**
- * Communication Multicast entre un serveur et N clients (avec UDP pour la synchro).
+ * Communication Multicast entre un serveur et N clients 
+ * (avec UDP pour la synchro).
  * 
  * Ce programme va multiplier deux matrices contenant N x N nombres entiers
  * 
  * La classe abstraite Config permet de recuperer les parametres de ports et
- * le nombre de travailleurs, mais le client recuperera le nombre de travailleurs
- * avec un message du serveur, pour avoir un peu de souplesse.
+ * le nombre de travailleurs, mais le client recuperera le nombre de 
+ * travailleurs avec un message du serveur, pour avoir un peu de souplesse.
  * 
- * Le client va utiliser PORT(Config) pour son socket multicast, GROUPE(Config) pour l'adresse
- * de multicast ou il va s'abonner, et PORT_UDP(Config) pour communiquer en UDP avec le
- * serveur. Son port de communication UDP sera recupere par le serveur pour
- * pouvoir communiquer.
+ * Le client va utiliser PORT(Config) pour son socket multicast, GROUPE(Config) 
+ * pour l'adresse de multicast ou il va s'abonner, et PORT_UDP(Config) pour 
+ * communiquer en UDP avec le serveur. Son port de communication UDP sera 
+ * recupere par le serveur pour pouvoir communiquer.
  * 
- * Le coordinateur (serveur) va envoyer à chaque travailleur (client) leurs numero
- * respectifs en UDP, par un socket UDP sur le port PORT_UDP(Config) -en recuperant leur 
- * adresse et port avec le paquet de connexion qu'il a recu pour router le paquet qu'il 
- * doit leur renvoyer-, puis il va leur envoyer les deux matrices a l'adresse GROUPE(Config) 
- * sur son port multicast PORT_MULTICAST(Config).
+ * Le coordinateur (serveur) va envoyer à chaque travailleur (client) leurs 
+ * numero respectifs en UDP, par un socket UDP sur le port PORT_UDP(Config) 
+ * -en recuperant leur adresse et port avec le paquet de connexion qu'il a recu 
+ * pour router le paquet qu'il doit leur renvoyer-, puis il va leur envoyer les 
+ * deux matrices a l'adresse GROUPE(Config) sur son port multicast 
+ * PORT_MULTICAST(Config).
  * 
  * Chaque client va calculer la ligne de C et la remettre au serveur.
  * 
@@ -58,7 +60,8 @@ public class V4_Client extends Config
 		// synchronisation avec le serveur : envoie au serveur un paquet de 
 		// requete, pour qu'il sache qu'il est connecte
 		DatagramSocket socketS = new DatagramSocket();
-		DatagramPacket paquetS = new DatagramPacket(tampon, tampon.length, InetAddress.getByName(HOST), PORT_UDP);
+		DatagramPacket paquetS = new DatagramPacket(tampon, tampon.length, 
+								 InetAddress.getByName(HOST), PORT_UDP);
 		socketS.send(paquetS); // envoi du paquet a l'aide du socket
 
 		/*
@@ -87,14 +90,16 @@ public class V4_Client extends Config
 		for(int i=0; i<n; i++)
 			for(int j=0; j<n; j++)
 			{
-				matA[i][j] = IntToBytes.bytesToInt(tampon, (j*TAILLE_INT + i*n*TAILLE_INT));
+				matA[i][j] = IntToBytes.bytesToInt(tampon, 
+										(j*TAILLE_INT + i*n*TAILLE_INT));
 			}
 		
 		// Recuperation de la matrice B
 		for(int i=0; i<n; i++)
 			for(int j=0; j<n; j++)
 			{
-				matB[i][j] = IntToBytes.bytesToInt(tampon, (j*TAILLE_INT + i*n*TAILLE_INT + n*n*TAILLE_INT));
+				matB[i][j] = IntToBytes.bytesToInt(tampon, 
+							 (j*TAILLE_INT + i*n*TAILLE_INT + n*n*TAILLE_INT));
 			}
 
 		// Variables pour le retour de la ligne calculee
@@ -121,7 +126,8 @@ public class V4_Client extends Config
 			IntToBytes.intToBytes(ligneRetour[i], byteRetour, i*TAILLE_INT);
 
 		// Construit le paquet a envoyer
-		paquetS = new DatagramPacket(byteRetour, byteRetour.length, InetAddress.getByName(HOST), PORT_UDP);
+		paquetS = new DatagramPacket(byteRetour, byteRetour.length, 
+									 InetAddress.getByName(HOST), PORT_UDP);
 		
 		// L'envoie
 		socketS.send(paquetS);

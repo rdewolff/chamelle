@@ -10,22 +10,22 @@ import java.util.*;
  * Ce programme va multiplier deux matrices contenant N x N nombres entiers
  * 
  * La classe abstraite Config permet de recuperer les parametres de ports et
- * le nombre de travailleurs, mais le client recuperera le nombre de travailleurs
- * avec un message du serveur, pour avoir un peu de souplesse.
+ * le nombre de travailleurs, mais le client recuperera le nombre de 
+ * travailleurs avec un message du serveur, pour avoir un peu de souplesse.
  * 
  * Le coordinateur (serveur) va envoyer à chaque travailleur (client) une ligne 
  * de la matrice A et la matrice B.
  * 
  * Chaque client va calculer la ligne de C et la remettre au serveur.
  * 
- * Le serveur utilise la parametre PORT de la classe Config, et il faut lancer les
- * clients avec PORT, PORT + 1 ... PORT + n-1 en parametre.
+ * Le serveur utilise la parametre PORT de la classe Config, et il faut lancer 
+ * les clients avec PORT, PORT + 1 ... PORT + n-1 en parametre.
  * 
  * Note: Les clients peuvent etre lances avant le serveur.
  * 
  * @author Romain de Wolff
  * @author Simon Hintermann
- * @date 26 otcobre 2007
+ * @date 26 octobre 2007
  */
 class V1_Serveur extends Config
 { 
@@ -48,7 +48,8 @@ class V1_Serveur extends Config
 	public static void main(String argv[]) throws Exception {
 
 		// affiche info sur serveur
-		System.out.println("Lancement du serveur sur " + InetAddress.getLocalHost());
+		System.out.println("Lancement du serveur sur " + 
+						   InetAddress.getLocalHost());
 
 		// creation des matrices sur lequelles on va faire des calculs
 		int[][]  matA, matB, matC;
@@ -95,16 +96,19 @@ class V1_Serveur extends Config
 		for (int i=0; i<N; i++) 
 		{
 			// Le flux de donnees sortantes vers les clients */
-			DataOutputStream fluxSortie = new DataOutputStream(connectionSocket[i].getOutputStream());
+			DataOutputStream fluxSortie = 
+				new DataOutputStream(connectionSocket[i].getOutputStream());
 			// Nombre de travailleurs (dimension matrice)
 			IntToBytes.intToBytes(N, out, 0);
 			// Ligne de la matrice A que le client i utilisera
 			for(int j=0; j<N; j++)
-				IntToBytes.intToBytes(matA[i][j], out, (j*TAILLE_INT + TAILLE_INT));
+				IntToBytes.intToBytes(matA[i][j], out, 
+									  (j*TAILLE_INT + TAILLE_INT));
 			// La matrice B
 			for(int j=0; j<N; j++)
 				for(int k=0; k<N; k++)
-					IntToBytes.intToBytes(matB[j][k], out, (j*TAILLE_INT + k*N*TAILLE_INT + TAILLE_INT + N*TAILLE_INT));
+					IntToBytes.intToBytes(matB[j][k], out, (j*TAILLE_INT + 
+								k*N*TAILLE_INT + TAILLE_INT + N*TAILLE_INT));
 			// Envoi du tableau de bytes aux clients
 			fluxSortie.write(out, 0, dimTab);
 			System.out.println("Client " + (i+1) + " envoye");
@@ -120,8 +124,10 @@ class V1_Serveur extends Config
 		for(int i=0; i<N; i++)
 		{
 			// Flux des donnees recues des clients
-			DataInputStream fluxEntree = new DataInputStream(connectionSocket[i].getInputStream());
-			// Recomposition de la matrice C avec les lignes calculees par les clients
+			DataInputStream fluxEntree = 
+				new DataInputStream(connectionSocket[i].getInputStream());
+			// Recomposition de la matrice C avec les lignes 
+			// calculees par les clients
 			for(int j=0; j<N; j++)
 			{
 				for(int k=0; k<TAILLE_INT; k++)
@@ -151,7 +157,8 @@ class V1_Serveur extends Config
 			}
 		}
 
-		// calcul les valeurs localement, pour comparer avec les informatiosn recus des clients
+		// calcul les valeurs localement, pour comparer avec 
+		// les informatiosn recus des clients
 		for (short i=0; i<N; i++) { // i = ligne
 			for (short j=0; j<N; j++) { // j = colonne
 				// multiplie avec la colonne de la matrice B
