@@ -28,19 +28,7 @@ import java.util.*;
  * @date 26 octobre 2007
  */
 class V1_Serveur extends Config
-{ 
-
-	/* 
-	 * Affichage de la matrice passee en parametre (2D)
-	 */
-	private static void afficheMatrice(int [][] tableau) {
-		for (short i=0; i<tableau.length; i++) {
-			for (short j=0; j<tableau.length; j++) {
-				System.out.print(tableau[i][j] + " ");
-			}
-			System.out.print('\n');
-		}
-	}
+{
 
 	/* 
 	 * Programme principal
@@ -138,16 +126,16 @@ class V1_Serveur extends Config
 
 		// affiche les tableaux ainsi que le resultat calcule
 		System.out.println("Matrice A");
-		afficheMatrice(matA);
+		Outils.afficheMatrice(matA);
 
 		System.out.println("Matrice B");
-		afficheMatrice(matB);
+		Outils.afficheMatrice(matB);
 		
 		/*
 		 * Affiche la matrice C
 		 */
 		System.out.println("Matrice C = A x B");
-		afficheMatrice(matC);
+		Outils.afficheMatrice(matC);
 		
 		// pour la verification, on recalcul la matrice localement
 		// reinit la matrice avant le calcul local
@@ -170,7 +158,7 @@ class V1_Serveur extends Config
 		
 		// affiche la matrice C calculee en local pour comparaison
 		System.out.println("Matrice C = A x B (local calcul)");
-		afficheMatrice(matC);
+		Outils.afficheMatrice(matC);
 
 		// fin de l'execution du serveur
 		System.out.println("Fin de l'execution du serveur.");
