@@ -35,18 +35,6 @@ import java.util.Random;
 public class V4_Serveur extends Config
 {
 
-	/* 
-	 * Affichage de la matrice passee en parametre (2D)
-	 */
-	private static void afficheMatrice(int [][] tableau) {
-		for (short i=0; i<tableau.length; i++) {
-			for (short j=0; j<tableau.length; j++) {
-				System.out.print(tableau[i][j] + " ");
-			}
-			System.out.print('\n');
-		}
-	}
-
 	public static void main(String[] args) throws IOException
 	{
 		
@@ -166,13 +154,13 @@ public class V4_Serveur extends Config
 		 */
 
 		System.out.println("Matrice A: ");
-		afficheMatrice(matC);
+		Outils.afficheMatrice(matC);
 
 		System.out.println("\nMatrice B: ");
-		afficheMatrice(matC);
+		Outils.afficheMatrice(matC);
 
 		System.out.println("\nMatrice recue: ");
-		afficheMatrice(matC);
+		Outils.afficheMatrice(matC);
 
 		// Reinitialisation de la matrice C
 		for(int i=0; i<N; i++)
@@ -191,7 +179,7 @@ public class V4_Serveur extends Config
 
 		// Affiche la matrice C calculee en local pour comparaison
 		System.out.println("\nMatrice C = A x B (calcul local)");
-		afficheMatrice(matC);
+		Outils.afficheMatrice(matC);
 
 		/*
 		 * Fin
