@@ -6,9 +6,25 @@ import java.io.*;
 /**
  * Communication UDP avec un serveur et N clients.
  * 
- * @param x <code>int</code> un entier qui représente le nombre de lignes à calculer ainsi que le nombre de clients qu'il sera necessaire pour calculer la matrice
- * @author Romain de Wolff
- * @author Simon Hintermann
+ * Ce programme va multiplier deux matrices contenant N x N nombres entiers. Les
+ * parametres de configuration du serveur se trouve dans le fichier Config.java
+ * dont herite chaque configuration.
+ * 
+ * Dans cette version (V2), le fonctionnement est identique a celui de la V1. La
+ * difference reside dans le faite que les transmissions vont s'effectuer
+ * en UDP. 
+ * 
+ * On utilise une classe de configuration appelee "Config". Celle-ci determine 
+ * la taille des matrices (N), et les ports utilisés lors de la communication 
+ * UDP.
+ * 
+ * La taille des matrices (N) est envoye a chaque client par le serveur. 
+ * 
+ * Note: les clients peuvent etres lances avant le serveur.
+ * 
+ * @author 	Romain de Wolff
+ * @author 	Simon Hintermann
+ * @date 	26 octobre 2007
  */
 
 public class V2_Serveur extends Config

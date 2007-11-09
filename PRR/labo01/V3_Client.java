@@ -5,25 +5,30 @@ import java.io.*;
 /**
  * Communication UDP avec un serveur et N clients.
  * 
- * Ce programme va multiplier deux matrices contenant N x N nombres entiers
+ * Ce programme va multiplier deux matrices contenant N x N nombres entiers. Les
+ * parametres de configuration du serveur se trouve dans le fichier Config.java
+ * dont herite chaque configuration.
  * 
- * Le coordinateur (serveur) va envoyer à chaque travailleur (client) une ligne 
- * de la matrice A et la matrice B.
+ * Dans cette version (V3), le fonctionnement est identique a celui de la V2. La
+ * difference reside dans le faite que la matrice B est diffusee aux 
+ * travailleurs, puis chaque travailleur recoit une ligne de A et l'indice a
+ * calculer.
  * 
- * Chaque travailleur va calculer la ligne de C et la remettre au travailleur.
+ * On utilise une classe de configuration appelee "Config". Celle-ci determine 
+ * la taille des matrices (N), et les ports utilisés lors de la communication 
+ * UDP.
  * 
- * Si le port utilise est X, alors UDP utilisera X, le groupe multicast X+1 et
- * la transmission multicast s'effectuera sur X+2
+ * Nous communiquons de maniere direct avec les client en UDP et la diffusion 
+ * se fait en UDP Multicast. Le groupe de multicast est defini a l'aide de la 
+ * constante
  * 
- * @param n		un entier qui représente le nombre de lignes à 
- * calculer ainsi que le nombre de clients qu'il sera necessaire pour 
- * calculer la matrice
- * @param port	le port que le serveur va utiliser. Le client 
- * doit utiliser le meme port pour se connecter
+ * Note: les clients peuvent etres lances avant le serveur.
  * 
- * @author Romain de Wolff
- * @author Simon Hintermann
+ * @author 	Romain de Wolff
+ * @author 	Simon Hintermann
+ * @date 	26 octobre 2007
  */
+
 public class V3_Client extends Config 
 {	
 

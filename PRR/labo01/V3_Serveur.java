@@ -22,13 +22,14 @@ import java.io.*;
  * Nous communiquons de maniere direct avec les client en UDP et la diffusion 
  * se fait en UDP Multicast. Le groupe de multicast est defini a l'aide de la 
  * constante
- * 
+ *  
  * Note: les clients peuvent etres lances avant le serveur.
  * 
  * @author 	Romain de Wolff
  * @author 	Simon Hintermann
  * @date 	26 octobre 2007
  */
+
 public class V3_Serveur extends Config
 {
 	/** 
