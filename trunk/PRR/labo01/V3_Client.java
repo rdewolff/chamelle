@@ -30,21 +30,7 @@ import java.io.*;
  */
 
 public class V3_Client extends Config 
-{	
-
-	/** 
-	 * Affichage de la matrice carrée passée en parametre (2 dimensions)
-	 * @param int [] [] tableau
-	 */
-	private static void afficheMatrice(int [][] tableau) {
-		for (short i=0; i<tableau.length; i++) {
-			for (short j=0; j<tableau.length; j++) {
-				System.out.print(tableau[i][j] + " ");
-			}
-			System.out.print('\n');
-		}
-	}
-
+{
 	/*
 	 * Methode principale contenant tout le client
 	 */
@@ -100,7 +86,7 @@ public class V3_Client extends Config
 				}
 			}
 
-			int n = IntToBytes.bytesToInt(tampon, 0);
+			int n = Outils.bytesToInt(tampon, 0);
 			System.out.println("Taille de la matrice : " + n);
 
 			// recoit la matrice B du serveur en diffusion
@@ -115,7 +101,7 @@ public class V3_Client extends Config
 			int[][] matB = new int[n][n];
 			for (short i=0; i<n; i++) {
 				for (short j=0; j<n; j++) {
-					matB[i][j] = IntToBytes.bytesToInt(tampon, 
+					matB[i][j] = Outils.bytesToInt(tampon, 
 							offset*TAILLE_INT);
 					offset++;
 				}
@@ -131,17 +117,17 @@ public class V3_Client extends Config
 
 			// recupere l'indice de B qui est dans le tampon
 			offset = 0; 
-			int ligneACalculer = IntToBytes.bytesToInt(tampon, offset);
+			int ligneACalculer = Outils.bytesToInt(tampon, offset);
 			offset++;
 
 			// idem avec la ligne A
 			for (short i=0; i<n; i++) {
-				ligneA[i] = IntToBytes.bytesToInt(tampon, offset*TAILLE_INT);
+				ligneA[i] = Outils.bytesToInt(tampon, offset*TAILLE_INT);
 				offset++;
 			}
 
 			// affiche la matrice
-			afficheMatrice(matB);
+			Outils.afficheMatrice(matB);
 			// et la ligne a calculer
 			System.out.println("Ligne a calculer : " + ligneACalculer);
 
@@ -163,12 +149,12 @@ public class V3_Client extends Config
 			/*
 			 * Emet la ligne calculee au serveur/coordinateur
 			 */
-			IntToBytes.intToBytes(ligneACalculer, tampon, offset);
+			Outils.intToBytes(ligneACalculer, tampon, offset);
 			offset++;
 
 			// met la ligne calculee dans le tampon d'envoi
 			for (short i=0; i<n; i++) {
-				IntToBytes.intToBytes(ligneC[i], tampon, offset*TAILLE_INT);
+				Outils.intToBytes(ligneC[i], tampon, offset*TAILLE_INT);
 				offset++;
 			}
 
@@ -187,7 +173,7 @@ public class V3_Client extends Config
 
 			// affiche la matrice B
 			System.out.println("\nMatrice B");
-			afficheMatrice(matB);
+			Outils.afficheMatrice(matB);
 
 			// affiche la ligne C calculee par ce client
 			System.out.println("Ligne de C calculee");

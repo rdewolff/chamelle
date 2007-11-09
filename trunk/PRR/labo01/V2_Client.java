@@ -94,8 +94,8 @@ public class V2_Client extends Config
 			// decomponse les elements recus par le serveur
 			int offset = 0; // le pointeur d'insertion dans le tableau de byte
 			// recoit les infos qui sont dans un seul character (deux nombre<10)
-			int ligneACalculer = IntToBytes.bytesToInt(tampon, (offset++));
-			int n = IntToBytes.bytesToInt(tampon, (offset++)*4);
+			int ligneACalculer = Outils.bytesToInt(tampon, (offset++));
+			int n = Outils.bytesToInt(tampon, (offset++)*4);
 
 			System.out.println("ligneACalculer: " + ligneACalculer + "\nn: "+n);
 
@@ -112,13 +112,13 @@ public class V2_Client extends Config
 
 			// reconstruit la ligne A
 			for (short i=0; i<n; i++) {
-				ligneA[i] = IntToBytes.bytesToInt(tampon, (offset++)*TAILLE_INT);
+				ligneA[i] = Outils.bytesToInt(tampon, (offset++)*TAILLE_INT);
 			}
 
 			// reconstruit la matrice B
 			for (short i=0; i<n; i++) {
 				for (short j=0; j<n; j++) {
-					matB[i][j] = IntToBytes.bytesToInt(tampon, 
+					matB[i][j] = Outils.bytesToInt(tampon, 
 							(offset++)*TAILLE_INT);
 				}
 			}
@@ -139,11 +139,11 @@ public class V2_Client extends Config
 			/* 
 			 * Emet la ligne calculee au coordinateur
 			 */
-			IntToBytes.intToBytes(ligneACalculer, tampon, (offset++));
+			Outils.intToBytes(ligneACalculer, tampon, (offset++));
 
 			// envoie la ligne calculee au serveur
 			for (short i=0; i<n; i++) {
-				IntToBytes.intToBytes(ligneC[i], tampon, (offset++)*4);
+				Outils.intToBytes(ligneC[i], tampon, (offset++)*4);
 			}
 
 			// affiche les resultats

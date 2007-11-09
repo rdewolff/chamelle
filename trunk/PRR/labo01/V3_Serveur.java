@@ -103,7 +103,7 @@ public class V3_Serveur extends Config
 				System.out.println("Client n. " + nbClientConnecte + 
 						" synchronise "); // afiche qu'un client est connecte
 				// renvoie la taille des matrices au client qui se connecte
-				IntToBytes.intToBytes(n, tampon, 0);
+				Outils.intToBytes(n, tampon, 0);
 				paquet = new DatagramPacket(tampon, tampon.length, 
 						paquet.getAddress(), paquet.getPort()); // paquet d'envoi
 				socket.send(paquet);
@@ -121,7 +121,7 @@ public class V3_Serveur extends Config
 			int offset = 0; // le pointeur d'insertion dans le tableau de byte 
 			for (short i=0; i<n; i++) {
 				for (short j=0; j<n; j++) {
-					IntToBytes.intToBytes(matB[i][j], tampon, (offset++)*4);
+					Outils.intToBytes(matB[i][j], tampon, (offset++)*4);
 				}
 			}
 
@@ -141,10 +141,10 @@ public class V3_Serveur extends Config
 			for (short i=0; i<n; i++) {
 				offset = 0; // reinitialise le pointeur d'insertion
 				// insere la ligne a calculer dans le tampon 
-				IntToBytes.intToBytes(i, tampon, offset++);
+				Outils.intToBytes(i, tampon, offset++);
 				// insere la ligne de A dans le tampon
 				for (short j=0; j<n; j++)
-					IntToBytes.intToBytes(matA[i][j], tampon, (offset++)*4);
+					Outils.intToBytes(matA[i][j], tampon, (offset++)*4);
 				// preparation du paquet d'envoi
 				paquet = new DatagramPacket(tampon, tampon.length, 
 						clients[i].getAddress(), clients[i].getPort()); 
@@ -159,11 +159,11 @@ public class V3_Serveur extends Config
 				offset = 0; // reset la position ou on se trouve dans le tampon
 				paquet = new DatagramPacket(tampon, tampon.length);	
 				socket.receive(paquet); // attend la requete du client
-				int ligneRecue = IntToBytes.bytesToInt(tampon, 
+				int ligneRecue = Outils.bytesToInt(tampon, 
 						(offset++)*TAILLE_INT);
 				System.out.println("Ligne recue : " + ligneRecue);
 				for (short i=0; i<n; i++) {
-					matC[ligneRecue][i] = IntToBytes.bytesToInt(tampon, 
+					matC[ligneRecue][i] = Outils.bytesToInt(tampon, 
 							(offset++)*TAILLE_INT);
 				}
 			}

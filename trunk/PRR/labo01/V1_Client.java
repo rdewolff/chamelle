@@ -63,7 +63,7 @@ class V1_Client extends Config
 				// Recuperation de la dimension de la matrice
 				for(short i=0; i<TAILLE_INT; i++)
 					in[i] = inFromServer.readByte();
-				n = IntToBytes.bytesToInt(in, 0);
+				n = Outils.bytesToInt(in, 0);
 				break;
 			} catch (IOException e) {
 				System.out.println("Tentative de connexion..."); 
@@ -84,7 +84,7 @@ class V1_Client extends Config
 		{
 			for(short j=0; j<TAILLE_INT; j++)
 				in[j] = inFromServer.readByte();
-			ligne[i] = IntToBytes.bytesToInt(in, 0);
+			ligne[i] = Outils.bytesToInt(in, 0);
 		}
 
 		// Recuperation de la matrice
@@ -93,7 +93,7 @@ class V1_Client extends Config
 			{
 				for(short k=0; k<TAILLE_INT; k++)
 					in[k] = inFromServer.readByte();
-				mat[j][i] = IntToBytes.bytesToInt(in, 0);
+				mat[j][i] = Outils.bytesToInt(in, 0);
 			}
 
 		/*
@@ -106,7 +106,7 @@ class V1_Client extends Config
 
 		// Creation du tableau de bytes a renvoyer au serveur
 		for(short i=0; i<n; i++)
-			IntToBytes.intToBytes(ligneRetour[i], byteRetour, i*TAILLE_INT);
+			Outils.intToBytes(ligneRetour[i], byteRetour, i*TAILLE_INT);
 
 		/*
 		 * Emet la ligne calculee au coordinateur/serveur
