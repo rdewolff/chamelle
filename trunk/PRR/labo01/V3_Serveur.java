@@ -56,18 +56,18 @@ public class V3_Serveur extends Config
 			int TAILLE_TAMPON_SYNCHRO = 4*TAILLE_CHAR; // message recu : "HELO"
 
 			// creation des tableaux sur lequelles on va faire les calculs
-			int[][]  tabA, tabB, tabC;
-			tabA = new int[n][n];
-			tabB = new int[n][n];
-			tabC = new int[n][n];
+			int[][]  matA, matB, matC;
+			matA = new int[n][n];
+			matB = new int[n][n];
+			matC = new int[n][n];
 
 			// insertion de valeurs aleatoires dans le tableau
 			Random hasard = new Random();
 			// parcours les deux talbeaux et insere les valeurs aleatoires
 			for (short i=0; i<n; i++) {
 				for (short j=0; j<n; j++) {
-					tabA[i][j] = hasard.nextInt(10);
-					tabB[i][j] = hasard.nextInt(10);
+					matA[i][j] = hasard.nextInt(10);
+					matB[i][j] = hasard.nextInt(10);
 				}
 			}
 
@@ -112,7 +112,7 @@ public class V3_Serveur extends Config
 			int offset = 0; // le pointeur d'insertion dans le tableau de byte 
 			for (short i=0; i<n; i++) {
 				for (short j=0; j<n; j++) {
-					IntToBytes.intToBytes(tabB[i][j], tampon, (offset++)*4);
+					IntToBytes.intToBytes(matB[i][j], tampon, (offset++)*4);
 				}
 			}
 
@@ -135,7 +135,7 @@ public class V3_Serveur extends Config
 				IntToBytes.intToBytes(i, tampon, offset++);
 				// insere la ligne de A dans le tampon
 				for (short j=0; j<n; j++)
-					IntToBytes.intToBytes(tabA[i][j], tampon, (offset++)*4);
+					IntToBytes.intToBytes(matA[i][j], tampon, (offset++)*4);
 				paquet = new DatagramPacket(tampon, tampon.length, clients[i].getAddress(), clients[i].getPort()); // preparation du paquet d'envoi
 				socket.send(paquet); // envoie le paquet au client
 			}
@@ -151,7 +151,7 @@ public class V3_Serveur extends Config
 				int ligneRecue = IntToBytes.bytesToInt(tampon, (offset++)*TAILLE_INT);
 				System.out.println("Ligne recue : " + ligneRecue);
 				for (short i=0; i<n; i++) {
-					tabC[ligneRecue][i] = IntToBytes.bytesToInt(tampon, (offset++)*TAILLE_INT);
+					matC[ligneRecue][i] = IntToBytes.bytesToInt(tampon, (offset++)*TAILLE_INT);
 				}
 			}
 
@@ -161,19 +161,19 @@ public class V3_Serveur extends Config
 			System.out.println("Affichages des matrices");
 			// affiche les tableaux ainsi que le resultats calcules
 			System.out.println("Matrice A");
-			afficheMatrice(tabA);
+			afficheMatrice(matA);
 
 			System.out.println("Matrice B");
-			afficheMatrice(tabB);
+			afficheMatrice(matB);
 
 			System.out.println("Matrice C = A x B (recue ligne par ligne)");
-			afficheMatrice(tabC);
+			afficheMatrice(matC);
 
 			// pour la verification, on recalcul la matrice localement
 			// reinit la matrice avant le calcul local
 			for (short i=0; i<n; i++) { // i = ligne
 				for (short j=0; j<n; j++) { // j = colonne
-					tabC[i][j] = 0;
+					matC[i][j] = 0;
 				}
 			}
 			// calcul les valeurs localement, pour comparer avec les informations recus des clients
@@ -181,14 +181,14 @@ public class V3_Serveur extends Config
 				for (short j=0; j<n; j++) { // j = colonne
 					// multiplie avec la colonne de la matrice B
 					for (short k=0; k<n; k++) {
-						tabC[i][j] += tabA[i][k] * tabB[k][j];
+						matC[i][j] += matA[i][k] * matB[k][j];
 					}    		   
 				}
 			}
 
 			// affiche la matrice C calculee en local pour comparaison
 			System.out.println("Matrice C = A x B (local calcul)");
-			afficheMatrice(tabC);
+			afficheMatrice(matC);
 
 			// ferme le socket de connexion
 			socketMulti.close();
