@@ -1,10 +1,11 @@
 import java.net.*;
 import java.io.*;
 
-public class V2_Client {	
-	
-	/* 
-	 * Affichage de la matrice passee en parametre (2D)
+public class V2_Client extends Config
+{
+	/** 
+	 * Affichage de la matrice carrée passée en parametre (2 dimensions)
+	 * @param int [] [] tableau
 	 */
 	private static void afficheMatrice(int [][] tableau) {
 		for (short i=0; i<tableau.length; i++) {
@@ -20,73 +21,88 @@ public class V2_Client {
 	 */
 	public static void main (String args[]) throws IOException {
 		try {
-			
 			// adresse et port de connexion passe en parametre
-			InetAddress address = InetAddress.getByName(args[0]); 
-			int port = Integer.parseInt(args[1]); 
-			
-			 // synchronisation avec le serveur
+			InetAddress address = InetAddress.getByName(HOST);
+
+			// synchronisation avec le serveur
 			String query = "HELO";
-			int TAILLE_TAMPON = 4;
-			int TAILLE_TAMPON_SYNCHRO = query.length()*2; // message recu : "HELO"
-			byte[] tampon = new byte[TAILLE_TAMPON_SYNCHRO]; // defini la taille miniumm necessaire. Un char = 2 bytes
-			tampon = query.getBytes();
-			
+			int TAILLE_TAMPON = 2*TAILLE_INT;
+			int TAILLE_TAMPON_SYNCHRO = query.length()*TAILLE_CHAR; // message recu : "HELO"
+			byte[] tampon;
+
 			System.out.println("*** Client ***");
-			BufferedReader stdin= new BufferedReader(new InputStreamReader(System.in)); 
-			System.out.print("Appuyer sur une <enter> pour vous connecter au serveur"); 
-			stdin.readLine(); // attend touche <enter> 
-			
-			// synchronisation avec le serveur : envoie au serveur un paquet de requete, pour qu'il sache qu'il est connecte
+			// Variables UDP
 			DatagramSocket socket = new DatagramSocket();
-			DatagramPacket paquet = new DatagramPacket(tampon, tampon.length, address, port);
-			socket.send(paquet); // envoi du paquet a l'aide du socket
-			
-			/* 
-			 * Recoit les infos du serveur
-			 */
-			TAILLE_TAMPON = (5*5+2)*4;
-			tampon = new byte[TAILLE_TAMPON]; // reinit le tampon avec la bonne taille
-			paquet = new DatagramPacket(tampon, tampon.length);
-			socket.receive(paquet); 
-			
+			DatagramPacket paquet;
+
+			// Boucle d'attente de l'existence du serveur
+			while (true) {
+				try {
+					tampon = new byte[TAILLE_TAMPON_SYNCHRO]; // definit la taille miniumm necessaire.
+					tampon = query.getBytes();
+					// synchronisation avec le serveur : envoie au serveur un paquet de requete, 
+					// pour qu'il sache qu'il est connecte
+					paquet = new DatagramPacket(tampon, tampon.length, address, PORT);
+					socket.send(paquet); // envoi du paquet a l'aide du socket
+
+					/* 
+					 * Recoit les infos du serveur
+					 */
+					tampon = new byte[TAILLE_TAMPON]; // reinit le tampon avec la bonne taille
+					paquet = new DatagramPacket(tampon, tampon.length);
+					socket.setSoTimeout(1000);
+					socket.receive(paquet); 
+					break;
+				} catch (Exception e) {
+					System.out.println("Tentative de connexion...");
+				}
+			}
+			// Enleve le chien de garde de la socket
+			socket.setSoTimeout(0);
+
 			// la connection est des lors etablie, la communication fonctionne
 			System.out.println("Connection avec le serveur etablie");
-			
-			// décomponse les elements recus par le serveur
+
+			// decomponse les elements recus par le serveur
 			int offset = 0; // le pointeur d'insertion dans le tableau de byte
 			// recoit les infos qui sont dans un seul character (deux nombre < 10)
 			int ligneACalculer = IntToBytes.bytesToInt(tampon, (offset++));
-			int tailleMatrice = IntToBytes.bytesToInt(tampon, (offset++)*4);
+			int n = IntToBytes.bytesToInt(tampon, (offset++)*4);
+
+			System.out.println("ligneACalculer: " + ligneACalculer + "\nn: " + n);
+
+			offset = 0; // Reset de l'offset de lecture
+			tampon = new byte[(n*n+n)*TAILLE_INT]; // reinit le tampon avec la bonne taille
+			paquet = new DatagramPacket(tampon, tampon.length);
+			socket.receive(paquet); 
 			
-			System.out.println("ligneACalculer: " + ligneACalculer + "\ntailleMatrice: " + tailleMatrice);
-			
-			int[] ligneA = new int[tailleMatrice];
-			int[] ligneC = new int[tailleMatrice];			
-			int[][] tabB = new int[tailleMatrice][tailleMatrice];
-			
+			// Variables pour le calcul de la ligne
+			int[] ligneA = new int[n];
+			int[] ligneC = new int[n];			
+			int[][] tabB = new int[n][n];
+
 			// reconstruit la ligne A
-			for (short i=0; i<tailleMatrice; i++) {
-				ligneA[i] = IntToBytes.bytesToInt(tampon, (offset++)*4);
+			for (short i=0; i<n; i++) {
+				ligneA[i] = IntToBytes.bytesToInt(tampon, (offset++)*TAILLE_INT);
 			}
-			
+
 			// reconstruit la matrice B
-			for (short i=0; i<tailleMatrice; i++) {
-				for (short j=0; j<tailleMatrice; j++) {
-					tabB[i][j] = IntToBytes.bytesToInt(tampon, (offset++)*4);
+			for (short i=0; i<n; i++) {
+				for (short j=0; j<n; j++) {
+					tabB[i][j] = IntToBytes.bytesToInt(tampon, (offset++)*TAILLE_INT);
 				}
 			}
-			
+
 			/*
 			 * Calcul la ligne correspondante de C
 			 */
-			for (short j=0; j<tailleMatrice; j++) { // j = colonne
+			for (short j=0; j<n; j++) { // j = colonne
 				// multiplie avec la colonne de la matrice B
-				for (short k=0; k<tailleMatrice; k++) {
+				for (short k=0; k<n; k++) {
 					ligneC[j] += ligneA[k] * tabB[k][j];
 				}    		   
 			}
-			
+
 			// reset la décalage
 			offset = 0;  
 
@@ -94,9 +110,9 @@ public class V2_Client {
 			 * Emet la ligne calculee au coordinateur
 			 */
 			IntToBytes.intToBytes(ligneACalculer, tampon, (offset++));
-			
+
 			// envoie la ligne calculee au serveur
-			for (short i=0; i<tailleMatrice; i++) {
+			for (short i=0; i<n; i++) {
 				IntToBytes.intToBytes(ligneC[i], tampon, (offset++)*4);
 			}
 
@@ -105,25 +121,25 @@ public class V2_Client {
 			for (int i=0; i<ligneA.length; i++) {
 				System.out.print(ligneA[i] + " ");
 			}
-			
+
 			// affiche la matrice B
 			System.out.println("\nMatrice B");
 			afficheMatrice(tabB);
-			
+
 			// affiche la ligne C calculee par ce client
 			System.out.println("Ligne de C calculee");
 			for (int i=0; i<ligneC.length; i++) {
 				System.out.print(ligneC[i] + " ");
 			}
-			
+
 			// envoie tout
-			paquet = new DatagramPacket(tampon, tampon.length, address, port);
+			paquet = new DatagramPacket(tampon, tampon.length, address, PORT);
 			socket.send(paquet); // envoi du paquet a l'aide du socket
-			
+
 			// ferme la connection
 			socket.close();
 			System.out.println("\n*** fin client ***");
-			
+
 		} catch (IOException e) {
 			System.err.println(e);
 
