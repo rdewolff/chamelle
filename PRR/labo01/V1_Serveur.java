@@ -99,15 +99,15 @@ class V1_Serveur extends Config
 			DataOutputStream fluxSortie = 
 				new DataOutputStream(connectionSocket[i].getOutputStream());
 			// Nombre de travailleurs (dimension matrice)
-			IntToBytes.intToBytes(N, out, 0);
+			Outils.intToBytes(N, out, 0);
 			// Ligne de la matrice A que le client i utilisera
 			for(int j=0; j<N; j++)
-				IntToBytes.intToBytes(matA[i][j], out, 
+				Outils.intToBytes(matA[i][j], out, 
 									  (j*TAILLE_INT + TAILLE_INT));
 			// La matrice B
 			for(int j=0; j<N; j++)
 				for(int k=0; k<N; k++)
-					IntToBytes.intToBytes(matB[j][k], out, (j*TAILLE_INT + 
+					Outils.intToBytes(matB[j][k], out, (j*TAILLE_INT + 
 								k*N*TAILLE_INT + TAILLE_INT + N*TAILLE_INT));
 			// Envoi du tableau de bytes aux clients
 			fluxSortie.write(out, 0, dimTab);
@@ -132,7 +132,7 @@ class V1_Serveur extends Config
 			{
 				for(int k=0; k<TAILLE_INT; k++)
 					in[k] = fluxEntree.readByte();
-				matC[i][j] = IntToBytes.bytesToInt(in, 0);
+				matC[i][j] = Outils.bytesToInt(in, 0);
 			}
 		}
 
