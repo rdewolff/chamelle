@@ -15,7 +15,7 @@ class V1_Client extends Config
 
 	public static void main(String argv[]) throws Exception { 
 
-		while(true){ // TODO : trop rapide!!!!
+		while(true){
 			try {
 
 				/*
@@ -86,6 +86,7 @@ class V1_Client extends Config
 				/*
 				 * Emet la ligne calculee au coordinateur/serveur
 				 */
+				
 				outToServer.write(byteRetour, 0, TAILLE_INT*n);
 
 				// Fermeture de la connexion
