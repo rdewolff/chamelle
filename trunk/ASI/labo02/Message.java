@@ -5,11 +5,11 @@ import java.text.*;
  * Le message email.
  */
 public class Message {
-    /* Les entêtes et le corps du message. */
+    /* Les entÃªtes et le corps du message. */
     public String Headers;
     public String Body;
 
-    /* Serveur SMTP, expéditeur et destinataire. */
+    /* Serveur SMTP, expÃ©diteur et destinataire. */
     private String SMTPServer;
     private String From;
     private String To;
@@ -17,7 +17,7 @@ public class Message {
     /* Pour les fins de ligne. */
     private static final String CRLF = "\r\n";
 
-    /* Créer l'objet Message en insérant les entêtes requises par la RFC 2822. */
+    /* CrÃ©er l'objet Message en insÃ©rant les entÃªtes requises par la RFC 2822. */
     public Message(String SMTPServer, String from, String to, String subject, String text) {
 	/* Enlever les espaces vides */
 	this.SMTPServer = SMTPServer.trim();
@@ -35,7 +35,7 @@ public class Message {
 	Body = text;
     }
 
-    /* Méthodes pour accéder le serveur SMTP, l'expéditeur et le destinataire */
+    /* MÃ©thodes pour accÃ©der le serveur SMTP, l'expÃ©diteur et le destinataire */
    
     public String getSMTPServer() {
 	return SMTPServer;
@@ -50,14 +50,14 @@ public class Message {
     }
 
 
-    /* Contrôler si le message est valide en vérifiant que l'expéditeur
-       et le destinataire contiennent seulement un caractère "@". */
+    /* ContrÃ´ler si le message est valide en vÃ©rifiant que l'expÃ©diteur
+       et le destinataire contiennent seulement un caractÃ¨re "@". */
     public boolean isValid() {
 	int fromAt = From.indexOf('@');
 	int toAt = To.indexOf('@');
 
 	if(fromAt < 1 || (From.length() - fromAt) <= 1 || fromAt != From.lastIndexOf('@')) {
-	    System.out.println("L'adresse expéditeur est invalide");
+	    System.out.println("L'adresse expÃ©diteur est invalide");
 	    return false;
 	}
 	if(toAt < 1 || (To.length() - toAt) <= 1 || toAt != To.lastIndexOf('@')) {

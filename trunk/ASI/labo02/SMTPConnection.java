@@ -10,7 +10,7 @@ public class SMTPConnection {
     /* La socket de connection */
     public Socket socketConnection;
 
-    /* Flux pour lire et écrire dans la socket */
+    /* Flux pour lire et Ã©crire dans la socket */
     public BufferedReader fromServer;
     public DataOutputStream toServer;
 
@@ -18,39 +18,39 @@ public class SMTPConnection {
     private static final int SMTP_PORT = 25;
     private static final String CRLF = "\r\n";
 
-    /* Sommes-nous connectés? Utilisé dans close() pour déterminer que faire. */
+    /* Sommes-nous connectÃ©s? UtilisÃ© dans close() pour dÃ©terminer que faire. */
     private boolean isConnected = false;
 
-    /* Constructeur. Créer la socket et les flux associés. 
-       Envoyer la commande HELO et contrôler s'il y a des erreurs. */
+    /* Constructeur. CrÃ©er la socket et les flux associÃ©s. 
+       Envoyer la commande HELO et contrÃ´ler s'il y a des erreurs. */
     public SMTPConnection(Envelope envelope) throws IOException {
-	// socketConnection = /* compléter */;
-	fromServer = /* compléter */;
-	toServer = /* compléter */;
+	// socketConnection = /* complÃ©ter */;
+	fromServer = /* complÃ©ter */;
+	toServer = /* complÃ©ter */;
 
-	// Lire une ligne du serveur et vérifier que le code de réponse est 220.
-	/* compléter */
+	// Lire une ligne du serveur et vÃ©rifier que le code de rÃ©ponse est 220.
+	/* complÃ©ter */
 	
 	// Echange (handshake) SMTP. Nous avons besoin du nom de la machine
-	// locale. Envoyer la commande SMTP initiale appropriée.
-	String localhost = /* compléter */;
+	// locale. Envoyer la commande SMTP initiale appropriÃ©e.
+	String localhost = /* complÃ©ter */;
 	try {
-	    sendCommand(/* compléter */);
+	    sendCommand(/* complÃ©ter */);
 	} catch (IOException e) {
-	    System.out.println(/* compléter */);
+	    System.out.println(/* complÃ©ter */);
 	    return;
 	}
 	isConnected = true;
     }
 
     /* Envoyer le message. Ecrire simplement les commandes SMTP correctes
-       dans le bon ordre. Pas de contrôle d'erreur, on les lance vers
+       dans le bon ordre. Pas de contrÃ´le d'erreur, on les lance vers
        l'appelant... */
     public void send(Envelope envelope) throws IOException {
-	// Envoyer toutes les commandes nécessaires pour envoyer un
+	// Envoyer toutes les commandes nÃ©cessaires pour envoyer un
 	// message. Appeler sendCommand() pour faire le travail. Ne pas
-	// attraper d'exception lancée par sendCommand() ici à l'intérieur.
-	/* compléter */
+	// attraper d'exception lancÃ©e par sendCommand() ici Ã  l'intÃ©rieur.
+	/* complÃ©ter */
 	
     }
 
@@ -58,7 +58,7 @@ public class SMTPConnection {
     public void close() {
 	isConnected = false;
 	try {
-	    sendCommand(/* compléter */);
+	    sendCommand(/* complÃ©ter */);
 	    socketConnection.close();
 	} catch (IOException e) {
 	    System.out.println("Impossible de fermer la connexion: " + e);
@@ -66,25 +66,25 @@ public class SMTPConnection {
 	}
     }
 
-    /* Envoyer une commande SMTP au serveur. Contrôler le code de réponse.
-       Ne contrôle pas les codes de réponse multiples (requis pour RCPT TO). */
+    /* Envoyer une commande SMTP au serveur. ContrÃ´ler le code de rÃ©ponse.
+       Ne contrÃ´le pas les codes de rÃ©ponse multiples (requis pour RCPT TO). */
     private void sendCommand(String command, int rc) throws IOException {
-	// Ecrire la commande au serveur et lire la réponse du serveur
-	/* compléter */
+	// Ecrire la commande au serveur et lire la rÃ©ponse du serveur
+	/* complÃ©ter */
 	
-	// Vérifier que la réponse du serveur est la même que le paramètre
+	// VÃ©rifier que la rÃ©ponse du serveur est la mÃªme que le paramÃ¨tre
 	// rc. Si ce n'est pas le cas, lancer une IOException.
-	/* compléter */
+	/* complÃ©ter */
 
     }
 
-    /* Parser la ligne de réponse du serveur. Retourner le code de réponse. */
+    /* Parser la ligne de rÃ©ponse du serveur. Retourner le code de rÃ©ponse. */
     private int parseReply(String reply) {
-	/* compléter */
-	
+	/* complÃ©ter */
+	return 0; // TODO: temp
     }
 
-    /* Destructeur. Fermer la connexion si qqch anormal est arrivé. */
+    /* Destructeur. Fermer la connexion si qqch anormal est arrivÃ©. */
     protected void finalize() throws Throwable {
 	if(isConnected) {
 	    close();
