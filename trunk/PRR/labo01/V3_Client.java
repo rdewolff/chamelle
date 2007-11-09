@@ -29,7 +29,7 @@ public class V3_Client {
 			 * Déclarations et initialisations
 			 */
 			// adresse et port de connexion passe en parametre
-			InetAddress address = InetAddress.getByName(args[0]); 
+			InetAddress address = InetAddress.getByName(args[0]); // TODO : check param juste
 			int port = Integer.parseInt(args[1]); 
 			
 			String query = "HELO"; // pour se sychroniser avec le serveur
@@ -72,7 +72,7 @@ public class V3_Client {
 			// recoit la matrice B du serveur en diffusion
 			tampon = new byte[tailleMatrice*tailleMatrice*tailleInt];
 			paquet = new DatagramPacket(tampon, tampon.length);
-			socketMulti.receive(paquet); 
+			socketMulti.receive(paquet); // TODO : n-ième client ne recoit pas la matrice du serveur
 			
 			System.out.println("Matrice B recue du serveur!");
 			
@@ -85,6 +85,9 @@ public class V3_Client {
 					offset++;
 				}
 			}
+			
+			// TODO : merde par la
+			System.out.println("A");
 			
 			// recoit l'indice de B et la ligne de A
 			int[] ligneA = new int[tailleMatrice];
