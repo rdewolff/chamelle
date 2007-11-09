@@ -37,18 +37,18 @@ public class V2_Serveur extends Config
 			final int TAILLE_TAMPON_SYNCHRO = TAILLE_CHAR; // message recu : "HELO"
 
 			// creation des tableaux sur lequelles on va faire les calculs
-			int[][]  tabA, tabB, tabC;
-			tabA = new int[n][n];
-			tabB = new int[n][n];
-			tabC = new int[n][n];
+			int[][]  matA, matB, matC;
+			matA = new int[n][n];
+			matB = new int[n][n];
+			matC = new int[n][n];
 
 			// insertion de valeurs aleatoires dans le tableau
 			Random hasard = new Random();
 			// parcours les deux talbeaux et insere les valeurs aleatoires
 			for (short i=0; i<n; i++) {
 				for (short j=0; j<n; j++) {
-					tabA[i][j] = hasard.nextInt(10);
-					tabB[i][j] = hasard.nextInt(10);
+					matA[i][j] = hasard.nextInt(10);
+					matB[i][j] = hasard.nextInt(10);
 				}
 			}
 
@@ -93,14 +93,14 @@ public class V2_Serveur extends Config
 
 				// insere la ligne de la matrice A dans le tampon
 				for (short i=0; i<n; i++) {
-					IntToBytes.intToBytes(tabA[k][i], tampon, offset*TAILLE_INT);
+					IntToBytes.intToBytes(matA[k][i], tampon, offset*TAILLE_INT);
 					offset++;
 				}
 
 				// insere la matrice B dans le tampon
 				for (short i=0; i<n; i++) {
 					for (short j=0; j<n; j++) {
-						IntToBytes.intToBytes(tabB[i][j], tampon, offset*TAILLE_INT);
+						IntToBytes.intToBytes(matB[i][j], tampon, offset*TAILLE_INT);
 						offset++;
 					}
 				}
@@ -120,7 +120,7 @@ public class V2_Serveur extends Config
 				int ligneRecue = IntToBytes.bytesToInt(tampon, offset*TAILLE_INT);
 				offset++;
 				for (short i=0; i<n; i++) {
-					tabC[ligneRecue][i] = IntToBytes.bytesToInt(tampon, offset*TAILLE_INT);
+					matC[ligneRecue][i] = IntToBytes.bytesToInt(tampon, offset*TAILLE_INT);
 					offset++;
 				}
 			}
@@ -133,19 +133,19 @@ public class V2_Serveur extends Config
 			 * Affiche la matrice
 			 */
 			System.out.println("Matrice A");
-			afficheMatrice(tabA);
+			afficheMatrice(matA);
 
 			System.out.println("Matrice B");
-			afficheMatrice(tabB);
+			afficheMatrice(matB);
 
 			System.out.println("Matrice C = A x B (recue ligne par ligne)");
-			afficheMatrice(tabC);
+			afficheMatrice(matC);
 
 			// pour la verification, on recalcul la matrice localement
 			// reinit la matrice avant le calcul local
 			for (short i=0; i<n; i++) { // i = ligne
 				for (short j=0; j<n; j++) { // j = colonne
-					tabC[i][j] = 0;
+					matC[i][j] = 0;
 				}
 			}
 
@@ -154,14 +154,14 @@ public class V2_Serveur extends Config
 				for (short j=0; j<n; j++) { // j = colonne
 					// multiplie avec la colonne de la matrice B
 					for (short k=0; k<n; k++) {
-						tabC[i][j] += tabA[i][k] * tabB[k][j];
+						matC[i][j] += matA[i][k] * matB[k][j];
 					}    		   
 				}
 			}
 
 			// affiche la matrice C calculee en local pour comparaison
 			System.out.println("Matrice C = A x B (local calcul)");
-			afficheMatrice(tabC);
+			afficheMatrice(matC);
 
 			// ferme le socket de connexion
 			socket.close();

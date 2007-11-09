@@ -133,6 +133,28 @@ class V1_Serveur extends Config
 
 		System.out.println("Matrice C = A x B");
 		afficheMatrice(matC);
+		
+		// pour la verification, on recalcul la matrice localement
+		// reinit la matrice avant le calcul local
+		for (short i=0; i<N; i++) { // i = ligne
+			for (short j=0; j<N; j++) { // j = colonne
+				matC[i][j] = 0;
+			}
+		}
+
+		// calcul les valeurs localement, pour comparer avec les informatiosn recus des clients
+		for (short i=0; i<N; i++) { // i = ligne
+			for (short j=0; j<N; j++) { // j = colonne
+				// multiplie avec la colonne de la matrice B
+				for (short k=0; k<N; k++) {
+					matC[i][j] += matA[i][k] * matB[k][j];
+				}    		   
+			}
+		}
+		
+		// affiche la matrice C calculee en local pour comparaison
+		System.out.println("Matrice C = A x B (local calcul)");
+		afficheMatrice(matC);
 
 		// fin de l'execution du serveur
 		System.out.println("Fin de l'execution du serveur.");

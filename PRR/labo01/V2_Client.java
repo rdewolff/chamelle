@@ -79,7 +79,7 @@ public class V2_Client extends Config
 			// Variables pour le calcul de la ligne
 			int[] ligneA = new int[n];
 			int[] ligneC = new int[n];			
-			int[][] tabB = new int[n][n];
+			int[][] matB = new int[n][n];
 
 			// reconstruit la ligne A
 			for (short i=0; i<n; i++) {
@@ -89,7 +89,7 @@ public class V2_Client extends Config
 			// reconstruit la matrice B
 			for (short i=0; i<n; i++) {
 				for (short j=0; j<n; j++) {
-					tabB[i][j] = IntToBytes.bytesToInt(tampon, (offset++)*TAILLE_INT);
+					matB[i][j] = IntToBytes.bytesToInt(tampon, (offset++)*TAILLE_INT);
 				}
 			}
 
@@ -99,7 +99,7 @@ public class V2_Client extends Config
 			for (short j=0; j<n; j++) { // j = colonne
 				// multiplie avec la colonne de la matrice B
 				for (short k=0; k<n; k++) {
-					ligneC[j] += ligneA[k] * tabB[k][j];
+					ligneC[j] += ligneA[k] * matB[k][j];
 				}    		   
 			}
 
@@ -124,7 +124,7 @@ public class V2_Client extends Config
 
 			// affiche la matrice B
 			System.out.println("\nMatrice B");
-			afficheMatrice(tabB);
+			afficheMatrice(matB);
 
 			// affiche la ligne C calculee par ce client
 			System.out.println("Ligne de C calculee");
