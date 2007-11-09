@@ -59,18 +59,31 @@ public class V4_Client extends Config
 
 		// synchronisation avec le serveur : envoie au serveur un paquet de 
 		// requete, pour qu'il sache qu'il est connecte
-		DatagramSocket socketS = new DatagramSocket();
-		DatagramPacket paquetS = new DatagramPacket(tampon, tampon.length, 
-								 InetAddress.getByName(HOST), PORT_UDP);
-		socketS.send(paquetS); // envoi du paquet a l'aide du socket
-
-		/*
-		 * Recoit les informations du serveur
-		 */
+		DatagramSocket socketS;
+		DatagramPacket paquetS;
 		
-		// Reception du nombre de travailleurs et de numero de ce travailleur
-		paquetS = new DatagramPacket(tamponDim, tamponDim.length);
-		socketS.receive(paquetS);
+		// Boucle d'attente de connexion au serveur
+		while(true){
+			try {
+				socketS = new DatagramSocket();
+				paquetS = new DatagramPacket(tampon, tampon.length, 
+						 InetAddress.getByName(HOST), PORT_UDP);
+				socketS.send(paquetS); // envoi du paquet a l'aide du socket
+
+				/*
+				 * Recoit les informations du serveur
+				 */
+
+				// Reception du nombre de travailleurs et de numero de 
+				// ce travailleur
+				paquetS = new DatagramPacket(tamponDim, tamponDim.length);
+				socketS.setSoTimeout(1000);
+				socketS.receive(paquetS);
+				break;
+			} catch (IOException e) {
+				System.out.println("Tentative de connexion..."); 
+			}
+		}
 		n = IntToBytes.bytesToInt(tamponDim, 0);
 		numero = IntToBytes.bytesToInt(tamponDim, TAILLE_INT);
 
