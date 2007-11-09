@@ -16,11 +16,12 @@ import java.util.*;
  * Le coordinateur (serveur) va envoyer à chaque travailleur (client) une ligne 
  * de la matrice A et la matrice B.
  * 
- * Chaque travailleur va calculer la ligne de C et la remettre au travailleur.
+ * Chaque client va calculer la ligne de C et la remettre au serveur.
  * 
  * Le serveur utilise la parametre PORT de la classe Config, et il faut lancer les
  * clients avec PORT, PORT + 1 ... PORT + n-1 en parametre.
  * 
+ * Note: Les clients peuvent etre lances avant le serveur.
  * 
  * @author Romain de Wolff
  * @author Simon Hintermann
