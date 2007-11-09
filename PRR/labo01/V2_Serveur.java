@@ -28,20 +28,7 @@ import java.io.*;
  */
 
 public class V2_Serveur extends Config
-{	
-	/** 
-	 * Affichage de la matrice carrée passée en parametre (2 dimensions)
-	 * @param int [] [] tableau
-	 */
-	private static void afficheMatrice(int [][] tableau) {
-		for (short i=0; i<tableau.length; i++) {
-			for (short j=0; j<tableau.length; j++) {
-				System.out.print(tableau[i][j] + " "); 
-			}
-			System.out.print('\n');
-		}
-	}
-
+{
 	public static void main (String args[]) throws IOException, SocketException 
 	{
 		try {
@@ -90,8 +77,8 @@ public class V2_Serveur extends Config
 				clients[nbClientConnecte] = new Clients(nbClientConnecte, 
 						paquet.getAddress(), paquet.getPort());
 				tampon = new byte[TAILLE_TAMPON]; // redefinit la taille du tampon 
-				IntToBytes.intToBytes(nbClientConnecte, tampon, 0);
-				IntToBytes.intToBytes(n, tampon, TAILLE_INT);
+				Outils.intToBytes(nbClientConnecte, tampon, 0);
+				Outils.intToBytes(n, tampon, TAILLE_INT);
 				// envoie le paquet "tampon" contenant la taille des matrices 
 				// ainsi que la ligne de A et la matrice B
 				paquet = new DatagramPacket(tampon, tampon.length, 
@@ -116,14 +103,14 @@ public class V2_Serveur extends Config
 
 				// insere la ligne de la matrice A dans le tampon
 				for (short i=0; i<n; i++) {
-					IntToBytes.intToBytes(matA[k][i], tampon, offset*TAILLE_INT);
+					Outils.intToBytes(matA[k][i], tampon, offset*TAILLE_INT);
 					offset++;
 				}
 
 				// insere la matrice B dans le tampon
 				for (short i=0; i<n; i++) {
 					for (short j=0; j<n; j++) {
-						IntToBytes.intToBytes(matB[i][j], tampon, 
+						Outils.intToBytes(matB[i][j], tampon, 
 								offset*TAILLE_INT);
 						offset++;
 					}
@@ -143,11 +130,11 @@ public class V2_Serveur extends Config
 				offset = 0; // reset la position ou on se trouve dans le tampon
 				paquet = new DatagramPacket(tampon, tampon.length);
 				socket.receive(paquet); // attend la requete du client
-				int ligneRecue = IntToBytes.bytesToInt(tampon, 
+				int ligneRecue = Outils.bytesToInt(tampon, 
 						offset*TAILLE_INT);
 				offset++;
 				for (short i=0; i<n; i++) {
-					matC[ligneRecue][i] = IntToBytes.bytesToInt(tampon, 
+					matC[ligneRecue][i] = Outils.bytesToInt(tampon, 
 							offset*TAILLE_INT);
 					offset++;
 				}
@@ -161,13 +148,13 @@ public class V2_Serveur extends Config
 			 * Affiche la matrice
 			 */
 			System.out.println("Matrice A");
-			afficheMatrice(matA);
+			Outils.afficheMatrice(matA);
 
 			System.out.println("Matrice B");
-			afficheMatrice(matB);
+			Outils.afficheMatrice(matB);
 
 			System.out.println("Matrice C = A x B (recue ligne par ligne)");
-			afficheMatrice(matC);
+			Outils.afficheMatrice(matC);
 
 			// pour la verification, on recalcul la matrice localement
 			// reinit la matrice avant le calcul local
@@ -190,7 +177,7 @@ public class V2_Serveur extends Config
 
 			// affiche la matrice C calculee en local pour comparaison
 			System.out.println("Matrice C = A x B (local calcul)");
-			afficheMatrice(matC);
+			Outils.afficheMatrice(matC);
 
 			// ferme le socket de connexion
 			socket.close();

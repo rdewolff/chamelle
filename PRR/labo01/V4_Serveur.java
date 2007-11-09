@@ -106,8 +106,8 @@ public class V4_Serveur extends Config
 			clients[i] = new Clients(i, paquetUDP.getAddress(), 
 								     paquetUDP.getPort());
 			//Envoie le nombre de travailleurs et le numero de travailleur
-			IntToBytes.intToBytes(N, tamponUDP, 0);
-			IntToBytes.intToBytes(i, tamponUDP, TAILLE_INT);
+			Outils.intToBytes(N, tamponUDP, 0);
+			Outils.intToBytes(i, tamponUDP, TAILLE_INT);
 			paquetUDP = new DatagramPacket(tamponUDP, tamponUDP.length, 
 						clients[i].getAddress(), clients[i].getPort());
 			socketS.send(paquetUDP);
@@ -126,7 +126,7 @@ public class V4_Serveur extends Config
 		for(short i=0; i<N; i++)
 			for(short j=0; j<N; j++)
 			{
-				IntToBytes.intToBytes(matA[i][j], tampon, offset*TAILLE_INT);
+				Outils.intToBytes(matA[i][j], tampon, offset*TAILLE_INT);
 				offset++;
 			}
 
@@ -134,7 +134,7 @@ public class V4_Serveur extends Config
 		for(int i=0; i<N; i++)
 			for(int j=0; j<N; j++)
 			{
-				IntToBytes.intToBytes(matB[i][j], tampon, offset*TAILLE_INT);
+				Outils.intToBytes(matB[i][j], tampon, offset*TAILLE_INT);
 				offset++;
 			}
 
@@ -154,10 +154,10 @@ public class V4_Serveur extends Config
 			socketS.receive(paquetUDP);
 			byte[] ligneRecue = paquetUDP.getData();
 			// Le premier int represente le numero du client
-			int noClient = IntToBytes.bytesToInt(ligneRecue, 0);
+			int noClient = Outils.bytesToInt(ligneRecue, 0);
 			// Mise a jour de la matrice C
 			for(int j=0; j<N; j++)
-				matC[noClient][j] = IntToBytes.bytesToInt(ligneRecue, 
+				matC[noClient][j] = Outils.bytesToInt(ligneRecue, 
 									j*TAILLE_INT + TAILLE_INT);
 		}
 		

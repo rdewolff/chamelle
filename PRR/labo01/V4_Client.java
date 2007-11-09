@@ -84,8 +84,8 @@ public class V4_Client extends Config
 				System.out.println("Tentative de connexion..."); 
 			}
 		}
-		n = IntToBytes.bytesToInt(tamponDim, 0);
-		numero = IntToBytes.bytesToInt(tamponDim, TAILLE_INT);
+		n = Outils.bytesToInt(tamponDim, 0);
+		numero = Outils.bytesToInt(tamponDim, TAILLE_INT);
 
 		// Initialisation des dimensions des matrices
 		matA = new int[n][n];
@@ -103,7 +103,7 @@ public class V4_Client extends Config
 		for(int i=0; i<n; i++)
 			for(int j=0; j<n; j++)
 			{
-				matA[i][j] = IntToBytes.bytesToInt(tampon, 
+				matA[i][j] = Outils.bytesToInt(tampon, 
 										(j*TAILLE_INT + i*n*TAILLE_INT));
 			}
 		
@@ -111,7 +111,7 @@ public class V4_Client extends Config
 		for(int i=0; i<n; i++)
 			for(int j=0; j<n; j++)
 			{
-				matB[i][j] = IntToBytes.bytesToInt(tampon, 
+				matB[i][j] = Outils.bytesToInt(tampon, 
 							 (j*TAILLE_INT + i*n*TAILLE_INT + n*n*TAILLE_INT));
 			}
 
@@ -136,7 +136,7 @@ public class V4_Client extends Config
 		
 		// Creation du tableau de bytes a renvoyer au serveur
 		for(short i=0; i<n+1; i++)
-			IntToBytes.intToBytes(ligneRetour[i], byteRetour, i*TAILLE_INT);
+			Outils.intToBytes(ligneRetour[i], byteRetour, i*TAILLE_INT);
 
 		// Construit le paquet a envoyer
 		paquetS = new DatagramPacket(byteRetour, byteRetour.length, 

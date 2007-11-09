@@ -4,7 +4,7 @@ public class Outils {
 	/**
 	 * Affichage de la matrice passee en parametre (2D)
 	 */
-	private static void afficheMatrice(int [][] tableau) {
+	public static void afficheMatrice(int [][] tableau) {
 		for (short i=0; i<tableau.length; i++) {
 			for (short j=0; j<tableau.length; j++) {
 				System.out.print(tableau[i][j] + " ");
