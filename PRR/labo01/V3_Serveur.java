@@ -88,20 +88,24 @@ public class V3_Serveur extends Config
 			System.out.println("*** Serveur demarre ***");
 			System.out.println("Attends que les travailleurs se presentent");
 
-			// attend que tous les clients soient connectes et stock leur information
+			// attend que tous les clients soient connectes et stock leur infos
 			Clients[] clients = new Clients[n];
 			// synchronisation avec tous les clients
 			while (nbClientConnecte < n) 
 			{
-				paquet = new DatagramPacket(tampon, tampon.length); // paquet de reception reception
+				// paquet de reception reception
+				paquet = new DatagramPacket(tampon, tampon.length); 
 				socket.receive(paquet); // attend la requete du client 
-				// stock les informations du client dans un objet prevu a cet effet			
-				clients[nbClientConnecte] = new Clients(nbClientConnecte, paquet.getAddress(), paquet.getPort());
+				// stock les informations du client dans un objet		
+				clients[nbClientConnecte] = new Clients(nbClientConnecte, 
+						paquet.getAddress(), paquet.getPort());
 				nbClientConnecte++;
-				System.out.println("Client n. " + nbClientConnecte + " synchronise "); // afiche qu'un client est connecte
-				// renvoie la taille des matrices au client qui vient de se connecte
+				System.out.println("Client n. " + nbClientConnecte + 
+						" synchronise "); // afiche qu'un client est connecte
+				// renvoie la taille des matrices au client qui se connecte
 				IntToBytes.intToBytes(n, tampon, 0);
-				paquet = new DatagramPacket(tampon, tampon.length, paquet.getAddress(), paquet.getPort()); // paquet d'envoi
+				paquet = new DatagramPacket(tampon, tampon.length, 
+						paquet.getAddress(), paquet.getPort()); // paquet d'envoi
 				socket.send(paquet);
 			}
 
@@ -133,7 +137,7 @@ public class V3_Serveur extends Config
 			// defini le tampon a la taille de la ligne de A
 			tampon = new byte[(n+1)*4]; 
 
-			// envoie a chaque client la ligne de A qu'il va utiliser pour ses calculs
+			// envoie a chaque client la ligne de A qu'il va utiliser
 			for (short i=0; i<n; i++) {
 				offset = 0; // reinitialise le pointeur d'insertion
 				// insere la ligne a calculer dans le tampon 
@@ -141,7 +145,9 @@ public class V3_Serveur extends Config
 				// insere la ligne de A dans le tampon
 				for (short j=0; j<n; j++)
 					IntToBytes.intToBytes(matA[i][j], tampon, (offset++)*4);
-				paquet = new DatagramPacket(tampon, tampon.length, clients[i].getAddress(), clients[i].getPort()); // preparation du paquet d'envoi
+				// preparation du paquet d'envoi
+				paquet = new DatagramPacket(tampon, tampon.length, 
+						clients[i].getAddress(), clients[i].getPort()); 
 				socket.send(paquet); // envoie le paquet au client
 			}
 
@@ -153,10 +159,12 @@ public class V3_Serveur extends Config
 				offset = 0; // reset la position ou on se trouve dans le tampon
 				paquet = new DatagramPacket(tampon, tampon.length);	
 				socket.receive(paquet); // attend la requete du client
-				int ligneRecue = IntToBytes.bytesToInt(tampon, (offset++)*TAILLE_INT);
+				int ligneRecue = IntToBytes.bytesToInt(tampon, 
+						(offset++)*TAILLE_INT);
 				System.out.println("Ligne recue : " + ligneRecue);
 				for (short i=0; i<n; i++) {
-					matC[ligneRecue][i] = IntToBytes.bytesToInt(tampon, (offset++)*TAILLE_INT);
+					matC[ligneRecue][i] = IntToBytes.bytesToInt(tampon, 
+							(offset++)*TAILLE_INT);
 				}
 			}
 
@@ -181,7 +189,8 @@ public class V3_Serveur extends Config
 					matC[i][j] = 0;
 				}
 			}
-			// calcul les valeurs localement, pour comparer avec les informations recus des clients
+			// calcul les valeurs localement, pour comparer avec les 
+			// informations recus des clients
 			for (short i=0; i<n; i++) { // i = ligne
 				for (short j=0; j<n; j++) { // j = colonne
 					// multiplie avec la colonne de la matrice B
