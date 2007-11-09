@@ -1,6 +1,8 @@
 /**
+ * Configuration des clients-serveurs calculant des matrices
  * 
  * @author Romain de Wolff
+ * @author Simon Hintermann
  *
  */
 public abstract class Config {
