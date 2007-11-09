@@ -3,7 +3,7 @@ import java.net.*;
 import java.util.Random;
 
 /**
- * Communication TCP avec un serveur et N clients.
+ * Communication Multicast entre un serveur et N clients (avec UDP pour la synchro).
  * 
  * Ce programme va multiplier deux matrices contenant N x N nombres entiers
  * 
@@ -11,14 +11,20 @@ import java.util.Random;
  * le nombre de travailleurs, mais le client recuperera le nombre de travailleurs
  * avec un message du serveur, pour avoir un peu de souplesse.
  * 
- * Le coordinateur (serveur) va envoyer à chaque travailleur (client) une ligne 
- * de la matrice A et la matrice B.
+ * Le client va utiliser PORT(Config) pour son socket multicast, GROUPE(Config) pour l'adresse
+ * de multicast ou il va s'abonner, et PORT_UDP(Config) pour communiquer en UDP avec le
+ * serveur. Son port de communication UDP sera recupere par le serveur pour
+ * pouvoir communiquer.
  * 
- * Chaque travailleur va calculer la ligne de C et la remettre au travailleur.
+ * Le coordinateur (serveur) va envoyer à chaque travailleur (client) leurs numero
+ * respectifs en UDP, par un socket UDP sur le port PORT_UDP(Config) -en recuperant leur 
+ * adresse et port avec le paquet de connexion qu'il a recu pour router le paquet qu'il 
+ * doit leur renvoyer-, puis il va leur envoyer les deux matrices a l'adresse GROUPE(Config) 
+ * sur son port multicast PORT_MULTICAST(Config).
  * 
- * Le serveur utilise la parametre PORT de la classe Config, et il faut lancer les
- * clients avec PORT, PORT + 1 ... PORT + n-1 en parametre.
+ * Chaque client va calculer la ligne de C et la remettre au serveur.
  * 
+ * Note: Les clients peuvent etre lances avant le serveur.
  * 
  * @author Romain de Wolff
  * @author Simon Hintermann
