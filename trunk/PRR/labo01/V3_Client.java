@@ -2,6 +2,28 @@
 import java.net.*;
 import java.io.*;
 
+/**
+ * Communication UDP avec un serveur et N clients.
+ * 
+ * Ce programme va multiplier deux matrices contenant N x N nombres entiers
+ * 
+ * Le coordinateur (serveur) va envoyer à chaque travailleur (client) une ligne 
+ * de la matrice A et la matrice B.
+ * 
+ * Chaque travailleur va calculer la ligne de C et la remettre au travailleur.
+ * 
+ * Si le port utilise est X, alors UDP utilisera X, le groupe multicast X+1 et
+ * la transmission multicast s'effectuera sur X+2
+ * 
+ * @param n		un entier qui représente le nombre de lignes à 
+ * calculer ainsi que le nombre de clients qu'il sera necessaire pour 
+ * calculer la matrice
+ * @param port	le port que le serveur va utiliser. Le client 
+ * doit utiliser le meme port pour se connecter
+ * 
+ * @author Romain de Wolff
+ * @author Simon Hintermann
+ */
 public class V3_Client extends Config 
 {	
 
