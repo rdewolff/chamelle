@@ -63,8 +63,9 @@ public class V3_Client extends Config
 			socketMulti.joinGroup(groupe);
 
 			String query = "HELO"; // pour se sychroniser avec le serveur
-			int TAILLE_TAMPON_SYNCHRO = query.length()*2; // message recu : "HELO"
-			byte[] tampon = new byte[TAILLE_TAMPON_SYNCHRO]; // defini la taille miniumm necessaire. Un char = 2 bytes
+			int TAILLE_TAMPON_SYNCHRO = query.length()*2; // message recu :"HELO"
+			// defini la taille miniumm necessaire. Un char = 2 bytes
+			byte[] tampon = new byte[TAILLE_TAMPON_SYNCHRO]; 
 			tampon = query.getBytes();
 
 			System.out.println("*** Client ***");
@@ -75,8 +76,10 @@ public class V3_Client extends Config
 			// Boucle d'attente de l'existence du serveur
 			while (true) {
 				try {
-					// synchronisation avec le serveur : envoie au serveur un paquet de requete, pour qu'il sache qu'il est connecte
-					paquet = new DatagramPacket(tampon, tampon.length, address, PORT_UDP);
+					// synchronisation avec le serveur : envoie au serveur un 
+					//paquet de requete, pour qu'il sache qu'il est connecte
+					paquet = new DatagramPacket(tampon, tampon.length, address, 
+							PORT_UDP);
 					socket.send(paquet); // envoi du paquet a l'aide du socket
 
 					/*
@@ -87,7 +90,7 @@ public class V3_Client extends Config
 					 * - la ligne de A 
 					 */
 					// reception de la taille des matrices
-					tampon = new byte[TAILLE_INT]; // recoit un int, qui fait 4 bytes
+					tampon = new byte[TAILLE_INT]; // recoit un int de 4 bytes
 					paquet = new DatagramPacket(tampon, tampon.length);
 					socket.setSoTimeout(1000);
 					socket.receive(paquet);
@@ -112,7 +115,8 @@ public class V3_Client extends Config
 			int[][] matB = new int[n][n];
 			for (short i=0; i<n; i++) {
 				for (short j=0; j<n; j++) {
-					matB[i][j] = IntToBytes.bytesToInt(tampon, offset*TAILLE_INT);
+					matB[i][j] = IntToBytes.bytesToInt(tampon, 
+							offset*TAILLE_INT);
 					offset++;
 				}
 			}
@@ -169,7 +173,8 @@ public class V3_Client extends Config
 			}
 
 			// envoie tout
-			paquet = new DatagramPacket(tampon, tampon.length, address, PORT_UDP);
+			paquet = new DatagramPacket(tampon, tampon.length, address, 
+					PORT_UDP);
 			socket.send(paquet); // envoi du paquet a l'aide du socket
 
 			/*

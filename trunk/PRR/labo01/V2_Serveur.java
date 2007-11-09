@@ -48,9 +48,10 @@ public class V2_Serveur extends Config
 			// declaration des variables
 			int nbClientConnecte = 0;
 			int n = N;
-			// defini la taille du tampon de communication (pour synchronisation et utilisation)
+			// defini la taille du tampon de communication pour synchonisation
 			final int TAILLE_TAMPON = 2*TAILLE_INT;
-			final int TAILLE_TAMPON_SYNCHRO = TAILLE_CHAR; // message recu : "HELO"
+			// message recu : "HELO"
+			final int TAILLE_TAMPON_SYNCHRO = TAILLE_CHAR; 
 
 			// creation des tableaux sur lequelles on va faire les calculs
 			int[][]  matA, matB, matC;
@@ -85,16 +86,20 @@ public class V2_Serveur extends Config
 			{
 				// synchronisation avec les clients
 				socket.receive(paquet); // attend la requete du client 
-				// stock les informations du client dans un objet prevu a cet effet			
-				clients[nbClientConnecte] = new Clients(nbClientConnecte, paquet.getAddress(), paquet.getPort());
+				// stock les informations du client dans un objet	
+				clients[nbClientConnecte] = new Clients(nbClientConnecte, 
+						paquet.getAddress(), paquet.getPort());
 				tampon = new byte[TAILLE_TAMPON]; // redefinit la taille du tampon 
 				IntToBytes.intToBytes(nbClientConnecte, tampon, 0);
 				IntToBytes.intToBytes(n, tampon, TAILLE_INT);
-				// envoie le paquet "tampon" contenant la taille des matrices ainsi que la ligne de A et la matrice B
-				paquet = new DatagramPacket(tampon, tampon.length, clients[nbClientConnecte].getAddress(), 
+				// envoie le paquet "tampon" contenant la taille des matrices 
+				// ainsi que la ligne de A et la matrice B
+				paquet = new DatagramPacket(tampon, tampon.length, 
+						clients[nbClientConnecte].getAddress(), 
 						clients[nbClientConnecte].getPort());
 				socket.send(paquet);
-				System.out.println("Client " + nbClientConnecte + " connecte"); // afiche qu'un client est connecte
+				// afiche qu'un client est connecte
+				System.out.println("Client " + nbClientConnecte + " connecte"); 
 				nbClientConnecte++;
 			}
 
@@ -102,10 +107,12 @@ public class V2_Serveur extends Config
 			 * Emet une ligne de A et la matrice B a chaque travailleur
 			 */
 			System.out.println("Envoie des donnees aux clients");
-			tampon = new byte[(n*n+n)*TAILLE_INT]; // redefini la taille du tampon 
-			int offset = 0; // variable utilisee pour savoir ou on en est dans le tambon
+			// redefini la taille du tampon
+			tampon = new byte[(n*n+n)*TAILLE_INT];  
+			int offset = 0; // variable utilisee pour savoir on est dans le tampon
 			for (short k=0; k<n; k++) {
-				offset = 0; // reinitialise pour chaque client la position dans le tampon
+				// reinitialise pour chaque client la position dans le tampon
+				offset = 0; 
 
 				// insere la ligne de la matrice A dans le tampon
 				for (short i=0; i<n; i++) {
@@ -116,13 +123,16 @@ public class V2_Serveur extends Config
 				// insere la matrice B dans le tampon
 				for (short i=0; i<n; i++) {
 					for (short j=0; j<n; j++) {
-						IntToBytes.intToBytes(matB[i][j], tampon, offset*TAILLE_INT);
+						IntToBytes.intToBytes(matB[i][j], tampon, 
+								offset*TAILLE_INT);
 						offset++;
 					}
 				}
 
-				// envoie le paquet "tampon" contenant la taille des matrices ainsi que la ligne de A et la matrice B
-				paquet = new DatagramPacket(tampon, tampon.length, clients[k].getAddress(), clients[k].getPort());
+				// envoie le paquet "tampon" contenant la taille des matrices 
+				// ainsi que la ligne de A et la matrice B
+				paquet = new DatagramPacket(tampon, tampon.length, 
+						clients[k].getAddress(), clients[k].getPort());
 				socket.send(paquet);
 			}				
 
@@ -133,10 +143,12 @@ public class V2_Serveur extends Config
 				offset = 0; // reset la position ou on se trouve dans le tampon
 				paquet = new DatagramPacket(tampon, tampon.length);
 				socket.receive(paquet); // attend la requete du client
-				int ligneRecue = IntToBytes.bytesToInt(tampon, offset*TAILLE_INT);
+				int ligneRecue = IntToBytes.bytesToInt(tampon, 
+						offset*TAILLE_INT);
 				offset++;
 				for (short i=0; i<n; i++) {
-					matC[ligneRecue][i] = IntToBytes.bytesToInt(tampon, offset*TAILLE_INT);
+					matC[ligneRecue][i] = IntToBytes.bytesToInt(tampon, 
+							offset*TAILLE_INT);
 					offset++;
 				}
 			}
@@ -165,7 +177,8 @@ public class V2_Serveur extends Config
 				}
 			}
 
-			// calcul les valeurs localement, pour comparer avec les informatiosn recus des clients
+			// calcul les valeurs localement, pour comparer avec les 
+			// informations recus des clients
 			for (short i=0; i<n; i++) { // i = ligne
 				for (short j=0; j<n; j++) { // j = colonne
 					// multiplie avec la colonne de la matrice B
