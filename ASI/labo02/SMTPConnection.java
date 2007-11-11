@@ -25,11 +25,11 @@ public class SMTPConnection {
        Envoyer la commande HELO et contrôler s'il y a des erreurs. */
     public SMTPConnection(Envelope envelope) throws IOException {
 	// socketConnection = /* compléter */;
-	fromServer = /* compléter */;
-	toServer = /* compléter */;
+	fromServer = new BufferedReader(new InputStreamReader(System.in)); // TODO /* compléter */;
+	toServer = new DataOutputStream(System.out);	// TODO /* compléter */;
 
 	// Lire une ligne du serveur et vérifier que le code de réponse est 220.
-	/* compléter */
+	// TODO : /* compléter */
 	
 	// Echange (handshake) SMTP. Nous avons besoin du nom de la machine
 	// locale. Envoyer la commande SMTP initiale appropriée.
