@@ -24,23 +24,38 @@ public class SMTPConnection {
 	/* Constructeur. Créer la socket et les flux associés. 
        Envoyer la commande HELO et contrôler s'il y a des erreurs. */
 	public SMTPConnection(Envelope envelope) throws IOException {
-		// socketConnection = // TODO /* compléter */;
-		// on va mettre ici les InputStream et OutputStream (cf code labo 01)
-		fromServer = new BufferedReader(new InputStreamReader(System.in)); // TODO /* compléter */;
-		toServer = new DataOutputStream(System.out);	// TODO /* compléter */;
+		
+		// ouvre la connection avec le serveur distant
+		socketConnection = new Socket("smtp.heig-vd.ch", SMTP_PORT);
+		
+		// défini les flux entrant et sortant
+		fromServer = new BufferedReader(new InputStreamReader(socketConnection.getInputStream()));
+		toServer = new DataOutputStream(socketConnection.getOutputStream());
+
+		// temporaire, on utilise la console comme entrée/sortie
+		//fromServer = new BufferedReader(new InputStreamReader(System.in)); // TODO /* compléter */;
+		//toServer = new DataOutputStream(System.out);	
 
 		// Lire une ligne du serveur et vérifier que le code de réponse est 220.
-		// TODO : /* compléter */
+		String cham = new String();
+		int rep;
+		cham = fromServer.readLine();
+		rep = parseReply(cham);
+		
+		System.out.println("readLine du serveur : " + cham + "\n" + "REP: " + rep);
+		
 
 		// Echange (handshake) SMTP. Nous avons besoin du nom de la machine
 		// locale. Envoyer la commande SMTP initiale appropriée.
-		String localhost = // TODO /* compléter */;
+		String localhost = "chamelle"; // TODO /* compléter */;
+			
 			try {
-				sendCommand(  /* compléter */);
+				sendCommand("HELO " + localhost, 220); // TODO 220 ? -> constante ?
 			} catch (IOException e) {
 				System.out.println(  /* compléter */);
-						return;
+				return;
 			}
+			
 			isConnected = true;
 	}
 
@@ -51,7 +66,7 @@ public class SMTPConnection {
 		// Envoyer toutes les commandes nécessaires pour envoyer un
 		// message. Appeler sendCommand() pour faire le travail. Ne pas
 		// attraper d'exception lancée par sendCommand() ici à l'intérieur.
-	    /* compléter */
+		/* compléter */
 
 	}
 
@@ -59,7 +74,7 @@ public class SMTPConnection {
 	public void close() {
 		isConnected = false;
 		try {
-			sendCommand(/* compléter */);
+			// sendCommand(/* compléter */); // TODO
 			socketConnection.close();
 		} catch (IOException e) {
 			System.out.println("Impossible de fermer la connexion: " + e);
@@ -72,7 +87,7 @@ public class SMTPConnection {
 	private void sendCommand(String command, int rc) throws IOException {
 		// Ecrire la commande au serveur et lire la réponse du serveur
 		/* compléter */
-
+		toServer.writeChars(command);
 		// Vérifier que la réponse du serveur est la même que le paramètre
 		// rc. Si ce n'est pas le cas, lancer une IOException.
 		/* compléter */
@@ -82,7 +97,7 @@ public class SMTPConnection {
 	/* Parser la ligne de réponse du serveur. Retourner le code de réponse. */
 	private int parseReply(String reply) {
 		/* compléter */
-		return 0;
+		return Integer.parseInt(reply.split(" ")[0]);
 	}
 
 	/* Destructeur. Fermer la connexion si qqch anormal est arrivé. */
