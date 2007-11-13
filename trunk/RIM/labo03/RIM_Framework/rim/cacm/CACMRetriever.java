@@ -38,9 +38,9 @@ public class CACMRetriever implements Retriever
 			in.close();
 		}
 		catch(ClassNotFoundException e)
-      {System.out.println("classnfoundlect2");}
-      catch(ClassCastException e)
-      {System.out.println("ClassCast");}
+		{System.out.println("classnfoundlect2");}
+		catch(ClassCastException e)
+		{System.out.println("ClassCast");}
 		catch(FileNotFoundException e)
 		{System.out.println("Le fichier n'existe pas");}
 		catch(IOException e)

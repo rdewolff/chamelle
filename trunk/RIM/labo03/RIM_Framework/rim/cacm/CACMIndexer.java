@@ -15,7 +15,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 	//Les deux Maps triees servant de memoire d'indexage
 	static TreeMap<Integer, Object[][]> index = new TreeMap<Integer, Object[][]>();
 	static TreeMap<String, Object[][]> indexInverse = new TreeMap<String, Object[][]>();
-	//Variable dernier ID indexe
+	//Variable dernier ID indexer
 	static int lastId = 0;
 	
 	static
@@ -23,7 +23,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		String mot = null;
 		File f = null;
 		try
-	  {
+		{
 			//Ouverture du fichier de stop words
 			FileInputStream in = new FileInputStream("rim/ressources/common_words");
 			
@@ -43,10 +43,10 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 			//Reinitialisation du fichier du TreeMap de l'index
 			f = new File("index_object.txt");
 			f.delete();
-	  }
-	  catch(ClassCastException e)
-	  {System.out.println("ClassCast");}
-	  catch(FileNotFoundException e)
+		}
+		catch(ClassCastException e)
+		{System.out.println("ClassCast");}
+		catch(FileNotFoundException e)
 		{System.out.println("Le fichier <common_words> n'existe pas");}
 		catch(IOException e)
 		{System.out.println("Probl�me lors de la mise en m�moire des stop words...");}
@@ -172,9 +172,9 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 					ligne = ligne + "<" + tableau[i][0] + "," + tableau[i][1] + ">";
 				ligne = ligne + "}\r\n";	
 				os.write(ligne); //Ecriture de la ligne
-   		}
-	      os.flush();
-         os.close();
+	   		}
+		    os.flush();
+	        os.close();
 			
 			//Recuperation de la liste des lignes d'index
 			keys2 = indexInverse.keySet();
@@ -193,21 +193,21 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 				ligne = ligne + "}\r\n";
 				//Ecriture de la ligne
 				os2.write(ligne);
-   		}
-	      os2.flush();
-         os2.close();
+	   		}
+		    os2.flush();
+	        os2.close();
 			
 			ObjectOutputStream os3 = new ObjectOutputStream(new FileOutputStream("index_object.txt"));
 			//Ecriture des deux TreeMaps
 			os3.writeObject(index);
 			os3.writeObject(indexInverse);
-	      os3.flush();
-         os3.close();
+			os3.flush();
+			os3.close();
 		}
 		catch(FileNotFoundException e)
-      {System.out.println("Filenfound");}
-      catch(IOException e)
-      {System.out.println("IOexception2");}
+		{System.out.println("Filenfound");}
+		catch(IOException e)
+		{System.out.println("IOexception2");}
 	}
 	
 	public void finalizeIndexation () {};
