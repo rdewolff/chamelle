@@ -12,7 +12,7 @@ public class SMTPConnection {
 
 	/* Flux pour lire et écrire dans la socket */
 	public BufferedReader fromServer;
-	public DataOutputStream toServer;
+	public BufferedWriter toServer;
 
 	/* Port SMTP et fin de ligne */
 	private static final int SMTP_PORT = 25;
@@ -24,39 +24,36 @@ public class SMTPConnection {
 	/* Constructeur. Créer la socket et les flux associés. 
        Envoyer la commande HELO et contrôler s'il y a des erreurs. */
 	public SMTPConnection(Envelope envelope) throws IOException {
-		
+
 		// ouvre la connection avec le serveur distant
-		socketConnection = new Socket("smtp.heig-vd.ch", SMTP_PORT);
-		
+		socketConnection = new Socket(envelope.DestHost, SMTP_PORT);
+
 		// défini les flux entrant et sortant
 		fromServer = new BufferedReader(new InputStreamReader(socketConnection.getInputStream()));
-		toServer = new DataOutputStream(socketConnection.getOutputStream());
+		toServer = new BufferedWriter(new OutputStreamWriter(socketConnection.getOutputStream()));
 
 		// temporaire, on utilise la console comme entrée/sortie
-		//fromServer = new BufferedReader(new InputStreamReader(System.in)); // TODO /* compléter */;
-		//toServer = new DataOutputStream(System.out);	
+		//fromServer = new BufferedReader(new InputStreamReader(System.in));
+		//toServer = new DataOutputStream(System.out);
 
 		// Lire une ligne du serveur et vérifier que le code de réponse est 220.
-		String cham = new String();
-		int rep;
-		cham = fromServer.readLine();
-		rep = parseReply(cham);
-		
-		System.out.println("readLine du serveur : " + cham + "\n" + "REP: " + rep);
-		
+		if (parseReply(fromServer.readLine()) != 220) {
+			throw new IOException("Erreur de connection avec le serveur SMTP");
+		}
 
 		// Echange (handshake) SMTP. Nous avons besoin du nom de la machine
 		// locale. Envoyer la commande SMTP initiale appropriée.
-		String localhost = "chamelle"; // TODO /* compléter */;
-			
-			try {
-				sendCommand("HELO " + localhost, 220); // TODO 220 ? -> constante ?
-			} catch (IOException e) {
-				System.out.println(  /* compléter */);
-				return;
-			}
-			
-			isConnected = true;
+		// TODO nom ou adresse IP ? /* compléter */;
+		String localhost = (InetAddress.getLocalHost()).getHostAddress(); 
+		
+		try {
+			sendCommand("HELO " + localhost, 250);
+		} catch (IOException e) {
+			System.out.println("Erreur lors du handshake SMTP");
+			return;
+		}
+
+		isConnected = true;
 	}
 
 	/* Envoyer le message. Ecrire simplement les commandes SMTP correctes
@@ -67,14 +64,18 @@ public class SMTPConnection {
 		// message. Appeler sendCommand() pour faire le travail. Ne pas
 		// attraper d'exception lancée par sendCommand() ici à l'intérieur.
 		/* compléter */
-
+		sendCommand("MAIL From: " + envelope.Sender, 250);
+		sendCommand("RCPT To: " + envelope.Recipient, 250);
+		// TODO : subject, date-time
+		sendCommand("DATA", 254);
+		sendCommand(envelope.leMessage + CRLF + "." + CRLF, 250);
 	}
 
 	/* Fermer la connexion. Envoyer la commande QUIT et fermer la socket.*/
 	public void close() {
 		isConnected = false;
 		try {
-			// sendCommand(/* compléter */); // TODO
+			sendCommand("QUIT", 250); /* compléter */
 			socketConnection.close();
 		} catch (IOException e) {
 			System.out.println("Impossible de fermer la connexion: " + e);
@@ -87,16 +88,23 @@ public class SMTPConnection {
 	private void sendCommand(String command, int rc) throws IOException {
 		// Ecrire la commande au serveur et lire la réponse du serveur
 		/* compléter */
-		toServer.writeChars(command);
+		toServer.write(command);
+		// toServer.flush();
+		System.out.println(command);
+		
 		// Vérifier que la réponse du serveur est la même que le paramètre
 		// rc. Si ce n'est pas le cas, lancer une IOException.
-		/* compléter */
-
+		if (parseReply(fromServer.readLine()) != rc) {
+			System.out.println("erreur sendCommand();");
+			throw new IOException();
+		}
+		System.out.println("FIN sendCommand();");
 	}
 
 	/* Parser la ligne de réponse du serveur. Retourner le code de réponse. */
 	private int parseReply(String reply) {
 		/* compléter */
+		// le code de réponse est le premier élément de la ligne
 		return Integer.parseInt(reply.split(" ")[0]);
 	}
 

@@ -12,13 +12,14 @@ public class MailClient extends Frame {
 	private Button btClear = new Button("Effacer");
 	private Button btQuit = new Button("Quitter");
 	private Label SMTPServerLabel = new Label("Serveur SMTP:");
-	private TextField SMTPServerField = new TextField("", 40);
+	// TODO : remove valeurs
+	private TextField SMTPServerField = new TextField("smtp.heig-vd.ch", 40); 
 	private Label fromLabel = new Label("De:");
-	private TextField fromField = new TextField("", 40);
+	private TextField fromField = new TextField("romain.de-wolff@heig-vd.ch", 40);
 	private Label toLabel = new Label("A:"); 
-	private TextField toField = new TextField("", 40);
+	private TextField toField = new TextField("rdewolff@gmail.com", 40);
 	private Label subjectLabel = new Label("Sujet:");
-	private TextField subjectField = new TextField("", 40);
+	private TextField subjectField = new TextField("TEST", 40);
 	private Label messageLabel = new Label("Message:");
 	private TextArea messageText = new TextArea(10, 40);
 
