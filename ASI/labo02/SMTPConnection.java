@@ -45,14 +45,13 @@ public class SMTPConnection {
 		// locale. Envoyer la commande SMTP initiale appropriée.
 		// TODO nom ou adresse IP ? /* compléter */;
 		String localhost = (InetAddress.getLocalHost()).getHostAddress(); 
-		
+		localhost = "kik.bluewin.ch";
 		try {
-			sendCommand("HELO " + localhost, 250);
+			sendCommand("HELO "+localhost, 250);
 		} catch (IOException e) {
 			System.out.println("Erreur lors du handshake SMTP");
 			return;
 		}
-
 		isConnected = true;
 	}
 
@@ -64,8 +63,8 @@ public class SMTPConnection {
 		// message. Appeler sendCommand() pour faire le travail. Ne pas
 		// attraper d'exception lancée par sendCommand() ici à l'intérieur.
 		/* compléter */
-		sendCommand("MAIL From: " + envelope.Sender, 250);
-		sendCommand("RCPT To: " + envelope.Recipient, 250);
+		sendCommand("MAIL FROM:" + envelope.Sender, 250);
+		sendCommand("RCPT TO:" + envelope.Recipient, 250);
 		// TODO : subject, date-time
 		sendCommand("DATA", 254);
 		sendCommand(envelope.leMessage + CRLF + "." + CRLF, 250); // TODO : inutile ?
@@ -76,7 +75,7 @@ public class SMTPConnection {
 	public void close() {
 		isConnected = false;
 		try {
-			sendCommand("QUIT", 250); /* compléter */
+			sendCommand("QUIT", 221); /* compléter */
 			socketConnection.close();
 		} catch (IOException e) {
 			System.out.println("Impossible de fermer la connexion: " + e);
@@ -90,26 +89,22 @@ public class SMTPConnection {
 		// Ecrire la commande au serveur et lire la réponse du serveur
 		/* compléter */
 		toServer.writeBytes(command + CRLF);
-
-
-		System.out.println(command + CRLF);
+		
+		// pour debug, affiche dans la console
+		System.out.println(command + CRLF); 
 		
 		// Vérifier que la réponse du serveur est la même que le paramètre
 		// rc. Si ce n'est pas le cas, lancer une IOException.
-		System.out.println(fromServer.readLine());
-
-		
 		if (parseReply(fromServer.readLine()) != rc) {
-			System.out.println("erreur sendCommand();");
 			throw new IOException();
 		}
-		System.out.println("FIN sendCommand();");
 	}
 
 	/* Parser la ligne de réponse du serveur. Retourner le code de réponse. */
 	private int parseReply(String reply) {
 		/* compléter */
 		// le code de réponse est le premier élément de la ligne
+		System.out.println("réponse : " + reply.split(" ")[0]);
 		return Integer.parseInt(reply.split(" ")[0]);
 	}
 
