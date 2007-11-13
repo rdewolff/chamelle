@@ -10,7 +10,7 @@ import rim.Retriever;
  */
 public class CACMRetriever implements Retriever
 {
-	//Les deux Maps triees représentant les deux indexs
+	//Les deux Maps triees reprï¿½sentant les deux indexs
 	static TreeMap<Integer, Object[][]> index = new TreeMap<Integer, Object[][]>();
 	static TreeMap<String, Object[][]> indexInverse = new TreeMap<String, Object[][]>();
 	
@@ -50,16 +50,16 @@ public class CACMRetriever implements Retriever
 	/* (non-Javadoc)
 	 * @see rim.Retriever#searchDocument(java.lang.Integer)
 	 */
-	public Map<String, Integer> searchDocument(Integer documentId)
+	public Map<String, Double> searchDocument(Integer documentId)
 	{
 		//Map de retour
-		TreeMap<String, Integer> result = new TreeMap<String, Integer>();
+		TreeMap<String, Double> result = new TreeMap<String, Double>();
 		//Tableau representant la reponse a la requete
 		Object[][] list = index.get(documentId);
 		//Constructionde la reponse
 		for(int i=0; i<list.length; i++)
 		{
-			result.put((String)list[i][0], (Integer)list[i][1]);
+			result.put((String)list[i][0], (Double)list[i][1]);
 		}
 		
 		return result;
@@ -68,18 +68,24 @@ public class CACMRetriever implements Retriever
 	/* (non-Javadoc)
 	 * @see rim.Retriever#searchTerm(java.lang.String)
 	 */
-	public Map<Integer, Integer> searchTerm(String term)
+	public Map<Integer, Double> searchTerm(String term)
 	{
 		//Map de retour
-		TreeMap<Integer, Integer> result = new TreeMap<Integer, Integer>();
+		TreeMap<Integer, Double> result = new TreeMap<Integer, Double>();
 		//Tableau representant la reponse a la requete
 		Object[][] list = indexInverse.get(term);
 		//Construction de la reponse
 		for(int i=0; i<list.length; i++)
 		{
-			result.put((Integer)list[i][0], (Integer)list[i][1]);
+			result.put((Integer)list[i][0], (Double)list[i][1]);
 		}
 		
 		return result;
 	}
+	
+	/* (non-Javadoc)
+	 * @see rim.Retriever#executeQuery(java.lang.String)
+	 */
+	public Map<Double,Integer> executeQuery (String query)
+	{return new HashMap<Double, Integer>();};
 }
