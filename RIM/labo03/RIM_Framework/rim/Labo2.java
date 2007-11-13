@@ -82,7 +82,7 @@ public class Labo2 {
 						case 1: 	System.out.println("Entrez le document recherche:");
 									document = Integer.valueOf(inFromUser.readLine());
 									System.out.println("Termes trouves dans le document avec leur frequence:");
-									Map<String, Integer> t = r.searchDocument(document);
+									Map<String, Double> t = r.searchDocument(document);
 									Set keys = t.keySet();
 									for(Object s: keys)
 										System.out.println(s + ", " + t.get(s));
@@ -92,7 +92,7 @@ public class Labo2 {
 									terme = inFromUser.readLine();
 									System.out.println("Documents contenant ce terme avec leur frequence:");
 									terme = terme.trim();
-									Map<Integer, Integer> t2 = r.searchTerm(terme);
+									Map<Integer, Double> t2 = r.searchTerm(terme);
 									keys = t2.keySet();
 									for(Object s: keys)
 										System.out.println(s + ", " + t2.get(s));
