@@ -13,9 +13,9 @@ public class MailClient extends Frame {
 	private Button btQuit = new Button("Quitter");
 	private Label SMTPServerLabel = new Label("Serveur SMTP:");
 	// TODO : remove valeurs
-	private TextField SMTPServerField = new TextField("smtp.heig-vd.ch", 40); 
+	private TextField SMTPServerField = new TextField("smtp.citycable.ch", 40); 
 	private Label fromLabel = new Label("De:");
-	private TextField fromField = new TextField("romain.de-wolff@heig-vd.ch", 40);
+	private TextField fromField = new TextField("rdewolff@citycable.ch", 40);
 	private Label toLabel = new Label("A:"); 
 	private TextField toField = new TextField("rdewolff@gmail.com", 40);
 	private Label subjectLabel = new Label("Sujet:");
