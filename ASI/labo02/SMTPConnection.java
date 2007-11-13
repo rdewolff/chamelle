@@ -12,7 +12,7 @@ public class SMTPConnection {
 
 	/* Flux pour lire et écrire dans la socket */
 	public BufferedReader fromServer;
-	public BufferedWriter toServer;
+	public DataOutputStream toServer;
 
 	/* Port SMTP et fin de ligne */
 	private static final int SMTP_PORT = 25;
@@ -30,7 +30,7 @@ public class SMTPConnection {
 
 		// défini les flux entrant et sortant
 		fromServer = new BufferedReader(new InputStreamReader(socketConnection.getInputStream()));
-		toServer = new BufferedWriter(new OutputStreamWriter(socketConnection.getOutputStream()));
+		toServer = new DataOutputStream(new DataOutputStream(socketConnection.getOutputStream()));
 
 		// temporaire, on utilise la console comme entrée/sortie
 		//fromServer = new BufferedReader(new InputStreamReader(System.in));
@@ -88,12 +88,15 @@ public class SMTPConnection {
 	private void sendCommand(String command, int rc) throws IOException {
 		// Ecrire la commande au serveur et lire la réponse du serveur
 		/* compléter */
-		toServer.write(command);
-		// toServer.flush();
+		toServer.writeBytes(command);
+
 		System.out.println(command);
 		
 		// Vérifier que la réponse du serveur est la même que le paramètre
 		// rc. Si ce n'est pas le cas, lancer une IOException.
+		System.out.println(fromServer.readLine());
+
+		
 		if (parseReply(fromServer.readLine()) != rc) {
 			System.out.println("erreur sendCommand();");
 			throw new IOException();
