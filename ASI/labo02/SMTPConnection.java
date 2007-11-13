@@ -68,7 +68,8 @@ public class SMTPConnection {
 		sendCommand("RCPT To: " + envelope.Recipient, 250);
 		// TODO : subject, date-time
 		sendCommand("DATA", 254);
-		sendCommand(envelope.leMessage + CRLF + "." + CRLF, 250);
+		sendCommand(envelope.leMessage + CRLF + "." + CRLF, 250); // TODO : inutile ?
+		
 	}
 
 	/* Fermer la connexion. Envoyer la commande QUIT et fermer la socket.*/
@@ -88,9 +89,10 @@ public class SMTPConnection {
 	private void sendCommand(String command, int rc) throws IOException {
 		// Ecrire la commande au serveur et lire la réponse du serveur
 		/* compléter */
-		toServer.writeBytes(command);
+		toServer.writeBytes(command + CRLF);
 
-		System.out.println(command);
+
+		System.out.println(command + CRLF);
 		
 		// Vérifier que la réponse du serveur est la même que le paramètre
 		// rc. Si ce n'est pas le cas, lancer une IOException.
