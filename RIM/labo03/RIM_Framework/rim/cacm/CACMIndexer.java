@@ -29,9 +29,9 @@ public class CACMIndexer implements Indexer {
       catch(ClassCastException e)
       {System.out.println("ClassCast");}
       catch(FileNotFoundException e)
-		{System.out.println("Le fichier <common_words> n'existe pas");}
-		catch(IOException e)
-		{System.out.println("Problème lors de la mise en mémoire des stop words...");}
+	  {System.out.println("Le fichier <common_words> n'existe pas");}
+	  catch(IOException e)
+	  {System.out.println("Problï¿½me lors de la mise en memoire des stop words...");}
 	}
 	
 	/* (non-Javadoc)
@@ -64,4 +64,6 @@ public class CACMIndexer implements Indexer {
 		 catch(IOException e){}
 		//System.out.println(content);
 	}
+	
+	public void finalizeIndexation () {};
 }
