@@ -32,11 +32,7 @@ public class SMTPConnection {
 		fromServer = new BufferedReader(new InputStreamReader(socketConnection.getInputStream()));
 		toServer = new DataOutputStream(new DataOutputStream(socketConnection.getOutputStream()));
 
-		// temporaire, on utilise la console comme entrée/sortie
-		//fromServer = new BufferedReader(new InputStreamReader(System.in));
-		//toServer = new DataOutputStream(System.out);
-
-		// Lire une ligne du serveur et vérifier que le code de réponse est 220.
+		// la connexiona avec le serveur est établie, vérifie que le code est bien le 220
 		if (parseReply(fromServer.readLine()) != 220) {
 			throw new IOException("Erreur de connection avec le serveur SMTP");
 		}
@@ -61,11 +57,8 @@ public class SMTPConnection {
 		// message. Appeler sendCommand() pour faire le travail. Ne pas
 		// attraper d'exception lancée par sendCommand() ici à l'intérieur.
 		/* compléter */
-		
 		sendCommand("MAIL FROM:" + envelope.Sender, 250);
-		sendCommand("RCPT TO:" + envelope.Recipient, 250);
-		// TODO : subject, date-time
-		//sendCommand(subject, rc)
+		sendCommand("RCPT TO:" + envelope.Recipient, 250); // TODO : ou 251 si destinaire pas local 
 		sendCommand("DATA", 354);
 		sendCommand(envelope.leMessage + CRLF + ".", 250);
 	}
