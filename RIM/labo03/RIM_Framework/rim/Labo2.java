@@ -102,7 +102,7 @@ public class Labo2 {
 									CACMIndexer i = new CACMIndexer();
 									CACMFeeder c = new CACMFeeder();
 									c.parseCollection(java.net.URI.create("rim/ressources/cacm.all"), i);
-									i.save();
+									i.finalizeIndexation();
 									break;
 					}
 				}

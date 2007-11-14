@@ -25,7 +25,7 @@ public class CACMRetriever implements Retriever
 			CACMIndexer i = new CACMIndexer();
 			CACMFeeder c = new CACMFeeder();
 			c.parseCollection(java.net.URI.create("rim/ressources/cacm.all"), i);
-			i.save();
+			i.finalizeIndexation();
 		}
 		
 		//Lecture des deux TreeMaps stockes dans le fichier "index_object"
