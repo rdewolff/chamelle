@@ -43,11 +43,9 @@ public class SMTPConnection {
 
 		// Echange (handshake) SMTP. Nous avons besoin du nom de la machine
 		// locale. Envoyer la commande SMTP initiale appropriée.
-		// TODO nom ou adresse IP ? /* compléter */;
 		String localhost = (InetAddress.getLocalHost()).getHostAddress(); 
-		localhost = "kik.bluewin.ch";
 		try {
-			sendCommand("HELO "+localhost, 250);
+			sendCommand("HELO " + localhost, 250);
 		} catch (IOException e) {
 			System.out.println("Erreur lors du handshake SMTP");
 			return;
@@ -63,12 +61,13 @@ public class SMTPConnection {
 		// message. Appeler sendCommand() pour faire le travail. Ne pas
 		// attraper d'exception lancée par sendCommand() ici à l'intérieur.
 		/* compléter */
+		
 		sendCommand("MAIL FROM:" + envelope.Sender, 250);
 		sendCommand("RCPT TO:" + envelope.Recipient, 250);
 		// TODO : subject, date-time
-		sendCommand("DATA", 254);
-		sendCommand(envelope.leMessage + CRLF + "." + CRLF, 250); // TODO : inutile ?
-		
+		//sendCommand(subject, rc)
+		sendCommand("DATA", 354);
+		sendCommand(envelope.leMessage + CRLF + ".", 250);
 	}
 
 	/* Fermer la connexion. Envoyer la commande QUIT et fermer la socket.*/
@@ -91,7 +90,7 @@ public class SMTPConnection {
 		toServer.writeBytes(command + CRLF);
 		
 		// pour debug, affiche dans la console
-		System.out.println(command + CRLF); 
+		System.out.println(command); 
 		
 		// Vérifier que la réponse du serveur est la même que le paramètre
 		// rc. Si ce n'est pas le cas, lancer une IOException.
