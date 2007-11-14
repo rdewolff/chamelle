@@ -1,0 +1,216 @@
+% --------------------------------------------------------------------------
+% document template for a LaTeX file
+% Created : 22.11.2006 by Romain de Wolff
+% Modif : 8 octobre 2007, respect standart HEIG-VD pour travaux de diplômes
+% --------------------------------------------------------------------------
+\documentclass[a4paper, 11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[cyr]{aeguill}
+\usepackage[frenchb]{babel}               % \og et \fg pour les guillemets
+\usepackage{url}                          % pour inclure des URLs
+\usepackage{color}                        % utilisé pour le code source
+\usepackage{listings}                     % pour inclure le code source
+\usepackage{geometry}                     % pour les marges
+\usepackage{algorithmic}                  % pour présenter les algos
+\usepackage{algorithm}                    % pour présenter les algos
+\usepackage{graphicx}                     % pour inclure des images
+\usepackage{fancyvrb}                     % pour avoir du verbatim encadré
+\usepackage{url}                          % pour inclure des URLs
+\usepackage{geometry}                     % See geometry.pdf to learn the layout options
+\geometry{a4paper}                        % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                     % Activate for for rotated page geometry
+\usepackage[parfill]{parskip}             % Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{amssymb}
+%\usepackage{epstopdf}                    % Pour créer des références divers (webographie, etc) 
+\usepackage{bibtopic}
+\geometry{ hmargin=2.8cm, vmargin=2.5cm } % marges
+
+% ------------------- TITRE ------------------------
+\title{%\includegraphics[width=100px]{heig-vd-logo.pdf} \\ \vspace{4cm}
+\small{Présentation personnel - PPE} \\ \vspace{2cm}
+\huge{WebDAV \\ \vspace{3cm} \small{Un protocole réseau pour l'édition collaborative à distance sur le web}} \vspace{2cm}} \author{Romain \bsc{de
+Wolff} \\ IL2008 \\ \vspace{2cm} \\ Professeurs Mme. Laura Elena Raileanu \\ et Mme Nastaran Fatemi \vspace{2cm} }
+\date{Lausanne, le 8 octobre 2007}  % Activate to display a given date or no date
+\pagebreak{}
+\begin{document}
+\maketitle
+\thispagestyle{empty} % enlève le numéro de page sur la page de titre (uniquement)
+\newpage
+% -----------------------------------------------------------------------------
+% Debut du document
+\pagenumbering{roman} \setcounter{page}{1} 
+
+\section*{Remerciements} 
+
+@end
+
+\section*{Résumé}
+
+@end
+
+% -----------------------------------------------------------------------------
+% Table des matières
+\newpage
+\tableofcontents
+\newpage
+\pagenumbering{arabic} \setcounter{page}{1} 
+% -----------------------------------------------------------------------------
+% Début principal
+
+\section{Introduction}
+
+	% décrire le problème, l'objectif et la motivation
+	% attirer le lecteur
+	% http://www.asis.org/Bulletin/Oct-98/webdav.html-> printé
+
+	% problème - comment ca marchait dans le passé? - exemple - temps, etc..
+
+	Internet met aujourd'hui à disposition de tout le monde une quantité d'informations qui ne cesse de croître. Ces dernières années, la quantité d'information disponible a carrément explosé. N'importe quel ordinateur connecté à internet peut accéder à ce vaste réseau et à toute ces données. L'utilisateur peut naviguer de page en page et aux travers de gros index d'une manière très simple et efficace. De se fait il peut consulter des textes, des images, des vidéos sans fin. Ou presque. 
+	
+	Cette interopérabilité fut possible grâce a deux standards aujourd'hui : \emph{HyperText Markup Language} (HTML) et \emph{HyperText Transfer Protocol} (HTTP). Ces deux standards sont disponible sur tout type d'ordinateur, allant même, aujourd'hui, jusqu'au téléphone portable. Ainsi le nouveau téléphone d'Apple, le \emph{iPhone}, implémente \emph{Safari}, qui respectent les standards HTML actuels. Quelqu'un désireux de créer un site internet peut le faire à l'aide d'un ordinateur bon marché ainsi que d'une connexion internet. Une fois son document déposé sur le web, n'importe qui peut y accéder et y faire référence. C'est ce qui rend le \emph{World Wide Web} plus ouvert que n'importe quel système que l'humanité ait connu à ce jour. 
+	
+	Quand Tim Berners-Lee écrit la première page HTML au CERN\footnote{Organisation Européenne pour la Recherche Nucléaire. A l'origine, c'était l'acronyme du Conseil Européen pour la Recherche Nucléaire. \url{http://www.cern.ch}. Un organe provisoire institué en 1952, qui avait pour mandat de créer en Europe une organisation de rang mondial pour la recherche en physique fondamentale} c'était dans le but de mettre des textes scientifique en ligne et de pouvoir se référer entre eux sans créer une base de données centralisée. % + collaboratifs 
+	
+	Quand le web apparu auprès du public, la plupart des clients pouvaient parcourir l'information mais pas l'éditer. Lire les informations était le plus important et le plus facile. L'édition est plus complexe. L'engouement du début se concentra sur la lecture et en oublia l'écriture. Quelques protocoles propriétaires émergèrent rapidement, mais durant près de 10 ans, aucun standard d'écriture sur le web n'était disponible. 
+	
+	\subsection{Qu'est ce que WebDAV?}
+	
+		\emph{Web-based Distributed Authoring and Versioning} (WebDAV), est le premier protocole standard d'écriture sur le web. En Anglais, on utilise le mot \emph{authoring}, qui défini bien ce qu'offre WebDAV, aussi souvent appelé simplement \emph{DAV}. Cela signifie auteur, écrivain, créateur. WebDAV met en place une série de fonctionnalité qui permet de créer des documents sur internet en collaboration. La RFC 2518\footnote{La RFC 2518 est disponible en français à l'adresse \url{http://www.webdav.org/specs/rfc2518.fr.html}} décrit ses spécifications. Le but de WebDAV est de mettre à disposition l'écriture de la même manière que la lecture. Il est construit sur le protocole HTTP et y ajoute des fonctionnalités d'écriture et de gestions des documents. Il permet aussi de gérer l'évolution des modifications (\emph{versioning}) ainsi que le l'écriture d'un même document par plusieurs auteurs.
+		
+		WebDAV nous permet donc d'éditer \emph{directement sur le serveur HTTP}, ce qui nous permet de ne pas utiliser simplement le web comme media de lecture, mais aussi comme média d'écriture collaboratif. 
+		
+		
+		% TODO: objectif de WebDAV : répondu ?
+		
+		% ajouter : p 37 livre : top : partage de _tout_ type de documents !!
+		
+\section{Un peu d'histoire}
+
+	% TODO : référence au livre dont j'utilise les passages pour reprendre l'histoire
+	
+	Quand Tim Berners-Lee et Robert Cailliau inventère le \emph{World Wide Web}, ils voulaient rendre possible l'édition de fichier aussi facile que la lecture. C'est pour cela que HTTP inclus deux méthodes qui permettent en théorie de mettre à jour les pages web : \emph{PUT} pour créer ou modifier un fichier, et \emph{DELETE} pour effacer. Mais rapidement les utilisateurs ont utilisés le FTP. Le HTTP ne fonctionnait pas pour eux pour plusieurs raisons : 
+
+	\begin{itemize}
+		\item 	La sécurité n'était pas bonne. A cause de cela beaucoup d'administrateurs désactivèrent \emph{PUT} et \emph{DELETE}.
+		\item 	HTTP n'a pas de concept de collections, ce qui rendait impossible la création d'une page a un endroit spécifique voulu
+		\item 	Les premiers navigateurs se concentrèrent sur la lecture de document et ne supportaient pas l'écriture. Les éditeurs de textes ne supportaient pas le HTTP. C'est pour cela qu'il fallait utiliser un outil pour modifier sa page et un autre pour l'envoyer sur le serveur HTTP.
+	\end{itemize}
+			
+	\subsection{Au tout début}
+	
+		Les premiers sites internet furent forcément créés à l'aide d'éditeur de texte conventionnel car il n'existait pas encore d'outils spécialisés. Si l'auteur ne se trouvait pas directement sur la serveur HTTP, il utilisait souvent le protocole FTP (\emph{File Transfer Protocol}) pour mettre ces fichiers HTML terminé sur le serveur web. 
+
+		Le protocole FTP était un standard depuis 1985, bien avant que HTTP ne naisse. Il n'a donc pas été créé pour éditer des pages HTML. Il ne gère pas non plus le fait que plusieurs personne éditent le même fichier. 
+
+		Les premiers outils utilisés pour remédier a ce manque furent les éditeurs HTML. Ils mirent à disposition des fonctionnalités plus ou moins avancées pour travailler sur des fichiers HTML. En local, cela fonctionnait très bien, mais dès qu'il fallait travailler sur des serveur à distance, le problème n'était pas vraiment résolu.
+
+	\subsection{Logiciels propriétaires}
+	
+		Pour remédier aux problèmes de création et de mise à jour de fichiers sur un serveur web, les entreprises de création de logiciels ont crée des programmes propriétaires qui permettaient de faire cela. Mais chacun avec ses propres méthodes. Les outils étaient donc très souvent incompatible les uns des autres. 
+		
+		\begin{itemize}
+			\item \emph{Vermeer FrontPage} qui devint \emph{Microsoft FrontPage}, utilisa un protocole propriétaire pour gérer les fichiers à distances	
+			\item 		\emph{Macromedia Dreamweaver} et \emph{Allaire Coldfusion} eurent la capacité d'écrire des pages de manière collaboratives, avec la possibilité de verrouiller un fichier afin qu'un seul auteur le modifie à la fois. Mais cela fonctionnait au travers de protocoles propriétaires uniquement
+			\item 		\emph{Nestcape Navigator Gold} avait la capacité d'envoyer des fichiers sur un serveur distant en utilisant \emph{FTP} ou \emph{HTTP PUT}. Cela fonctionnait bien si un seul auteur utilisait le serveur, mais pas pour plusieurs.
+		\end{itemize}
+		
+		Les équipes de développement web professionnelles utilisent de temps en temps des systèmes de gestion des sources appelé \emph{CM} (Configuration Management). \emph{CVS} ou \emph{Subversion} sous Unix et \emph{Microsoft SourceSafe} sont tout deux des serveurs \emph{CM}. Ces systèmes utilisent souvent des protocoles personnalisés qui rendent difficile le support d'autres applications. Malgré qu'ils offrent d'excellente fonctionnalités pour la gestions d'utilisateurs multiples et la gestion des versions, ils forcent les développeurs à recopier les fichiers sur le serveur en production. Car il n'est pas pratique et souvent pas désirable de modifier directement les pages web sur le serveur en productions. 
+	
+	\subsection{Edition au travers des formulaires web}
+	
+		Beaucoup de fournisseur d'accès internet ou d'autres grand site internet de services comme \emph{Yahoo} offrent la possibilité d'héberger un site internet de petite taille gratuitement. Ils hébergent donc des sites pour un grand nombre de personnes. 
+		
+		Ces services utilisent les formulaires HTML pour la création et la modification de leur pages. Les utilisateurs peuvent entrer des information dans des champs de textes que le serveur mettra en ligne pour eux de manière automatique. Naturellement, les fonctionnalités sont ici très simples et l'utilisateur n'as pas beaucoup de possibilités. 
+		
+		Ce système permet aux utilisateurs de n'avoir aucun logiciel particulier pour mettre en forme leur pages. Ils utilisent directement leur navigateur web pour ce faire. 
+		
+		Aujourd'hui ce système c'est très développé avec l'apparition récente des BLOG\footnote{Raccourcis de \emph{Web Log}. C'est une sorte de journal dont le contenu est souvent textuel} qui permet de créer des articles facilement aux travers d'une interface web.
+		
+		Tout ces mécanismes souffrent malheureusement d'un gros défaut : ils ont pour but d'être éditer par un et un seul auteur. 
+
+	% download http - upload ftp - email exchange document	
+	\subsection{Le travail collaboratif avant WebDAV}
+
+		Pendant des années, le travail en collaboration s'effectuait comme cela : télécharger le document via HTTP, échanger les fichiers avec d'autres auteurs par e-mails et envoyer les documents sur le serveur par FTP. C'était un peu \emph{l'âge de pierre} de l'édition web. Avant qu'aucun outils ou nouveau protocole n'existe. Les seuls logiciels qui existaient était des clients (navigateurs) et serveurs HTTP. Ceux-ci étaient tout d'abord uniquement disponible dans le monde \emph{Unix}, mais se développèrent aussi vite dans le monde \emph{Windows}.
+		
+		Entre 1995 et 1998 l'accroissement de l'utilisation d'internet fit part à de nouveaux départs. L'arrivée de \emph{Microsoft Windows 95} fit évoluer grandement les choses. En effet, les clients Unix furent de moins en moins seuls sur le marché et cela contribua fortement aux développement du web. Les clients Mac suivirent très peu après. Le grand engouement pour cette technologie fit vite part à un manque . En effet il était difficile d'utiliser Telnet, FTP ou NFS pour des utilisateurs habitués à une interface graphique. 
+		
+	Dès lors, les programmes propriétaires tentèrent d'implémenter des extensions serveurs qui permettaient de combler ces lacunes. Mais chaque client communiquait uniquement avec son serveur correspondant. Aucun standard n'était présent sur le marché. Chacun utilisait son propre protocole sans vraiment tenir compte des autres. Ou alors un standard ouvert mais pas suffisamment complet pour une utilisation à grande échelle.
+		
+	% troisieme generation
+	\subsection{La formation de WebDAV}
+	
+		Les équipes partagent les mêmes ressources web devinrent de plus en plus grandes. L'accroissement économique du Web acquérit une telle importance que ce n'était plus un ou deux expert qui géraient un site web, mais toute une équipe.
+		
+		Les outils étaient trop diversifiés pour que le travail se fasse de manière simple. Chacun modifiait ses fichiers de son côté et les plaçaient sur le serveur une fois le travail terminé. Il n'était pas rare que des données soit perdues.
+		
+		Finalement, en 1996, les vendeurs de plusieurs de ces programmes informatiques réussir à se regrouper et décidèrent de faire l'effort de créer un standard ensemble. Leurs désirs étaient de créer un protocole permettant d'utiliser n'importe quel outil Web ou de bureautique afin de modifier un fichier à distance sur une serveur web. Pour rendre ceci possible, il fallait créer un nouveau protocole ensemble.
+		
+		C'est comme ça que naquit WebDAV! Il créèrent un nouveau protocole car il n'était pas envisageable de choisir le protocole déjà établis par une entreprise. En effet, cela l'avantagerait de manière significative.  
+		
+\section{Spécifications}
+
+	
+
+	Maintenu par IETF (The Internet Engineering Task Force)
+
+	RFC 2518 - WebDAV 
+	\subsection{Architecture client-serveur}
+	
+	\subsection{Mécanismes HTTP}
+	
+\section{Fonctionnalités (schémas!!)}
+	\subsection{Sécurité}
+		on est sur le web! faut faire gaffe!
+		http://www.tech-archive.net/Archive/Windows/microsoft.public.windows.server.sbs/2006-11/msg00989.html
+	\subsection{Propriétés}
+	\subsection{Gestion des versions}
+	\subsection{Locking}
+	\subsection{Namespace et URI}
+	\subsection{Intégration Subversion}
+	\subsection{XML}
+		Procédure simplifiée
+\section{Logiciels}
+	Implémenté direct dans WindowsXP et MacOS (tocheck)
+	\subsection{Client}
+	\subsection{Serveur}
+		Apache mod\_dav
+		Mise en place overview ?
+\section{Autres systèmes similaires existants}
+	\subsection{CVS}
+	\subsection{Subversion}
+		WebDAV dans subversion ?!
+		http://subversion.tigris.org/webdav-usage.html
+	\subsection{FTP}
+		avantages : pp. 36 livre
+		créé avant HTTP
+		pas de versioning
+	\subsection{SSH}
+\section{Scénarios d'utilisation}
+
+\section{Conclusion}
+-fin (pas résumé)
+tester? http://test.webdav.org/
+
+\section{Liste des figures}
+
+\section{Bibliographie} % bibtex? livre, articles, liens web
+%\nocite{*} % put all database entries into the reference list
+%
+%\cite{knuth83}
+%\bibdata{Book}
+%\bibliographystyle{plain} % Style des references: abbrv, plain, ... 
+%\bibliography{bibliographie.bib} % Nom du fichier *.bib 
+
+\section{Terminologies}
+
+HTTP
+FTP
+HTML
+
+
+\section{Annexe}
+
+Any ?
+
+\end{document}  
