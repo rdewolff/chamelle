@@ -11,7 +11,7 @@ import java.net.*;
 public class CACMIndexer implements Indexer//, Comparator<String>
 {	
 	//HashMap contenant les stop words a eliminer des documents
-	static HashMap<String, String> commonwords = new HashMap<String, String>();
+	static HashSet<String> commonwords = new HashSet<String>();
 	//Les deux Maps triees servant de memoire d'indexage
 	static TreeMap<Integer, Object[][]> index = new TreeMap<Integer, Object[][]>();
 	static TreeMap<String, Object[][]> indexInverse = new TreeMap<String, Object[][]>();
@@ -31,7 +31,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 			BufferedReader d = new BufferedReader(new InputStreamReader(in));
 			while((mot=d.readLine())!= null)
 			{ 	
-				commonwords.put(mot,"");
+				commonwords.add(mot);
 			}
 			
 			//Reinitialisation du fichier d'index
@@ -85,7 +85,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		{
 			tok = tokens.nextToken();
 			//Selection des termes qui ne sont pas des stop words
-			if(!commonwords.containsKey(tok))
+			if(!commonwords.contains(tok))
 			{
 				elements.put(tok, elements.containsKey(tok)?elements.get(tok)+1:1);
 			}
@@ -149,7 +149,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 	* leurs fichiers respectifs: "index.txt" et "index_inverse.txt"
 	* Sauve aussi les deux indexs sous forme d'objet dans "index_object.txt"
 	*/
-	public void save()
+	public void finalizeIndexation()
 	{
 		Set keys = null;
 		Set keys2 = null;
@@ -209,6 +209,4 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		catch(IOException e)
 		{System.out.println("IOexception2");}
 	}
-	
-	public void finalizeIndexation () {};
 }
