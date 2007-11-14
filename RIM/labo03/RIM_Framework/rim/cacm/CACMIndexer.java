@@ -49,7 +49,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		catch(FileNotFoundException e)
 		{System.out.println("Le fichier <common_words> n'existe pas");}
 		catch(IOException e)
-		{System.out.println("Probl�me lors de la mise en m�moire des stop words...");}
+		{System.out.println("Problème lors de la mise en mémoire des stop words...");}
 	}
 	
 	/* (non-Javadoc)
@@ -65,7 +65,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		
 		//Decapitalisation
 		content = content.toLowerCase();
-		//Suppression de la ponctuation
+		//Suppression de la ponctuation // TODO : regexp
 		content = content.replace("(","");
 		content = content.replace(")","");
 		content = content.replace(".","");
@@ -74,6 +74,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		content = content.replace(":","");
 		content = content.replace("'s","");
 		content = content.replace("\"","");
+		content.replaceAll("\\p", "");
 		
 		//Tokenisation de la ligne passee en parametre
 		StringTokenizer tokens = new StringTokenizer(content);
