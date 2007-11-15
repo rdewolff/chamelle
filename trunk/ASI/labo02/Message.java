@@ -5,33 +5,58 @@ import java.text.*;
  * Le message email.
  */
 public class Message {
-	/* Les entêtes et le corps du message. */
+	
+	/* Les entêtes et le corps du message */
 	public String Headers;
 	public String Body;
 
-	/* Serveur SMTP, expéditeur et destinataire. */
+	/* Serveur SMTP, expéditeur et destinataires */
 	private String SMTPServer;
 	private String From;
 	private String To;
+	// champs pour le CC et le BCC
+	private String Cc;
+	private String Bcc;
 
 	/* Pour les fins de ligne. */
 	private static final String CRLF = "\r\n";
 
 	/* Créer l'objet Message en insérant les entêtes requises par la RFC 2822. */
-	public Message(String SMTPServer, String from, String to, String subject, String text) {
+	public Message(
+			String SMTPServer, 
+			String from, 
+			String to, 
+			String cc,
+			String subject, 
+			String text) {
 		/* Enlever les espaces vides */
 		this.SMTPServer = SMTPServer.trim();
 		From = from.trim();
 		To = to.trim();
 		Headers = "From: " + From + CRLF;
 		Headers += "To: " + To + CRLF;
+		// si il y a des Carbon Copy, on les ajoutes
+		System.out.println(cc);
+			
+		if (cc.trim().length() != 0) {
+			Headers += "Cc: " + cc + CRLF;
+		}
 		Headers += "Subject: " + subject.trim() + CRLF;
-
+		// on met la priorité au max pour tous les emails
+		Headers += "X-Priority: 1" + CRLF;
 		/* Une approximation du format requis. Seulement GMT. */
 		SimpleDateFormat format = 
 			new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US);
 		String dateString = format.format(new Date());
 		Headers += "Date: " + dateString + CRLF;
+		
+		// si le message contient la balise <HTML>, le type de message est HTML
+		if ((text.toLowerCase()).indexOf("<html>") == -1) {
+			Headers += "Content-Type: text/plain;";
+		} else {
+			Headers += "Content-Type: text/html;";
+		}
+
 		Body = text;
 	}
 
@@ -47,6 +72,14 @@ public class Message {
 
 	public String getTo() {
 		return To;
+	}
+	
+	public String getCc() {
+		return Cc;
+	}
+	
+	public String getBcc() {
+		return Bcc;
 	}
 
 
@@ -70,7 +103,6 @@ public class Message {
 	/* Pour imprimer le message. */
 	public String toString() {
 		String res;
-
 		res = Headers + CRLF;
 		res += Body;
 		return res;

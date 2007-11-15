@@ -17,7 +17,14 @@ public class MailClient extends Frame {
 	private Label fromLabel = new Label("De:");
 	private TextField fromField = new TextField("rdewolff@citycable.ch", 40);
 	private Label toLabel = new Label("A:"); 
-	private TextField toField = new TextField("rdewolff@gmail.com", 40);
+	private TextField toField = new TextField("romain.de-wolff@heig-vd.ch", 40);
+	// champs CC
+	private Label ccLabel = new Label("CC:"); 
+	private TextField ccField = new TextField("", 40);
+	// champs BCC
+	private Label bccLabel = new Label("BCC:"); 
+	private TextField bccField = new TextField("", 40);
+	
 	private Label subjectLabel = new Label("Sujet:");
 	private TextField subjectField = new TextField("TEST", 40);
 	private Label messageLabel = new Label("Message:");
@@ -36,6 +43,9 @@ public class MailClient extends Frame {
 		Panel SMTPServerPanel = new Panel(new BorderLayout());
 		Panel fromPanel = new Panel(new BorderLayout());
 		Panel toPanel = new Panel(new BorderLayout());
+		// on defini une zone pour le CC et le BCC
+		Panel ccPanel = new Panel(new BorderLayout());
+		Panel bccPanel = new Panel(new BorderLayout());
 		Panel subjectPanel = new Panel(new BorderLayout());
 		Panel messagePanel = new Panel(new BorderLayout());
 		SMTPServerPanel.add(SMTPServerLabel, BorderLayout.WEST);
@@ -44,6 +54,12 @@ public class MailClient extends Frame {
 		fromPanel.add(fromField, BorderLayout.CENTER);
 		toPanel.add(toLabel, BorderLayout.WEST);
 		toPanel.add(toField, BorderLayout.CENTER);
+		// on ajoute le champs CC et BCC à la zone prévue a cet effet
+		ccPanel.add(ccLabel, BorderLayout.WEST);
+		ccPanel.add(ccField, BorderLayout.CENTER);
+		bccPanel.add(bccLabel, BorderLayout.WEST);
+		bccPanel.add(bccField, BorderLayout.CENTER);
+
 		subjectPanel.add(subjectLabel, BorderLayout.WEST);
 		subjectPanel.add(subjectField, BorderLayout.CENTER);
 		messagePanel.add(messageLabel, BorderLayout.NORTH);	
@@ -52,6 +68,8 @@ public class MailClient extends Frame {
 		fieldPanel.add(SMTPServerPanel);
 		fieldPanel.add(fromPanel);
 		fieldPanel.add(toPanel);
+		fieldPanel.add(ccPanel);
+		fieldPanel.add(bccPanel);
 		fieldPanel.add(subjectPanel);
 
 		/* Créer un panneau pour les boutons et ajouter les
@@ -97,9 +115,11 @@ public class MailClient extends Frame {
 			}
 
 			/* Créer le message */
-			Message mailMessage = new Message(SMTPServerField.getText(),
+			Message mailMessage = new Message(
+					SMTPServerField.getText(),
 					fromField.getText(), 
 					toField.getText(), 
+					ccField.getText(),
 					subjectField.getText(), 
 					messageText.getText());
 
@@ -132,6 +152,8 @@ public class MailClient extends Frame {
 			SMTPServerField.setText("");
 			fromField.setText("");
 			toField.setText("");
+			ccField.setText("");
+			bccField.setText("");
 			subjectField.setText("");
 			messageText.setText("");
 		}

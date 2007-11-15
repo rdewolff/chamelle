@@ -59,6 +59,15 @@ public class SMTPConnection {
 		/* compléter */
 		sendCommand("MAIL FROM:" + envelope.Sender, 250);
 		sendCommand("RCPT TO:" + envelope.Recipient, 250); // TODO : ou 251 si destinaire pas local 
+
+		if (envelope.Cc.length() != 0) {
+			StringTokenizer ccToken = new StringTokenizer(envelope.Cc,",");
+			while(ccToken.hasMoreTokens()){
+				System.out.println(ccToken.nextToken());
+			}
+		}
+
+		// TODO message a destinataires multiples
 		sendCommand("DATA", 354);
 		sendCommand(envelope.leMessage + CRLF + ".", 250);
 	}
@@ -81,10 +90,10 @@ public class SMTPConnection {
 		// Ecrire la commande au serveur et lire la réponse du serveur
 		/* compléter */
 		toServer.writeBytes(command + CRLF);
-		
+
 		// pour debug, affiche dans la console
 		System.out.println(command); 
-		
+
 		// Vérifier que la réponse du serveur est la même que le paramètre
 		// rc. Si ce n'est pas le cas, lancer une IOException.
 		if (parseReply(fromServer.readLine()) != rc) {

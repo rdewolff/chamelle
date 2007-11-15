@@ -9,8 +9,10 @@ public class Envelope {
 	/* L'expéditeur du message (ici, contenu de l'entête "De"). */
 	public String Sender;
 
-	/* Le destinataire SMTP. */
+	/* Les destinataires SMTP. */
 	public String Recipient;
+	public String Cc; // carbon copie(s)
+	public String Bcc; // blind carbon copie(s)
 
 	/* Le host MX cible. */
 	public String DestHost;
@@ -25,7 +27,9 @@ public class Envelope {
 		DestHost = message.getSMTPServer();
 		Sender = message.getFrom();
 		Recipient = message.getTo();
-
+		Cc = message.getCc();
+		Bcc = message.getBcc();
+		
 		/* Obtenir le message. Le parser et adapter pour être sur que 
 	   il n'y a pas de point unique sur une ligne. Cela crérait un
 	   problème lors le l'envoi de l'email. */
