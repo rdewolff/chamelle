@@ -1,10 +1,11 @@
 
-public class Outils {
+public class Message {
+	
 	private int n;
 	private int[]][] matrice;
 	private int[] ligne;
 	
-	Outils(int n, int[] ligne, int[][] matrice)
+	Message(int n, int[] ligne, int[][] matrice)
 	{
 		this.n = n;
 		this.ligne = ligne;
