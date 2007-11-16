@@ -58,16 +58,21 @@ public class SMTPConnection {
 		// attraper d'exception lancée par sendCommand() ici à l'intérieur.
 		/* compléter */
 		sendCommand("MAIL FROM:" + envelope.Sender, 250);
-		sendCommand("RCPT TO:" + envelope.Recipient, 250); // TODO : ou 251 si destinaire pas local 
+		
+		 // TODO : ou 251 si destinaire pas local
+		
+		sendCommand("RCPT TO:" + envelope.Recipient, 250); 
 
-		if (envelope.Cc.length() != 0) {
-			StringTokenizer ccToken = new StringTokenizer(envelope.Cc,",");
-			while(ccToken.hasMoreTokens()){
-				System.out.println(ccToken.nextToken());
-			}
+		// message a destinataires multiples
+		// les CC
+		for (String cc : (envelope.Cc.trim()).split(",")) {
+			sendCommand("RCPT TO:" + cc, 250); 
+		}
+		// idem avec BCC
+		for (String bcc : (envelope.Bcc.trim()).split(",")) {
+			sendCommand("RCPT TO:" + bcc, 250); 
 		}
 
-		// TODO message a destinataires multiples
 		sendCommand("DATA", 354);
 		sendCommand(envelope.leMessage + CRLF + ".", 250);
 	}
