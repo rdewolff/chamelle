@@ -120,6 +120,7 @@ public class MailClient extends Frame {
 					fromField.getText(), 
 					toField.getText(), 
 					ccField.getText(),
+					bccField.getText(),
 					subjectField.getText(), 
 					messageText.getText());
 

@@ -1,6 +1,8 @@
 import java.util.*;
 import java.text.*;
 
+import sun.misc.Regexp;
+
 /**
  * Le message email.
  */
@@ -27,23 +29,30 @@ public class Message {
 			String from, 
 			String to, 
 			String cc,
+			String bcc,
 			String subject, 
 			String text) {
+		
 		/* Enlever les espaces vides */
 		this.SMTPServer = SMTPServer.trim();
 		From = from.trim();
 		To = to.trim();
+		this.Cc = cc; 
+		this.Bcc = bcc;
+		
 		Headers = "From: " + From + CRLF;
 		Headers += "To: " + To + CRLF;
 		// si il y a des Carbon Copy, on les ajoutes
-		System.out.println(cc);
-			
 		if (cc.trim().length() != 0) {
 			Headers += "Cc: " + cc + CRLF;
 		}
 		Headers += "Subject: " + subject.trim() + CRLF;
 		// on met la priorité au max pour tous les emails
 		Headers += "X-Priority: 1" + CRLF;
+		Headers += "X-MSMail-Priority: High" + CRLF; 
+		// on ajoute le nom du client email
+		Headers += "X-Mailer: deWolff Mail Client 0.1" + CRLF;
+		
 		/* Une approximation du format requis. Seulement GMT. */
 		SimpleDateFormat format = 
 			new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US);
@@ -82,10 +91,16 @@ public class Message {
 		return Bcc;
 	}
 
-
 	/* Contrôler si le message est valide en vérifiant que l'expéditeur
        et le destinataire contiennent seulement un caractère "@". */
 	public boolean isValid() {
+		javax.mail.internet.InternetAddress;
+		
+		// Regexp reg2 = "^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$";
+		//Regexp reg = "/^[a-zA-Z0-9._-]+@([a-zA-Z0-9.-]+\.)+[a-zA-Z0-9.-]{2,4}$/";
+		//  if (regexp.test(emailAdrr)) alert('the adress is valid');
+		//  else alert('the adress is invalid');
+		
 		int fromAt = From.indexOf('@');
 		int toAt = To.indexOf('@');
 
