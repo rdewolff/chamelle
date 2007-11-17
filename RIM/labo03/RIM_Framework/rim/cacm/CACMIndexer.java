@@ -74,7 +74,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		content = content.replace(":","");
 		content = content.replace("'s","");
 		content = content.replace("\"","");
-		//content.replaceAll("\\p", "");
+		content.replaceAll("\\p", "");
 		
 		//Tokenisation de la ligne passee en parametre
 		StringTokenizer tokens = new StringTokenizer(content);

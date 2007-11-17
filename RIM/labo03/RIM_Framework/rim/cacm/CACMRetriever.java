@@ -56,15 +56,11 @@ public class CACMRetriever implements Retriever
 		TreeMap<String, Double> result = new TreeMap<String, Double>();
 		//Tableau representant la reponse a la requete
 		Object[][] list = index.get(documentId);
-		System.out.println(list.length);
-		try {
-		//Construction de la reponse
+		//Constructionde la reponse
 		for(int i=0; i<list.length; i++)
 		{
 			result.put((String)list[i][0], (Double)list[i][1]);
-		}}
-		catch(Exception e)
-		{e.printStackTrace();}//System.out.println(e.);}
+		}
 		
 		return result;
 	}
