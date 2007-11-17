@@ -65,11 +65,13 @@ public class SMTPConnection {
 
 		// message a destinataires multiples
 		// les CC
-		for (String cc : (envelope.Cc.trim()).split(",")) {
+		// TODO : erreur quand CC meme vide ?!
+
+		for (String cc : (envelope.Cc.split(","))) {
 			sendCommand("RCPT TO:" + cc, 250); 
 		}
 		// idem avec BCC
-		for (String bcc : (envelope.Bcc.trim()).split(",")) {
+		for (String bcc : (envelope.Bcc.split(","))) {
 			sendCommand("RCPT TO:" + bcc, 250); 
 		}
 

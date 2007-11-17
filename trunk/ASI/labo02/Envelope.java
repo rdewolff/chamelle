@@ -28,11 +28,11 @@ public class Envelope {
 	 * 			 abc.com    : retourne abc.com
 	 * 			 pc1		: retourne pc1
 	 */
-	private static String getSecondDomain(String host) {
+	private String getSecondDomain(String host) {
 
 		String domaine;
 		String domaine2;
-
+ 
 		// si le domaine contient un point on determine le deomaine secondaire
 		if (host.contains(".")) {
 			// prend le dernier point jusqu'à la fin du host (ex: .ch)
