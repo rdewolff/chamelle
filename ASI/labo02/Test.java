@@ -22,7 +22,7 @@ public class Test {
 		// il ne doit pas être le dernier caractère
 		if (email.lastIndexOf("@") == email.length()-1)
 			return false; 
-		
+
 
 
 		// on coupe l'email en deux parties à analyser
@@ -86,6 +86,29 @@ public class Test {
 		return false;
 	}
 
+	private static String getSecondDomain(String host) {
+
+		String domaine;
+		String domaine2;
+
+		// si le domaine contient un point on determine le deomaine secondaire
+		if (host.contains(".")) {
+			// prend le dernier point jusqu'à la fin du host (ex: .ch)
+			domaine =  host.substring(host.lastIndexOf('.'), host.length() );
+			// on cherche l'avant dernier point dans le host
+			domaine2 = host.substring(0, host.lastIndexOf('.'));
+			domaine2 = domaine2.substring(domaine2.lastIndexOf('.')+1, domaine2.length());
+			// on construit le domaine secondaire a partir des 2 informations
+			domaine = domaine2 + domaine;
+
+		} else {
+			// sinon on retourne simplement le domaine passé en parametre
+			domaine = host;
+		}
+
+		return domaine;
+	}
+
 	public static void main (String args[]) {
 
 		if (checkMail("rdewolff@000000000.ca")) {
@@ -93,6 +116,8 @@ public class Test {
 		} else {
 			System.out.println("Adresse E-Mail INVALIDE");
 		}
-		
+
+		System.out.println(getSecondDomain("a.b.c.net"));
+
 	}
 }
