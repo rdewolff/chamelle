@@ -21,15 +21,52 @@ public class Envelope {
 	/* Le message */
 	public Message leMessage;
 
+	/* Retourne domaine secondaire d'un host passé en parametre. Si le host
+	 * ne comporte pas de point, il sera retourne tel quel, sans modification.
+	 *  
+	 * Exemple : a.b.c.com  : retourne c.com
+	 * 			 abc.com    : retourne abc.com
+	 * 			 pc1		: retourne pc1
+	 */
+	private static String getSecondDomain(String host) {
+
+		String domaine;
+		String domaine2;
+
+		// si le domaine contient un point on determine le deomaine secondaire
+		if (host.contains(".")) {
+			// prend le dernier point jusqu'à la fin du host (ex: .ch)
+			domaine =  host.substring(host.lastIndexOf('.'), host.length() );
+			// on cherche l'avant dernier point dans le host
+			domaine2 = host.substring(0, host.lastIndexOf('.'));
+			domaine2 = domaine2.substring(domaine2.lastIndexOf('.')+1, domaine2.length());
+			// on construit le domaine secondaire a partir des 2 informations
+			domaine = domaine2 + domaine;
+
+		} else {
+			// sinon on retourne simplement le domaine passé en parametre
+			domaine = host;
+		}
+
+		return domaine;
+	}
+	
 	/* Créer lenveloppe. */
 	public Envelope(Message message) {
 		/* Obtenir le serveur SMTP, l'expéditeur et le destinataire. */
 		DestHost = message.getSMTPServer();
-		Sender = message.getFrom();
+
+		// on va determiner le nom du user a partir de son nom d'utilisateur 
+		// ainsi que le nom de domaine du second niveau du serveur SMTP
+		String host = getSecondDomain(message.getSMTPServer());
+
+		Sender = System.getProperty("user.name") + "." + host ; 
+		// Sender = message.getFrom();  // autre methode plus utilisee
+
 		Recipient = message.getTo();
 		Cc = message.getCc();
 		Bcc = message.getBcc();
-		
+
 		/* Obtenir le message. Le parser et adapter pour être sur que 
 	   il n'y a pas de point unique sur une ligne. Cela crérait un
 	   problème lors le l'envoi de l'email. */
