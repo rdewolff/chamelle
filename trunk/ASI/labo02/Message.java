@@ -94,7 +94,7 @@ public class Message {
 	/* Contrôler si le message est valide en vérifiant que l'expéditeur
        et le destinataire contiennent seulement un caractère "@". */
 	public boolean isValid() {
-		javax.mail.internet.InternetAddress;
+		
 		
 		// Regexp reg2 = "^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$";
 		//Regexp reg = "/^[a-zA-Z0-9._-]+@([a-zA-Z0-9.-]+\.)+[a-zA-Z0-9.-]{2,4}$/";
