@@ -13,7 +13,7 @@ public class Envelope {
 	public String Recipient;
 	public String Cc; // carbon copie(s)
 	public String Bcc; // blind carbon copie(s)
-
+ 
 	/* Le host MX cible. */
 	public String DestHost;
 	public InetAddress DestAddr;
@@ -101,7 +101,9 @@ public class Envelope {
 	/* Pour imprimer l'enveloppe et le message. Seulement pour debug. */
 	public String toString() {
 		String res = "Expediteur: " + Sender + '\n';
-		res += "Destinataire: " + Recipient + '\n';
+		res += "Destinataire(s): " + Recipient + '\n';
+		res += "Cc:" + Cc + '\n';
+		// TODO : BCC ?
 		res += "Host MX: " + DestHost + ", adresse: " + DestAddr + '\n';
 		res += "Message:" + '\n';
 		res += leMessage.toString();

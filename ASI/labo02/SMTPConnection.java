@@ -3,10 +3,10 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Ouvrir une connexion SMTP vers une machine distante et envoyer un seul
-   message.
+ * Ouvrir une connexion SMTP vers une machine distante et envoyer des messages
  */
 public class SMTPConnection {
+
 	/* La socket de connection */
 	public Socket socketConnection;
 
@@ -57,24 +57,30 @@ public class SMTPConnection {
 		// message. Appeler sendCommand() pour faire le travail. Ne pas
 		// attraper d'exception lancée par sendCommand() ici à l'intérieur.
 		/* compléter */
+
+		// l'adresse de l'expediteur
 		sendCommand("MAIL FROM:" + envelope.Sender, 250);
-		
-		 // TODO : ou 251 si destinaire pas local
-		
-		sendCommand("RCPT TO:" + envelope.Recipient, 250); 
 
-		// message a destinataires multiples
+		// TODO : ou 251 si destinaire pas local
+
+		// plusieurs destinataires possibles
+		for (String cc : (envelope.Recipient.split(","))) {
+			sendCommand("RCPT TO:" + cc.trim(), 250); 
+		}
+
 		// les CC
-		// TODO : erreur quand CC meme vide ?!
-
-		for (String cc : (envelope.Cc.split(","))) {
-			sendCommand("RCPT TO:" + cc, 250); 
+		if (envelope.Cc.length() > 0) {
+			for (String cc : (envelope.Cc.split(","))) {
+				sendCommand("RCPT TO:" + cc.trim(), 250); 
+			}
 		}
 		// idem avec BCC
-		for (String bcc : (envelope.Bcc.split(","))) {
-			sendCommand("RCPT TO:" + bcc, 250); 
+		if (envelope.Bcc.length() > 0) {
+			for (String bcc : (envelope.Bcc.split(","))) {
+				sendCommand("RCPT TO:" + bcc.trim(), 250); 
+			}
 		}
-
+		// les données
 		sendCommand("DATA", 354);
 		sendCommand(envelope.leMessage + CRLF + ".", 250);
 	}

@@ -17,11 +17,11 @@ public class Message {
 		// verifie que le mail contienne bien un arobase
 		if (!email.contains("@"))
 			return false;
-		
+
 		// le mail complet doit comporter au minimum 5 caracteres
 		if (email.length()<5)
 			return false;
-		
+
 		// verifie que le nom de domaine complet n'excede pas 255 caracteres
 		String[] domaine = email.split("@");
 		if (domaine[1].length() > 255)
@@ -46,6 +46,20 @@ public class Message {
 		// si on arrive ici, l'email n'est pas valable
 		return false;
 	}
+
+	// vérifie la validité de plusieurs emails separe par des virgules
+	private boolean validMultipleMail(String mails) {
+
+		for (String s :mails.split(",") ) {
+			s = s.trim();
+			if (!checkMail(s)) {
+				System.out.println("Adresse invalide : "+s);
+				return false;
+			}
+		}
+		return true;
+	}
+
 
 	/* Les entêtes et le corps du message */
 	public String Headers;
@@ -140,12 +154,23 @@ public class Message {
 			return false;
 		}
 
-		// vérifie la validité des destinataires
-		for (String s :To.split(",") ) {
-			s = s.trim();
-			System.out.println(s);
-			if (!checkMail(s)) {
-				System.out.println("Le champs 'adresse destinataire' est invalide");
+		if (To.length() > 0) {
+			if (!validMultipleMail(To)) {
+				System.out.println("Le champs 'A:' comporte une adresse email invalide");
+				return false;
+			}
+		}
+
+		if (Cc.length() > 0) {
+			if (!validMultipleMail(Cc)) {
+				System.out.println("Le champs 'CC:' comporte une adresse email invalide");
+				return false;
+			}
+		}
+
+		if (Bcc.length() > 0) {
+			if (!validMultipleMail(Bcc)) {
+				System.out.println("Le champs 'BCC:' comporte une adresse email invalide");
 				return false;
 			}
 		}
