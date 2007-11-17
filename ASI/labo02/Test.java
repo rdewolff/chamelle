@@ -71,20 +71,7 @@ public class Test {
 		return true;
 	}
 
-	private static boolean checkMail(String email) {
-		// le nom d'utilisateur doit comporter au moins un caractère
-		String user = "[a-z0-9\\-\\_]++((\\.?[a-z0-9\\-\\_]++)+)?";
-		// traiter les sous-domaines
-		String host = "[a-z0-9\\-]{1,63}((\\.[a-z0-9\\-]++){1})?"; 
-		String doma = "\\.[a-z0-9]{2,6}"; // domaine entre 2 et 6 caractères
-		String regexp = user + "@" + host + doma;
-		Pattern p = Pattern.compile(regexp);
-		Matcher m = p.matcher(email.toLowerCase()); // insenssible à la casse
-		if (m.matches()) {
-			return true;
-		}
-		return false;
-	}
+	
 
 	private static String getSecondDomain(String host) {
 
@@ -108,16 +95,51 @@ public class Test {
 
 		return domaine;
 	}
-
+	
+	// verifie une adresse email
+	private static boolean checkMail(String email) {
+		
+		// on met tout en minuscule pour simplifier les verification
+		email = email.toLowerCase(); 
+		
+		// verifie que le mail contienne bien un arobase
+		if (!email.contains("@"))
+			return false;
+		
+		// verifie que le nom de domaine complet n'excede pas 255 caracteres
+		String[] domaine = email.split("@");
+		if (domaine[1].length() > 255)
+			return false;
+		
+		/*Compose l'expression reguliere qui permet de determiner si un email
+		 * est bien valide ou non */
+		
+		// le nom d'utilisateur doit comporter au moins un caractère
+		// il doit comporter des lettres
+		String user = "[a-z0-9\\-\\_]++((\\.?[a-z0-9\\-\\_]++)+)?";
+		
+		// traiter les sous-domaines
+		String host = "[a-z0-9\\-]{1,63}((\\.[a-z0-9\\-]{1,63})?)+"; 
+		String dom = "\\.[a-z0-9]{2,6}"; // domaine entre 2 et 6 caractères
+		String regexp = user + "@" + host + dom;
+		Pattern p = Pattern.compile(regexp);
+		Matcher m = p.matcher(email); // insenssible à la casse
+		if (m.matches()) {
+			return true;
+		}
+		return false;
+	}
+	
 	public static void main (String args[]) {
 
-		if (checkMail("rdewolff@000000000.ca")) {
+		if (checkMail("romain.de-wolff@public.toilette.heig-vd.ch")) {
 			System.out.println("Adresse E-Mail OK");
 		} else {
 			System.out.println("Adresse E-Mail INVALIDE");
 		}
 
-		System.out.println(getSecondDomain("a.b.c.net"));
+		
+		System.out.println("\n" + getSecondDomain("a.b.c.net"));
 
 	}
 }

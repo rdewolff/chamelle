@@ -113,7 +113,7 @@ public class MailClient extends Frame {
 				System.out.println("Pas d'adresse destination!");
 				return;
 			}
-
+ 
 			/* Créer le message */
 			Message mailMessage = new Message(
 					SMTPServerField.getText(),

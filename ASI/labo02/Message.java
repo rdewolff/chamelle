@@ -1,12 +1,51 @@
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.text.*;
-
-import sun.misc.Regexp;
 
 /**
  * Le message email.
  */
 public class Message {
+
+	//verifie une adresse email
+	public boolean checkMail(String email) {
+
+		// on met tout en minuscule pour simplifier les verification
+		email = email.toLowerCase(); 
+
+		// verifie que le mail contienne bien un arobase
+		if (!email.contains("@"))
+			return false;
+		
+		// le mail complet doit comporter au minimum 5 caracteres
+		if (email.length()<5)
+			return false;
+		
+		// verifie que le nom de domaine complet n'excede pas 255 caracteres
+		String[] domaine = email.split("@");
+		if (domaine[1].length() > 255)
+			return false;
+
+		/*Compose l'expression reguliere qui permet de determiner si un email
+		 * est bien valide ou non */
+
+		// le nom d'utilisateur doit comporter au moins un caractère
+		// il doit comporter des lettres
+		String user = "[a-z0-9\\-\\_]++((\\.?[a-z0-9\\-\\_]++)+)?";
+
+		// traiter les sous-domaines
+		String host = "[a-z0-9\\-]{1,63}((\\.[a-z0-9\\-]{1,63})?)+"; 
+		String dom = "\\.[a-z0-9]{2,6}"; // domaine entre 2 et 6 caractères
+		String regexp = user + "@" + host + dom;
+		Pattern p = Pattern.compile(regexp); // on prepare l'expression regulière
+		Matcher m = p.matcher(email); // insenssible à la casse
+		if (m.matches()) { // on verifie que le format est valide
+			return true; // ok
+		}
+		// si on arrive ici, l'email n'est pas valable
+		return false;
+	}
 
 	/* Les entêtes et le corps du message */
 	public String Headers;
@@ -95,23 +134,22 @@ public class Message {
        et le destinataire contiennent seulement un caractère "@". */
 	public boolean isValid() {
 
-
-		// Regexp reg2 = "^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$";
-		//Regexp reg = "/^[a-zA-Z0-9._-]+@([a-zA-Z0-9.-]+\.)+[a-zA-Z0-9.-]{2,4}$/";
-		//  if (regexp.test(emailAdrr)) alert('the adress is valid');
-		//  else alert('the adress is invalid');
-
-		int fromAt = From.indexOf('@');
-		int toAt = To.indexOf('@');
-		
-		if(fromAt < 1 || (From.length() - fromAt) <= 1 || fromAt != From.lastIndexOf('@')) {
+		// verifie la validité de l'email de l'expéditeur
+		if (!checkMail(From)) {
 			System.out.println("L'adresse expéditeur est invalide");
 			return false;
 		}
-		if(toAt < 1 || (To.length() - toAt) <= 1 || toAt != To.lastIndexOf('@')) {
-			System.out.println("L'adresse destinataire est invalide");
-			return false;
-		}	
+
+		// vérifie la validité des destinataires
+		for (String s :To.split(",") ) {
+			s = s.trim();
+			System.out.println(s);
+			if (!checkMail(s)) {
+				System.out.println("Le champs 'adresse destinataire' est invalide");
+				return false;
+			}
+		}
+
 		return true;
 	}
 
