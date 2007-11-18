@@ -22,7 +22,7 @@ public interface Retriever {
 	 * @param term a term.
 	 * @return the document id's mapped to the frequency of the contained term.
 	 */
-	public Map<Integer,Double> searchTerm (String term);
+	public Map<Integer,Integer> searchTerm (String term);
 	
 	/**
 	 * Retrieves the documents satisfying the given query. Each document is mapped to
