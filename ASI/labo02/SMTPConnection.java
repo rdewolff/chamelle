@@ -120,7 +120,7 @@ public class SMTPConnection {
 		// le code de réponse est le premier élément de la ligne
 		
 		// affiche le code de réponse du serveur
-		// System.out.println("réponse : " + reply.split(" ")[0]); 
+		System.out.println("Code de status: " + reply.split(" ")[0]); 
 		return Integer.parseInt(reply.split(" ")[0]);
 	}
 
