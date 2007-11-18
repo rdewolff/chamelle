@@ -10,9 +10,11 @@ import rim.Retriever;
  */
 public class CACMRetriever implements Retriever
 {
-	//Les deux Maps triees repr�sentant les deux indexs
-	static TreeMap<Integer, Object[][]> index = new TreeMap<Integer, Object[][]>();
-	static TreeMap<String, Object[][]> indexInverse = new TreeMap<String, Object[][]>();
+//	Les deux Maps triees servant de memoire d'indexage
+	static TreeMap<Integer, HashMap<String, Double>> index = 
+		new TreeMap<Integer, HashMap<String, Double>>();
+	static TreeMap<String, HashMap<Integer, Integer>> indexInverse = 
+		new TreeMap<String, HashMap<Integer, Integer>>();
 	
 	//Traitements statiques
 	static
@@ -33,8 +35,8 @@ public class CACMRetriever implements Retriever
 		{
 			System.out.println("Mise en memoire des indexs...");
 			ObjectInputStream in = new ObjectInputStream(new FileInputStream("index_object.txt"));
-			index = (TreeMap<Integer, Object[][]>)in.readObject();
-			indexInverse = (TreeMap<String, Object[][]>)in.readObject();
+			index = (TreeMap<Integer, HashMap<String, Double>>)in.readObject();
+			indexInverse = (TreeMap<String, HashMap<Integer, Integer>>)in.readObject();
 			in.close();
 		}
 		catch(ClassNotFoundException e)
@@ -52,35 +54,25 @@ public class CACMRetriever implements Retriever
 	 */
 	public Map<String, Double> searchDocument(Integer documentId)
 	{
-		//Map de retour
-		TreeMap<String, Double> result = new TreeMap<String, Double>();
 		//Tableau representant la reponse a la requete
-		Object[][] list = index.get(documentId);
+		HashMap<String, Double> list = index.get(documentId);
 		//Constructionde la reponse
-		for(int i=0; i<list.length; i++)
-		{
-			result.put((String)list[i][0], (Double)list[i][1]);
-		}
 		
-		return result;
+		return list;
 	}
 
 	/* (non-Javadoc)
 	 * @see rim.Retriever#searchTerm(java.lang.String)
 	 */
-	public Map<Integer, Double> searchTerm(String term)
+	public Map<Integer, Integer> searchTerm(String term)
 	{
 		//Map de retour
 		TreeMap<Integer, Double> result = new TreeMap<Integer, Double>();
 		//Tableau representant la reponse a la requete
-		Object[][] list = indexInverse.get(term);
+		HashMap<Integer, Integer> list = indexInverse.get(term);
 		//Construction de la reponse
-		for(int i=0; i<list.length; i++)
-		{
-			result.put((Integer)list[i][0], (Double)list[i][1]);
-		}
 		
-		return result;
+		return list;
 	}
 	
 	/* (non-Javadoc)

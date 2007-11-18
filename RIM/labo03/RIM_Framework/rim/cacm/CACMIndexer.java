@@ -13,8 +13,10 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 	//HashMap contenant les stop words a eliminer des documents
 	static HashSet<String> commonwords = new HashSet<String>();
 	//Les deux Maps triees servant de memoire d'indexage
-	static TreeMap<Integer, Object[][]> index = new TreeMap<Integer, Object[][]>();
-	static TreeMap<String, Object[][]> indexInverse = new TreeMap<String, Object[][]>();
+	static TreeMap<Integer, HashMap<String, Double>> index = 
+		new TreeMap<Integer, HashMap<String, Double>>();
+	static TreeMap<String, HashMap<Integer, Integer>> indexInverse = 
+		new TreeMap<String, HashMap<Integer, Integer>>();
 	//Variable dernier ID indexer
 	static int lastId = 0;
 	
@@ -60,6 +62,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		String tok = null;
 		String phrase = null;
 		Set keys = null;
+		int freqMax = 0;
 		//Table des termes avec leur frequence
 		HashMap<String, Integer> elements = new HashMap<String, Integer>();
 		
@@ -74,7 +77,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		content = content.replace(":","");
 		content = content.replace("'s","");
 		content = content.replace("\"","");
-		content.replaceAll("\\p", "");
+		//content.replaceAll("\\p", "");
 		
 		//Tokenisation de la ligne passee en parametre
 		StringTokenizer tokens = new StringTokenizer(content);
@@ -94,19 +97,23 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		
 		//Recuperation de la liste des termes
 		keys = elements.keySet();
-		//La liste des termes avec leur frequence que l'on va creer
-		Object[][] list = new Object[keys.size()][2];
-		int cpt = 0;
 		
+		//Recherche de la frequence maximale
+		for(Object s: keys)
+		{
+			if(elements.get(s) > freqMax)
+				freqMax = elements.get(s);
+		}
+		
+		HashMap<String, Double> h = new HashMap<String, Double>();
 		//Construction de la ligne d'index correspondant au document en cours de traitement
 		for(Object s: keys)
 		{
-			list[cpt][0] = s;
-			list[cpt][1] = elements.get((String)s);
-			cpt++;
+			h.put((String)s, (double)elements.get(s)/(double)freqMax);
 		}
+		
 		//Stockage dans la variable statique
-		index.put(id, list);
+		index.put(id, h);
 		
 		//La liste des documents avec leur frequence que l'on va creer pour les termes
 		for(Object s: keys)
@@ -115,32 +122,14 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 			//et y appondre le terme courant
 			if(indexInverse.containsKey(s))
 			{
-				//Longueur du tableau existant dans l'index inverse
-				int length = indexInverse.get((String)s).length;
-				//Declaration du nouveau tableau
-				Object[][] list2 = new Object[length+1][2];
-				// Recuperation de l'ancien tableau
-				Object[][] listRef = indexInverse.get((String)s);
-				
-				//Construction avec les anciennes valeurs
-				for(int i=0; i<length; i++)
-				{
-					list2[i][0] = listRef[i][0];
-					list2[i][1] = listRef[i][1];
-				}
-				//Ajout des nouvelles valeurs
-				list2[length][0] = id;
-				list2[length][1] = elements.get((String)s);
-				//Remplacement de la ligne de l'index inverse
-				indexInverse.put((String)s,list2);
+				indexInverse.get(s).put(id, elements.get((String)s));
 			}
 			//Sinon, on cree un tableau avec les valeurs courantes
 			else
 			{
-				Object[][] list2 = new Object[1][2];
-				list2[0][0] = id;
-				list2[0][1] = elements.get((String)s);
-				indexInverse.put((String)s,list2);
+				HashMap<Integer, Integer> h2 = new HashMap<Integer, Integer>();
+				h2.put(id, elements.get((String)s));
+				indexInverse.put((String)s,h2);
 			}
 		}
 	}
@@ -154,6 +143,8 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 	{
 		Set keys = null;
 		Set keys2 = null;
+		Set _keys = null;
+		Set _keys2 = null;
 		String ligne = null;
 		try
 		{
@@ -165,12 +156,15 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 			//Remplissage du fichier d'index
 			for(Object o: keys)
 			{
-				Object[][] tableau = new Object[index.get((Integer)o).length][2];
-				tableau = index.get(o);
+				_keys = index.get(o).keySet();
 				ligne = "[" + o + "]{"; //Debut de ligne avec l'ID du document
+				
 				//Liste des terme/frequence
-				for(int i=0; i<index.get((Integer)o).length; i++)
-					ligne = ligne + "<" + tableau[i][0] + "," + tableau[i][1] + ">";
+				for(Object o2: _keys)
+				{
+					ligne = ligne + "<" + (String)o2 + "," + index.get(o).get(o2) + ">";
+				}
+				
 				ligne = ligne + "}\r\n";	
 				os.write(ligne); //Ecriture de la ligne
 	   		}
@@ -185,12 +179,17 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 			//Remplissage du fichier d'index inverse
 			for(Object o: keys2)
 			{
-				Object[][] tableau = new Object[indexInverse.get((String)o).length][2];
-				tableau = indexInverse.get(o);
+//				Object[][] tableau = new Object[indexInverse.get((String)o).length][2];
+//				tableau = indexInverse.get(o);
 				ligne = "[" + o + "]{"; //Debut de ligne avec le terme
+				_keys2 = indexInverse.get(o).keySet();
+				
 				//Liste des document/frequence
-				for(int i=0; i<indexInverse.get((String)o).length; i++)
-					ligne = ligne + "<" + tableau[i][0] + "," + tableau[i][1] + ">";
+				for(Object o2: _keys2)
+				{
+					ligne = ligne + "<" + (Integer)o2 + "," + indexInverse.get(o).get(o2) + ">";
+				}
+
 				ligne = ligne + "}\r\n";
 				//Ecriture de la ligne
 				os2.write(ligne);
