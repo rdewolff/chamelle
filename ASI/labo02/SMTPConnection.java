@@ -104,7 +104,7 @@ public class SMTPConnection {
 		/* compléter */
 		toServer.writeBytes(command + CRLF);
 
-		// pour debug, affiche dans la console
+		// affiche dans la console la commande
 		System.out.println(command); 
 
 		// Vérifier que la réponse du serveur est la même que le paramètre
@@ -118,7 +118,9 @@ public class SMTPConnection {
 	private int parseReply(String reply) {
 		/* compléter */
 		// le code de réponse est le premier élément de la ligne
-		System.out.println("réponse : " + reply.split(" ")[0]);
+		
+		// affiche le code de réponse du serveur
+		// System.out.println("réponse : " + reply.split(" ")[0]); 
 		return Integer.parseInt(reply.split(" ")[0]);
 	}
 

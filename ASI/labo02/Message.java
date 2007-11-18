@@ -35,7 +35,7 @@ public class Message {
 		String user = "[a-z0-9\\-\\_]++((\\.?[a-z0-9\\-\\_]++)+)?";
 
 		// traiter les sous-domaines
-		String host = "[a-z0-9\\-]{1,63}((\\.[a-z0-9\\-]{1,63})?)+"; 
+		String host = "[a-z0-9\\-]{2,63}((\\.[a-z0-9\\-]{1,63})?)+"; 
 		String dom = "\\.[a-z0-9]{2,6}"; // domaine entre 2 et 6 caractères
 		String regexp = user + "@" + host + dom;
 		Pattern p = Pattern.compile(regexp); // on prepare l'expression regulière
