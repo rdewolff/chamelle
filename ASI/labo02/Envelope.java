@@ -60,7 +60,7 @@ public class Envelope {
 		// ainsi que le nom de domaine du second niveau du serveur SMTP
 		String host = getSecondDomain(message.getSMTPServer());
 
-		Sender = System.getProperty("user.name") + "." + host ; 
+		Sender = System.getProperty("user.name") + "@" + host ; 
 		// Sender = message.getFrom();  // autre methode plus utilisee
 
 		Recipient = message.getTo();
@@ -103,7 +103,6 @@ public class Envelope {
 		String res = "Expediteur: " + Sender + '\n';
 		res += "Destinataire(s): " + Recipient + '\n';
 		res += "Cc:" + Cc + '\n';
-		// TODO : BCC ?
 		res += "Host MX: " + DestHost + ", adresse: " + DestAddr + '\n';
 		res += "Message:" + '\n';
 		res += leMessage.toString();

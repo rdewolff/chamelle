@@ -95,6 +95,7 @@ public class Message {
 
 		Headers = "From: " + From + CRLF;
 		Headers += "To: " + To + CRLF;
+		
 		// si il y a des Carbon Copy, on les ajoutes
 		if (cc.trim().length() != 0) {
 			Headers += "Cc: " + cc + CRLF;
@@ -175,6 +176,7 @@ public class Message {
 			}
 		}
 
+		// si on passe les tests precedant, le mail est valide
 		return true;
 	}
 
