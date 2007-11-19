@@ -3,8 +3,8 @@ package rim.cacm;
 import rim.Indexer;
 import java.util.*;
 import java.io.*;
-import java.net.*;
-import java.math.*;
+//import java.net.*;
+//import java.math.*;
 
 /**
  * An indexer for the CACM collection.
@@ -74,7 +74,6 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 	public void index(Integer id, String content){
 	
 		String tok = null;
-		String phrase = null;
 		Set keys = null;
 		double freqMax = 0;
 		//Table des termes avec leur frequence
@@ -119,33 +118,37 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 				freqMax = elements.get(s);
 		}
 		
-		//
+		//Table pour les termes/fraquences normalisees
 		HashMap<String, Double> h = new HashMap<String, Double>();
+		//Table pour les termes/frequences absolues
 		HashMap<String, Integer> h2 = new HashMap<String, Integer>();
 		
 		//Construction de la ligne d'index correspondant au document en cours de traitement
 		for(Object s: keys)
 		{
+			//Memorisation des frequences normalisees
 			h.put((String)s, (double)elements.get(s)/freqMax);
-			//Memorisation des frequences
+			//Memorisation des frequences absolues
 			h2.put((String)s, elements.get(s));
 		}
 		
-		//Stockage dans la variable statique
+		//Stockage des frequences normalisees
 		index.put(id, h);
-		// Stockage des frequences
+		//Stockage des frequences
 		frequences.put(id, h2);
 		
-		//La liste des documents avec leur frequence que l'on va creer pour les termes
+		//La liste des documents avec leur frequence normalisee que 
+		//l'on va creer pour les termes
 		for(Object s: keys)
 		{
-			//Si l'index inverse contient deja un terme, il faut recuperer son tableau
-			//et y appondre le terme courant
+			//Si l'index inverse contient deja un terme, il faut rajouter le 
+			//terme courant et sa frequence normalisee
 			if(indexInverse.containsKey(s))
 			{
-				indexInverse.get(s).put(id, elements.get((String)s)/freqMax);
+				indexInverse.get(s).put(id, 
+						(double)elements.get((String)s)/freqMax);
 			}
-			//Sinon, on cree un tableau avec les valeurs courantes
+			//Sinon, on cree une map avec les valeurs courantes
 			else
 			{
 				HashMap<Integer, Double> h3 = new HashMap<Integer, Double>();
