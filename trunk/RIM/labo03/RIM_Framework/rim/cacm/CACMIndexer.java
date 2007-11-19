@@ -73,7 +73,6 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 	 */
 	public void index(Integer id, String content){
 	
-		String tok = null;
 		Set keys = null;
 		double freqMax = 0;
 		//Table des termes avec leur frequence
@@ -82,29 +81,28 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		//Decapitalisation
 		content = content.toLowerCase();
 		//Suppression de la ponctuation // TODO : regexp
-		content = content.replace("(","");
-		content = content.replace(")","");
-		content = content.replace(".","");
-		content = content.replace(",","");
-		content = content.replace(";","");
-		content = content.replace(":","");
-		content = content.replace("'s","");
-		content = content.replace("\"","");
+//		content = content.replace("(","");
+//		content = content.replace(")","");
+//		content = content.replace(".","");
+//		content = content.replace(",","");
+//		content = content.replace(";","");
+//		content = content.replace(":","");
+//		content = content.replace("'s","");
+//		content = content.replace("\"","");
 		//content.replaceAll("\\p", "");
 		
 		//Tokenisation de la ligne passee en parametre
-		StringTokenizer tokens = new StringTokenizer(content);
+		String[] tokens = content.split("[\\p{Punct} ]");
 		
 		//--Creation des indexs--//
 		
 		//Parcours des termes du document et sotckage de leur frequence
-		while (tokens.hasMoreTokens())
+		for (String s: tokens)
 		{
-			tok = tokens.nextToken();
 			//Selection des termes qui ne sont pas des stop words
-			if(!commonwords.contains(tok))
+			if(!commonwords.contains(s))
 			{
-				elements.put(tok, elements.containsKey(tok)?elements.get(tok)+1:1);
+				elements.put(s, elements.containsKey(s)?elements.get(s)+1:1);
 			}
 		}
 		

@@ -95,17 +95,17 @@ public class CACMRetriever implements Retriever
 			double sommePoidTerme = 0;
 			double sommeTfIdf = 0;
 
-			Set _keys = index.keySet();
-			for(Object id: _keys)
+			Set<Integer> _keys = index.keySet();
+			for(Integer id: _keys)
 			{
 				// parcours tous les termes de la requete
 				for (int i=0; i<arQuery.length; i++) {
 					tmpIndexInverse = indexInverse.get(arQuery[i]);
 					if (tmpIndexInverse != null) {
-						if(tmpIndexInverse.get((Integer)id) != null) {
-							sommeProduit = tmpIndexInverse.get((Integer)id) * 1.0;
+						if(tmpIndexInverse.get(id) != null) {
+							sommeProduit = tmpIndexInverse.get(id) * 1.0;
 							sommePoidTerme += Math.pow(1.0, 2.0);
-							sommeTfIdf += Math.pow(tmpIndexInverse.get((Integer)id), 2.0); 
+							sommeTfIdf += Math.pow(tmpIndexInverse.get(id), 2.0); 
 						} else {
 							sommeProduit = 0.0;
 						}
