@@ -202,6 +202,33 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		    os.flush();
 	        os.close();
 	        
+	        //Recuperation de la liste des lignes d'index
+			keys2 = indexInverse.keySet();
+			
+			//Ouverture du fichier
+			BufferedWriter os2 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("index_inverse.txt")));
+			
+			/*-------------------------------------
+			*Remplissage du fichier d'index inverse
+			-------------------------------------*/
+			for(Object o: keys2)
+			{
+				ligne = "[" + o + "]{"; //Debut de ligne avec le terme
+				_keys2 = indexInverse.get(o).keySet();
+				
+				//Liste des document/frequence
+				for(Object o2: _keys2)
+				{
+					ligne = ligne + "<" + (Integer)o2 + "," + indexInverse.get(o).get(o2) + ">";
+				}
+
+				ligne = ligne + "}\r\n";
+				//Ecriture de la ligne
+				os2.write(ligne);
+	   		}
+		    os2.flush();
+	        os2.close();
+	        
 	        keys = index.keySet();
 	        
 	        /*--------------------------------------------------
@@ -261,32 +288,25 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		    os.flush();
 	        os.close();
 			
-			//Recuperation de la liste des lignes d'index
-			keys2 = indexInverse.keySet();
-			
-			//Ouverture du fichier
-			BufferedWriter os2 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("index_inverse.txt")));
-			
-			/*-------------------------------------
-			*Remplissage du fichier d'index inverse
-			-------------------------------------*/
-			for(Object o: keys2)
-			{
-				ligne = "[" + o + "]{"; //Debut de ligne avec le terme
-				_keys2 = indexInverse.get(o).keySet();
-				
-				//Liste des document/frequence
-				for(Object o2: _keys2)
-				{
-					ligne = ligne + "<" + (Integer)o2 + "," + indexInverse.get(o).get(o2) + ">";
-				}
-
-				ligne = ligne + "}\r\n";
-				//Ecriture de la ligne
-				os2.write(ligne);
-	   		}
-		    os2.flush();
-	        os2.close();
+	        //La liste des documents avec leur frequence normalisee que 
+			//l'on va creer pour les termes
+//			for(Object s: keys)
+//			{
+//				//Si l'index inverse contient deja un terme, il faut rajouter le 
+//				//terme courant et sa frequence normalisee
+//				if(indexInverse.containsKey(s))
+//				{
+//					indexInverse.get(s).put(id, 
+//							(double)elements.get((String)s)/freqMax);
+//				}
+//				//Sinon, on cree une map avec les valeurs courantes
+//				else
+//				{
+//					HashMap<Integer, Double> h3 = new HashMap<Integer, Double>();
+//					h3.put(id, (double)elements.get((String)s)/freqMax);
+//					indexInverse.put((String)s,h3);
+//				}
+//			}
 			
 			ObjectOutputStream os3 = new ObjectOutputStream(new FileOutputStream("index_object.txt"));
 			//Ecriture des deux TreeMaps
