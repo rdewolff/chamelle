@@ -119,8 +119,10 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 				freqMax = elements.get(s);
 		}
 		
+		//
 		HashMap<String, Double> h = new HashMap<String, Double>();
 		HashMap<String, Integer> h2 = new HashMap<String, Integer>();
+		
 		//Construction de la ligne d'index correspondant au document en cours de traitement
 		for(Object s: keys)
 		{
@@ -174,7 +176,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 			//Nombre total de documents
 			n = index.size();
 			
-			//Ouverture du fichier
+			//Ouverture du fichier d'index des frequences normalisees
 			BufferedWriter os = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("index.txt")));
 			
 			/*--------------------------------------------------
@@ -200,7 +202,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 	        keys = index.keySet();
 	        
 	        /*--------------------------------------------------
-	        *Remplissage du fichier d'index de fréquences tf-idf
+	        *Mise a jour du treemap d'index de fréquences tf-idf
 	        --------------------------------------------------*/
 			for(Object o: keys)
 			{
@@ -216,8 +218,8 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 				//Calcul des tfidf et de tfidf maximum
 				for(Object o2: _keys)
 				{
-					tfidf = Math.log1p(index.get(o).get(o2))*
-							Math.log1p(n/(double)frequences.get(o).get(o2));
+					tfidf = (Math.log(index.get(o).get(o2)+1.0)/Math.log(2))*
+							(Math.log1p(n/(double)frequences.get(o).get(o2)+1.0)/Math.log(2));
 					if(tfidf > maxTfIdf) //Mise a jour tfidf Max
 						maxTfIdf = tfidf;
 					h.put((String)o2, tfidf);
@@ -232,6 +234,29 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 				//Stockage dans l'objet d'index
 				index2.put((Integer)o, h);
 	   		}
+			
+			//Ouverture du fichier des tf-idf normalisees
+			os = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("index2.txt")));
+			
+			/*--------------------------------------------------
+			*Remplissage du fichier d'index frequence normalisee
+			--------------------------------------------------*/
+			for(Object o: keys)
+			{
+				_keys = index2.get(o).keySet();
+				ligne = "[" + o + "]{"; //Debut de ligne avec l'ID du document
+				
+				//Liste des terme/frequence
+				for(Object o2: _keys)
+				{
+					ligne = ligne + "<" + (String)o2 + "," + index2.get(o).get(o2) + ">";
+				}
+				
+				ligne = ligne + "}\r\n";	
+				os.write(ligne); //Ecriture de la ligne
+	   		}
+		    os.flush();
+	        os.close();
 			
 			//Recuperation de la liste des lignes d'index
 			keys2 = indexInverse.keySet();
