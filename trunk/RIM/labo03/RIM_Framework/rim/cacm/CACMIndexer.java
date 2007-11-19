@@ -4,6 +4,7 @@ import rim.Indexer;
 import java.util.*;
 import java.io.*;
 import java.net.*;
+import java.math.*;
 
 /**
  * An indexer for the CACM collection.
@@ -12,13 +13,26 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 {	
 	//HashMap contenant les stop words a eliminer des documents
 	static HashSet<String> commonwords = new HashSet<String>();
-	//Les deux Maps triees servant de memoire d'indexage
+	
+	//Les deux Maps triees servant de memoire d'indexage frequence normalisee
+	static TreeMap<Integer, HashMap<String, Integer>> frequences = 
+		new TreeMap<Integer, HashMap<String, Integer>>();
+	
+	//Les deux Maps triees servant de memoire d'indexage frequence normalisee
 	static TreeMap<Integer, HashMap<String, Double>> index = 
 		new TreeMap<Integer, HashMap<String, Double>>();
-	static TreeMap<String, HashMap<Integer, Integer>> indexInverse = 
+	static TreeMap<String, HashMap<Integer, Double>> indexInverse = 
+		new TreeMap<String, HashMap<Integer, Double>>();
+	
+	//Les deux Maps triees servant de memoire d'indexage tf-idf normalise
+	static TreeMap<Integer, HashMap<String, Double>> index2 = 
+		new TreeMap<Integer, HashMap<String, Double>>();
+	static TreeMap<String, HashMap<Integer, Integer>> indexInverse2 = 
 		new TreeMap<String, HashMap<Integer, Integer>>();
+	
 	//Variable dernier ID indexer
 	static int lastId = 0;
+	static double n = 0;
 	
 	static
 	{
@@ -62,7 +76,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		String tok = null;
 		String phrase = null;
 		Set keys = null;
-		int freqMax = 0;
+		double freqMax = 0;
 		//Table des termes avec leur frequence
 		HashMap<String, Integer> elements = new HashMap<String, Integer>();
 		
@@ -106,14 +120,19 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		}
 		
 		HashMap<String, Double> h = new HashMap<String, Double>();
+		HashMap<String, Integer> h2 = new HashMap<String, Integer>();
 		//Construction de la ligne d'index correspondant au document en cours de traitement
 		for(Object s: keys)
 		{
-			h.put((String)s, (double)elements.get(s)/(double)freqMax);
+			h.put((String)s, (double)elements.get(s)/freqMax);
+			//Memorisation des frequences
+			h2.put((String)s, elements.get(s));
 		}
 		
 		//Stockage dans la variable statique
 		index.put(id, h);
+		// Stockage des frequences
+		frequences.put(id, h2);
 		
 		//La liste des documents avec leur frequence que l'on va creer pour les termes
 		for(Object s: keys)
@@ -122,14 +141,14 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 			//et y appondre le terme courant
 			if(indexInverse.containsKey(s))
 			{
-				indexInverse.get(s).put(id, elements.get((String)s));
+				indexInverse.get(s).put(id, elements.get((String)s)/freqMax);
 			}
 			//Sinon, on cree un tableau avec les valeurs courantes
 			else
 			{
-				HashMap<Integer, Integer> h2 = new HashMap<Integer, Integer>();
-				h2.put(id, elements.get((String)s));
-				indexInverse.put((String)s,h2);
+				HashMap<Integer, Double> h3 = new HashMap<Integer, Double>();
+				h3.put(id, (double)elements.get((String)s)/freqMax);
+				indexInverse.put((String)s,h3);
 			}
 		}
 	}
@@ -146,14 +165,21 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		Set _keys = null;
 		Set _keys2 = null;
 		String ligne = null;
+		
 		try
 		{
 			//Recuperation de la liste des lignes d'index
 			keys = index.keySet();
+			
+			//Nombre total de documents
+			n = index.size();
+			
 			//Ouverture du fichier
 			BufferedWriter os = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("index.txt")));
 			
-			//Remplissage du fichier d'index
+			/*--------------------------------------------------
+			*Remplissage du fichier d'index frequence normalisee
+			--------------------------------------------------*/
 			for(Object o: keys)
 			{
 				_keys = index.get(o).keySet();
@@ -170,17 +196,54 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 	   		}
 		    os.flush();
 	        os.close();
+	        
+	        keys = index.keySet();
+	        
+	        /*--------------------------------------------------
+	        *Remplissage du fichier d'index de fréquences tf-idf
+	        --------------------------------------------------*/
+			for(Object o: keys)
+			{
+				//Le tfIdf max de tous les documents
+		        double maxTfIdf = 0.0;
+		        //Les cles representant les termes dans un document
+				_keys = index.get(o).keySet();
+				//La variable du tf-idf
+				double tfidf = 0;
+				//Table intermediaire pour les termes et leur tf-idf
+				HashMap<String, Double> h = new HashMap<String, Double>();
+				
+				//Calcul des tfidf et de tfidf maximum
+				for(Object o2: _keys)
+				{
+					tfidf = Math.log1p(index.get(o).get(o2))*
+							Math.log1p(n/(double)frequences.get(o).get(o2));
+					if(tfidf > maxTfIdf) //Mise a jour tfidf Max
+						maxTfIdf = tfidf;
+					h.put((String)o2, tfidf);
+				}
+				_keys = h.keySet();
+				
+				//Normalisation du tfidf
+				for(Object o2: _keys)
+				{
+					h.put((String)o2, h.get(o2)/maxTfIdf);
+				}
+				//Stockage dans l'objet d'index
+				index2.put((Integer)o, h);
+	   		}
 			
 			//Recuperation de la liste des lignes d'index
 			keys2 = indexInverse.keySet();
+			
 			//Ouverture du fichier
 			BufferedWriter os2 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("index_inverse.txt")));
 			
-			//Remplissage du fichier d'index inverse
+			/*-------------------------------------
+			*Remplissage du fichier d'index inverse
+			-------------------------------------*/
 			for(Object o: keys2)
 			{
-//				Object[][] tableau = new Object[indexInverse.get((String)o).length][2];
-//				tableau = indexInverse.get(o);
 				ligne = "[" + o + "]{"; //Debut de ligne avec le terme
 				_keys2 = indexInverse.get(o).keySet();
 				
@@ -199,7 +262,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 			
 			ObjectOutputStream os3 = new ObjectOutputStream(new FileOutputStream("index_object.txt"));
 			//Ecriture des deux TreeMaps
-			os3.writeObject(index);
+			os3.writeObject(index2);
 			os3.writeObject(indexInverse);
 			os3.flush();
 			os3.close();
