@@ -10,10 +10,16 @@ import rim.Retriever;
  */
 public class CACMRetriever implements Retriever
 {
-//	Les deux Maps triees servant de memoire d'indexage
+	//Les deux Maps triees servant de memoire d'indexage
 	static TreeMap<Integer, HashMap<String, Double>> index = 
 		new TreeMap<Integer, HashMap<String, Double>>();
-	static TreeMap<String, HashMap<Integer, Integer>> indexInverse = 
+	static TreeMap<String, HashMap<Integer, Double>> indexInverse = 
+		new TreeMap<String, HashMap<Integer, Double>>();
+	
+	//Les deux Maps triees servant de memoire d'indexage tf-idf normalise
+	static TreeMap<Integer, HashMap<String, Double>> index2 = 
+		new TreeMap<Integer, HashMap<String, Double>>();
+	static TreeMap<String, HashMap<Integer, Integer>> indexInverse2 = 
 		new TreeMap<String, HashMap<Integer, Integer>>();
 	
 	//Traitements statiques
@@ -36,7 +42,7 @@ public class CACMRetriever implements Retriever
 			System.out.println("Mise en memoire des indexs...");
 			ObjectInputStream in = new ObjectInputStream(new FileInputStream("index_object.txt"));
 			index = (TreeMap<Integer, HashMap<String, Double>>)in.readObject();
-			indexInverse = (TreeMap<String, HashMap<Integer, Integer>>)in.readObject();
+			indexInverse = (TreeMap<String, HashMap<Integer, Double>>)in.readObject();
 			in.close();
 		}
 		catch(ClassNotFoundException e)
@@ -56,7 +62,6 @@ public class CACMRetriever implements Retriever
 	{
 		//Tableau representant la reponse a la requete
 		HashMap<String, Double> list = index.get(documentId);
-		//Constructionde la reponse
 		
 		return list;
 	}
@@ -64,13 +69,10 @@ public class CACMRetriever implements Retriever
 	/* (non-Javadoc)
 	 * @see rim.Retriever#searchTerm(java.lang.String)
 	 */
-	public Map<Integer, Integer> searchTerm(String term)
+	public Map<Integer, Double> searchTerm(String term)
 	{
-		//Map de retour
-		TreeMap<Integer, Double> result = new TreeMap<Integer, Double>();
 		//Tableau representant la reponse a la requete
-		HashMap<Integer, Integer> list = indexInverse.get(term);
-		//Construction de la reponse
+		HashMap<Integer, Double> list = indexInverse.get(term);
 		
 		return list;
 	}
