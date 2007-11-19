@@ -94,27 +94,25 @@ public class CACMRetriever implements Retriever
 			double sommeProduit = 0;
 			double sommePoidTerme = 0;
 			double sommeTfIdf = 0;
-			Set[] keys = new Set[arQuery.length];
-			for(int i=0; i<arQuery.length; i++)
-			{
-				keys[i] = indexInverse.get(arQuery[i]).keySet();
-			}
+
 			Set _keys = index.keySet();
 			for(Object id: _keys)
 			{
 				// parcours tous les termes de la requete
 				for (int i=0; i<arQuery.length; i++) {
 					tmpIndexInverse = indexInverse.get(arQuery[i]);
-					if (!tmpIndexInverse.isEmpty()) {
-						if(tmpIndexInverse.get((Integer)id) != null)
+					if (tmpIndexInverse != null) {
+						if(tmpIndexInverse.get((Integer)id) != null) {
 							sommeProduit = tmpIndexInverse.get((Integer)id) * 1.0;
-						else
+							sommePoidTerme += Math.pow(1.0, 2.0);
+							sommeTfIdf += Math.pow(tmpIndexInverse.get((Integer)id), 2.0); 
+						} else {
 							sommeProduit = 0.0;
+						}
 					} else {
 						sommeProduit = 0.0;
 					}
-					sommePoidTerme += Math.pow(1.0, 2.0);
-					sommeTfIdf += Math.pow(tmpIndexInverse.get((Integer)id), 2.0);
+
 				}
 				// on insere le document ID ainsi que sa similarite par cosinus
 				queryAnswer.put(sommeProduit / Math.sqrt(sommeTfIdf*sommePoidTerme), (Integer)id);
@@ -124,7 +122,8 @@ public class CACMRetriever implements Retriever
 				sommeTfIdf = 0;
 			}
 		} catch (Exception e) {
-			System.out.println("Erreur dans la fonction executeQuery()");
+			System.out.println("Erreur dans la fonction executeQuery() : ");
+			e.printStackTrace();
 		}
 
 		return queryAnswer; //  HashMap<Double, Integer>();
