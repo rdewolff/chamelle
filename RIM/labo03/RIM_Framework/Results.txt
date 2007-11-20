@@ -1,74 +1,41 @@
 Bonjour,
 
- 
+Comme demandï¿½ par certains de vos collï¿½gues, voici un exemple de rï¿½sultat pour une requï¿½te donnï¿½e, ceci afin que vous puissiez valider vos propres rï¿½sultats.
 
-Comme demandé par certains de vos collègues, voici un exemple de résultat pour une requête donnée, ceci afin que vous puissiez valider vos propres résultats.
-
- 
-
-Pour commencer, voici un résultat en utilisant les index pondérés par fréquence normalisée :
-
- 
-
+Pour commencer, voici un rï¿½sultat en utilisant les index pondï¿½rï¿½s par frï¿½quence normalisï¿½e :
 ------------------------------------------------------------------------
-
 Results for query 'Automatic Data Processing' :
-
 ------------------------------------------------------------------------
-
 Document no : 987 (cosinus = 0.5962847939999439)
-
 Document no : 528 (cosinus = 0.5773502691896258)
-
 Document no : 696 (cosinus = 0.5661385170722981)
-
 Document no : 1359 (cosinus = 0.5388602512436508)
-
 Document no : 2727 (cosinus = 0.48038446141526137)
-
 Document no : 333 (cosinus = 0.47140452079103173)
-
 Document no : 2999 (cosinus = 0.45291081365783825)
-
 Document no : 86 (cosinus = 0.4472135954999579)
 
-…
 
- 
-
-Et avec les index pondérés par tfidf normalisé :
-
- 
-
+Et avec les index pondï¿½rï¿½s par tfidf normalisï¿½ :
 ------------------------------------------------------------------------
-
 Results for query 'Automatic Data Processing' :
-
 ------------------------------------------------------------------------
-
 Document no : 987 (cosinus = 0.5782391905125097)
-
 Document no : 394 (cosinus = 0.4890443706939917)
-
 Document no : 528 (cosinus = 0.40836033116910564)
-
 Document no : 34 (cosinus = 0.31578560310621956)
-
 Document no : 333 (cosinus = 0.3142364113630746)
-
 Document no : 18 (cosinus = 0.2911207518637241)
-
 Document no : 597 (cosinus = 0.2864007174494743)
-
 Document no : 189 (cosinus = 0.2692367116319247)
 
-…
+ï¿½
 
-Il se peut que vous obteniez des valeurs légèrement différentes (qui peuvent être dues notamment à des pertes de précision dans certains calculs), mais vous devriez obtenir des résultats comparables à ceux-ci.
+Il se peut que vous obteniez des valeurs lï¿½gï¿½rement diffï¿½rentes (qui peuvent ï¿½tre dues notamment ï¿½ des pertes de prï¿½cision dans certains calculs), mais vous devriez obtenir des rï¿½sultats comparables ï¿½ ceux-ci.
 
  
 
-A tout à l’heure …
+A tout ï¿½ lï¿½heure ï¿½
 
  
 
@@ -86,4 +53,4 @@ CH-1401 Yverdon-les-Bains
 
 florian.poulin@heig-vd.ch
 
-Tél.: +41 24 557 75 86
+Tï¿½l.: +41 24 557 75 86

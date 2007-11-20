@@ -223,6 +223,9 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 	        /*--------------------------------------------------
 	        *Mise a jour du treemap d'index de fréquences tf-idf
 	        --------------------------------------------------*/
+			// TODO check selon cours maj des TFIDF
+			// si jamais ln(x)/ln(2) = log base 2(x)
+
 			/*--------------------------------------------------
 			*Remplissage du fichier d'index de fréquences tf-idf
 			--------------------------------------------------*/
