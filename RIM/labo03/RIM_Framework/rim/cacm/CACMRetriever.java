@@ -188,7 +188,7 @@ public class CACMRetriever implements Retriever
 			HashMap<Integer, Double> tmpIndexInverse = null;
 			
 			//Le set des documents concernes par la requete
-			HashSet<Integer> setDocs = null;
+			HashSet<Integer> setDocs = new HashSet<Integer>();
 			//Creation du set de documents qui contiennent les termes de la requete
 			for (String s: keys) {
 				if(tfIdf)
@@ -212,15 +212,19 @@ public class CACMRetriever implements Retriever
 				}
 				
 				Set<String> _keys;
+				
 				if(tfIdf)	
 					_keys = index2.get(id).keySet();
 				else
 					_keys = index.get(id).keySet();
+				
 				HashMap<String, Double> h = new HashMap<String, Double>();
+				
 				if(tfIdf)
 					h = index2.get(id);
 				else
 					h = index.get(id);
+				
 				for(String s: _keys)
 				{
 					sommeTfIdf += Math.pow(h.get(s), 2.0);

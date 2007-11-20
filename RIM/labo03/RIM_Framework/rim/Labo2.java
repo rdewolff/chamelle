@@ -127,7 +127,7 @@ public class Labo2 {
 									System.out.println("Documents trouve ainsi " +
 											"que similarite par cosinus:");
 									terme = terme.trim();
-									Map<Double,Integer> t4 = r.executeQuery(terme, false);
+									Map<Double,Integer> t4 = r.executeQuery(terme, true);
 									keys = t4.keySet();
 									for(Object s: keys)
 										System.out.println(s + ", " + t4.get(s));
