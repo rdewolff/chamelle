@@ -22,8 +22,8 @@ public class CACMRetriever implements Retriever
 	//Les deux Maps triees servant de memoire d'indexage tf-idf normalise
 	static TreeMap<Integer, HashMap<String, Double>> index2 = 
 		new TreeMap<Integer, HashMap<String, Double>>();
-	static TreeMap<String, HashMap<Integer, Integer>> indexInverse2 = 
-		new TreeMap<String, HashMap<Integer, Integer>>();
+	static TreeMap<String, HashMap<Integer, Double>> indexInverse2 = 
+		new TreeMap<String, HashMap<Integer, Double>>();
 
 	//Traitements statiques
 	static
@@ -67,6 +67,42 @@ public class CACMRetriever implements Retriever
 			ObjectInputStream in = new ObjectInputStream(new FileInputStream("index_object.txt"));
 			index = (TreeMap<Integer, HashMap<String, Double>>)in.readObject();
 			indexInverse = (TreeMap<String, HashMap<Integer, Double>>)in.readObject();
+			index2 = (TreeMap<Integer, HashMap<String, Double>>)in.readObject();
+			indexInverse2 = (TreeMap<String, HashMap<Integer, Double>>)in.readObject();
+			in.close();
+		}
+		catch(ClassNotFoundException e)
+		{System.out.println("classnfoundlect2");}
+		catch(ClassCastException e)
+		{System.out.println("ClassCast");}
+		catch(FileNotFoundException e)
+		{System.out.println("Le fichier n'existe pas");}
+		catch(IOException e)
+		{System.out.println("IOException");}
+	}
+	
+	public void reMem()
+	{
+		File f = new File("index_object.txt");
+		//Si l'index n'a pas ete construit, on effectue l'indexage
+		if(!f.exists())
+		{
+			System.out.println("Creation des indexs...");
+			CACMIndexer i = new CACMIndexer();
+			CACMFeeder c = new CACMFeeder();
+			c.parseCollection(java.net.URI.create("rim/ressources/cacm.all"), i);
+			i.finalizeIndexation();
+		}
+
+		//Lecture des deux TreeMaps stockes dans le fichier "index_object"
+		try
+		{
+			System.out.println("Mise en memoire des indexs...");
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream("index_object.txt"));
+			index = (TreeMap<Integer, HashMap<String, Double>>)in.readObject();
+			indexInverse = (TreeMap<String, HashMap<Integer, Double>>)in.readObject();
+			index2 = (TreeMap<Integer, HashMap<String, Double>>)in.readObject();
+			indexInverse2 = (TreeMap<String, HashMap<Integer, Double>>)in.readObject();
 			in.close();
 		}
 		catch(ClassNotFoundException e)
@@ -108,9 +144,12 @@ public class CACMRetriever implements Retriever
 	 * Croissant -> Decroissant 
 	 * 
 	 */
-	public Map<Double,Integer> executeQuery (String query)
+	public Map<Double,Integer> executeQuery (String query, boolean tfIdf)
 	{
 		Set<String> keys = null;
+		double sommeProduit = 0.0;
+		double sommePoidTerme = 0.0;
+		double sommeTfIdf = 0.0;
 		//Decapitalisation
 		query = query.toLowerCase();
 
@@ -128,64 +167,71 @@ public class CACMRetriever implements Retriever
 					set.put(s, 1.0);
 			}
 		}
-
+		
+		//Recuperation des termes de la requete
+		keys = set.keySet();
+		
 		//Table de stockage des cosinus de reponse
 		TreeMap<Double, Integer> queryAnswer = new TreeMap<Double, Integer>(new Comparator<Double>() {
 			public int compare(Double o1, Double o2) {
 				return Double.compare(o2, o1);
 			}
 		});
+		//Somme des poids des termes de la requete au carre
+		for(String s: keys) {
+			sommePoidTerme += Math.pow(set.get(s), 2.0);
+		}
 		
 		int cpt=0;
 		
 		try {
 			HashMap<Integer, Double> tmpIndexInverse = null;
-			double sommeProduit = 0.0;
-			double sommePoidTerme = 0.0;
-			double sommeTfIdf = 0.0;
-			//recuperation des termes de la requete
-			keys = set.keySet();
+			
 			//Le set des documents concernes par la requete
-			HashSet<Integer> setDocs = new HashSet<Integer>();
-			//Creation du set
+			HashSet<Integer> setDocs = null;
+			//Creation du set de documents qui contiennent les termes de la requete
 			for (String s: keys) {
-				setDocs.addAll(indexInverse.get(s).keySet());
+				if(tfIdf)
+					setDocs.addAll(indexInverse2.get(s).keySet());
+				else
+					setDocs.addAll(indexInverse.get(s).keySet());
 			}
 
 			//Parcours des documents concernes par notre requete
 			for(Integer id: setDocs) {
-				//Parcours tous les termes de la requete
+				//Parcours de tous les termes de la requete
 				for(String s: keys) {
-					tmpIndexInverse = indexInverse.get(s);
-					//Si le terme existe dans notre collection
-					if(tmpIndexInverse != null) {
-						//Si le document courant contient le terme courant de la requete
-						if(tmpIndexInverse.get(id) != null) {
-
-							sommeProduit += tmpIndexInverse.get(id) * set.get(s);
-							sommePoidTerme += Math.pow(set.get(s), 2.0);
-
-						}
+					if(tfIdf)
+						tmpIndexInverse = indexInverse2.get(s);
+					else
+						tmpIndexInverse = indexInverse.get(s);
+					//Si le terme existe dans notre collection et que le document existe
+					if(tmpIndexInverse != null && tmpIndexInverse.get(id) != null) {
+						sommeProduit += tmpIndexInverse.get(id) * set.get(s);
 					}
 				}
-
-				Set<String> _keys = index.get(id).keySet();
+				
+				Set<String> _keys;
+				if(tfIdf)	
+					_keys = index2.get(id).keySet();
+				else
+					_keys = index.get(id).keySet();
 				HashMap<String, Double> h = new HashMap<String, Double>();
-				h = index.get(id);
-
-				if(sommeProduit != 0.0)
+				if(tfIdf)
+					h = index2.get(id);
+				else
+					h = index.get(id);
+				for(String s: _keys)
 				{
-					for(String s: _keys)
-					{
-						sommeTfIdf += Math.pow(h.get(s), 2.0);
-					}
-					queryAnswer.put((sommeProduit / Math.sqrt(sommeTfIdf*sommePoidTerme)), id);
-					cpt++;
+					sommeTfIdf += Math.pow(h.get(s), 2.0);
 				}
+				if(id==394)
+					System.out.println("394::::::"+(sommeProduit / Math.sqrt(sommeTfIdf*sommePoidTerme)));
+				queryAnswer.put((sommeProduit / Math.sqrt(sommeTfIdf*sommePoidTerme)), id);
+				cpt++;
 
 				// reset
 				sommeProduit = 0.0;
-				sommePoidTerme = 0.0;
 				sommeTfIdf = 0.0;
 			}
 		} catch (Exception e) {
@@ -196,6 +242,5 @@ public class CACMRetriever implements Retriever
 		System.out.println("CPT : " + cpt);
 		System.out.println("TREE : " + queryAnswer.size());
 		return queryAnswer; //  HashMap<Double, Integer>();
-
 	};
 }
