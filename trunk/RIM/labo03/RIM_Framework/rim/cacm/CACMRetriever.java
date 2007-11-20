@@ -157,7 +157,7 @@ public class CACMRetriever implements Retriever
 		String[] tokens = query.split("[\\p{Punct} ]");
 		HashMap<String, Double> set = new HashMap<String, Double>();
 
-		//Parcours des termes du document et sotckage de leur frequence
+		//Parcours des termes du document et stockage de leur frequence
 		for (String s: tokens) {
 			//Selection des termes qui ne sont pas des stop words
 			if(!commonwords.contains(s)) {

@@ -119,7 +119,9 @@ public class Labo2 {
 									Map<Double,Integer> t3 = r.executeQuery(terme, false);
 									keys = t3.keySet();
 									for(Object s: keys)
-										System.out.println(s + ", " + t3.get(s));
+										// affichage des resultats 
+										System.out.println("Document no : "+t3.get(s)+
+												" (cosinus = "+s+")");
 									break;
 						// Requete sur la collection indexee avec tf-idf
 						case 6: 	System.out.println("Entrer le(s) terme(s) recherche:");
@@ -130,7 +132,8 @@ public class Labo2 {
 									Map<Double,Integer> t4 = r.executeQuery(terme, true);
 									keys = t4.keySet();
 									for(Object s: keys)
-										System.out.println(s + ", " + t4.get(s));
+										System.out.println("Document no : "+t4.get(s)+
+												" (cosinus = "+s+")");
 									break;
 					}
 				}
