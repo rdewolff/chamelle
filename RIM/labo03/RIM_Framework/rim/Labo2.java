@@ -42,15 +42,17 @@ public class Labo2 {
 		
 		try
 		{
-			while(requete != 5)
+			while(requete != 7)
 			{
 				//Choix de l'utilisateur
 				System.out.println("Commandes disponibles:");
 				System.out.println("1: Rechercher un document");
 				System.out.println("2: Rechercher un terme");
 				System.out.println("3: Indexer la collection");
-				System.out.println("4: Entrer une requete");
-				System.out.println("5: Quitter");
+				System.out.println("4: Recharger la collection");
+				System.out.println("5: Entrer une requete (freq norm)");
+				System.out.println("6: Entrer une requete (tf-idf)");
+				System.out.println("7: Quitter");
 				
 				//Boucle de saisie
 				while(true)
@@ -59,7 +61,7 @@ public class Labo2 {
 					{
 						requete = Integer.valueOf(inFromUser.readLine());
 						//Si l'entree au clavier est erronnee, on envoie une erreur
-						if(requete != 1 && requete != 2 && requete != 3 && requete != 4 && requete != 5)
+						if(requete < 1 || requete > 7)
 							throw new NumberFormatException();
 						break;
 					}
@@ -69,7 +71,7 @@ public class Labo2 {
 				}
 				
 				//Si l'utilisateur veut quitter
-				if(requete == 5)
+				if(requete == 7)
 				{
 					System.out.println("Fin du programme...");
 					break;
@@ -105,16 +107,30 @@ public class Labo2 {
 									c.parseCollection(java.net.URI.create("rim/ressources/cacm.all"), i);
 									i.finalizeIndexation();
 									break;
-						// executer une requete personnalisee
-						case 4: 	System.out.println("Entrer le(s) terme(s) recherche:");
+						//Rechargement des objets
+						case 4: 	r.reMem();
+									break;
+						// Requete sur la collection indexee avec les frequences normalisees
+						case 5: 	System.out.println("Entrer le(s) terme(s) recherche:");
 									terme = inFromUser.readLine();
 									System.out.println("Documents trouve ainsi " +
 											"que similarite par cosinus:");
 									terme = terme.trim();
-									Map<Double,Integer> t3 = r.executeQuery(terme);
+									Map<Double,Integer> t3 = r.executeQuery(terme, false);
 									keys = t3.keySet();
 									for(Object s: keys)
 										System.out.println(s + ", " + t3.get(s));
+									break;
+						// Requete sur la collection indexee avec tf-idf
+						case 6: 	System.out.println("Entrer le(s) terme(s) recherche:");
+									terme = inFromUser.readLine();
+									System.out.println("Documents trouve ainsi " +
+											"que similarite par cosinus:");
+									terme = terme.trim();
+									Map<Double,Integer> t4 = r.executeQuery(terme, false);
+									keys = t4.keySet();
+									for(Object s: keys)
+										System.out.println(s + ", " + t4.get(s));
 									break;
 					}
 				}

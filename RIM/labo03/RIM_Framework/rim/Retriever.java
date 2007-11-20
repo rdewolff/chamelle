@@ -33,5 +33,5 @@ public interface Retriever {
 	 * @return the document id's (values) mapped to their cosinus similarity with the 
 	 * query (key), sorted by descendant cosinus.
 	 */
-	public Map<Double,Integer> executeQuery (String query);
+	public Map<Double,Integer> executeQuery (String query, boolean tfIdf);
 }

@@ -27,8 +27,8 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 	//Les deux Maps triees servant de memoire d'indexage tf-idf normalise
 	static TreeMap<Integer, HashMap<String, Double>> index2 = 
 		new TreeMap<Integer, HashMap<String, Double>>();
-	static TreeMap<String, HashMap<Integer, Integer>> indexInverse2 = 
-		new TreeMap<String, HashMap<Integer, Integer>>();
+	static TreeMap<String, HashMap<Integer, Double>> indexInverse2 = 
+		new TreeMap<String, HashMap<Integer, Double>>();
 	
 	//Variable dernier ID indexer
 	static int lastId = 0;
@@ -153,9 +153,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 	public void finalizeIndexation()
 	{
 		Set keys = null;
-		Set keys2 = null;
 		Set _keys = null;
-		Set _keys2 = null;
 		String ligne = null;
 		
 		try
@@ -190,7 +188,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 	        os.close();
 	        
 	        //Recuperation de la liste des lignes d'index
-			keys2 = indexInverse.keySet();
+			keys = indexInverse.keySet();
 			
 			//Ouverture du fichier
 			os = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("index_inverse.txt")));
@@ -198,13 +196,13 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 			/*-------------------------------------
 			*Remplissage du fichier d'index inverse
 			-------------------------------------*/
-			for(Object o: keys2)
+			for(Object o: keys)
 			{
 				ligne = "[" + o + "]{"; //Debut de ligne avec le terme
-				_keys2 = indexInverse.get(o).keySet();
+				_keys = indexInverse.get(o).keySet();
 				
 				//Liste des document/frequence
-				for(Object o2: _keys2)
+				for(Object o2: _keys)
 				{
 					ligne = ligne + "<" + (Integer)o2 + "," + indexInverse.get(o).get(o2) + ">";
 				}
@@ -216,32 +214,39 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		    os.flush();
 	        os.close();
 	        
+	        //Recuperation de la liste des documents
 	        keys = index.keySet();
+	        
+	        //Ouverture du fichier des tf-idf normalisees
+			os = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("index2.txt")));
 	        
 	        /*--------------------------------------------------
 	        *Mise a jour du treemap d'index de fréquences tf-idf
 	        --------------------------------------------------*/
+			/*--------------------------------------------------
+			*Remplissage du fichier d'index de fréquences tf-idf
+			--------------------------------------------------*/
 			for(Object o: keys)
 			{
 				//Le tfIdf max de tous les documents
 		        double maxTfIdf = 0.0;
+		        //La variable du tf-idf
+				double tfidf = 0.0;
 		        //Les cles representant les termes dans un document
 				_keys = index.get(o).keySet();
-				//La variable du tf-idf
-				double tfidf = 0;
 				//Table intermediaire pour les termes et leur tf-idf
 				HashMap<String, Double> h = new HashMap<String, Double>();
 				
 				//Calcul des tfidf et de tfidf maximum
 				for(Object o2: _keys)
 				{
-					tfidf = (Math.log(index.get(o).get(o2)+1.0)/Math.log(2))*
-							(Math.log1p(n/(double)frequences.get(o).get(o2)+1.0)/Math.log(2));
+					int ni = indexInverse.get(o2).keySet().size();
+					tfidf = (Math.log((double)frequences.get(o).get(o2)+1.0)/Math.log(2))*
+							(Math.log(n/ni)/Math.log(2));
 					if(tfidf > maxTfIdf) //Mise a jour tfidf Max
 						maxTfIdf = tfidf;
 					h.put((String)o2, tfidf);
 				}
-				_keys = h.keySet();
 				
 				//Normalisation du tfidf
 				for(Object o2: _keys)
@@ -250,16 +255,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 				}
 				//Stockage dans l'objet d'index
 				index2.put((Integer)o, h);
-	   		}
-			
-			//Ouverture du fichier des tf-idf normalisees
-			os = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("index2.txt")));
-			
-			/*--------------------------------------------------
-			*Remplissage du fichier d'index frequence normalisee
-			--------------------------------------------------*/
-			for(Object o: keys)
-			{
+				
 				_keys = index2.get(o).keySet();
 				ligne = "[" + o + "]{"; //Debut de ligne avec l'ID du document
 				
@@ -272,35 +268,63 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 				ligne = ligne + "}\r\n";	
 				os.write(ligne); //Ecriture de la ligne
 	   		}
+			//Fin d'ecriture et fermeture du fichier d'index avec les frequences normalisees
 		    os.flush();
 	        os.close();
 			
-	        //La liste des documents avec leur frequence normalisee que 
-			//l'on va creer pour les termes
-//			for(Object s: keys)
-//			{
-//				//Si l'index inverse contient deja un terme, il faut rajouter le 
-//				//terme courant et sa frequence normalisee
-//				if(indexInverse.containsKey(s))
-//				{
-//					indexInverse.get(s).put(id, 
-//							(double)elements.get((String)s)/freqMax);
-//				}
-//				//Sinon, on cree une map avec les valeurs courantes
-//				else
-//				{
-//					HashMap<Integer, Double> h3 = new HashMap<Integer, Double>();
-//					h3.put(id, (double)elements.get((String)s)/freqMax);
-//					indexInverse.put((String)s,h3);
-//				}
-//			}
+	        //Recuperation de la liste des termes
+	        keys = indexInverse.keySet();
+	        
+	        //Ouverture du fichier des tf-idf normalisees
+			os = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("index_inverse2.txt")));
+	        
+			/*----------------------------------------------------------
+	        *Mise a jour du treemap d'index inverse de fréquences tf-idf
+	        ----------------------------------------------------------*/
+			/*----------------------------------------------------------
+			*Remplissage du fichier d'index inverse de fréquences tf-idf
+			----------------------------------------------------------*/
+			for(Object s: keys) {
+				_keys = indexInverse.get(s).keySet();
+				for(Object o: _keys)
+				{
+					//Si l'index inverse contient deja un terme, il faut rajouter le 
+					//terme courant et sa frequence normalisee
+					if(indexInverse2.containsKey(s)) {
+						indexInverse2.get(s).put((Integer)o, index2.get(o).get(s));
+					}
+					//Sinon, on cree une map avec les valeurs courantes
+					else {
+						HashMap<Integer, Double> h = new HashMap<Integer, Double>();
+						h.put((Integer)o, index2.get(o).get(s));
+						indexInverse2.put((String)s,h);
+					}
+				}
+				//Recuperation de la liste des documents contenant le terme courant (s)
+				_keys = indexInverse2.get(s).keySet();
+				ligne = "[" + s + "]{"; //Debut de ligne avec le terme traite
+				
+				//Liste des terme/frequence
+				for(Object o: _keys)
+				{
+					ligne = ligne + "<" + o + "," + indexInverse2.get(s).get(o) + ">";
+				}
+				
+				ligne = ligne + "}\r\n";	
+				os.write(ligne); //Ecriture de la ligne
+			}
+			//Fin d'ecriture et fermeture du fichier d'index inverse avec les frequences normalisees
+		    os.flush();
+	        os.close();
 			
-			ObjectOutputStream os3 = new ObjectOutputStream(new FileOutputStream("index_object.txt"));
+			ObjectOutputStream os2 = new ObjectOutputStream(new FileOutputStream("index_object.txt"));
 			//Ecriture des deux TreeMaps
-			os3.writeObject(index);
-			os3.writeObject(indexInverse);
-			os3.flush();
-			os3.close();
+			os2.writeObject(index);
+			os2.writeObject(indexInverse);
+			os2.writeObject(index2);
+			os2.writeObject(indexInverse2);
+			os2.flush();
+			os2.close();
 		}
 		catch(FileNotFoundException e)
 		{System.out.println("Filenfound");}
