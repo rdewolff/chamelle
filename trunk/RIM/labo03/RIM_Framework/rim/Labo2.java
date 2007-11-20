@@ -67,7 +67,7 @@ public class Labo2 {
 					}
 					//En cas d'erreur de format ou de bornes, on signale l'erreur
 					catch(NumberFormatException e)
-					{System.out.println("Veuillez entrer 1,2,3,ou 4");}
+					{System.out.println("Veuillez entrer un numero de la liste");}
 				}
 				
 				//Si l'utilisateur veut quitter
