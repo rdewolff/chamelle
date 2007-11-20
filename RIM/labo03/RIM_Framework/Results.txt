@@ -1,0 +1,89 @@
+Bonjour,
+
+ 
+
+Comme demandé par certains de vos collègues, voici un exemple de résultat pour une requête donnée, ceci afin que vous puissiez valider vos propres résultats.
+
+ 
+
+Pour commencer, voici un résultat en utilisant les index pondérés par fréquence normalisée :
+
+ 
+
+------------------------------------------------------------------------
+
+Results for query 'Automatic Data Processing' :
+
+------------------------------------------------------------------------
+
+Document no : 987 (cosinus = 0.5962847939999439)
+
+Document no : 528 (cosinus = 0.5773502691896258)
+
+Document no : 696 (cosinus = 0.5661385170722981)
+
+Document no : 1359 (cosinus = 0.5388602512436508)
+
+Document no : 2727 (cosinus = 0.48038446141526137)
+
+Document no : 333 (cosinus = 0.47140452079103173)
+
+Document no : 2999 (cosinus = 0.45291081365783825)
+
+Document no : 86 (cosinus = 0.4472135954999579)
+
+…
+
+ 
+
+Et avec les index pondérés par tfidf normalisé :
+
+ 
+
+------------------------------------------------------------------------
+
+Results for query 'Automatic Data Processing' :
+
+------------------------------------------------------------------------
+
+Document no : 987 (cosinus = 0.5782391905125097)
+
+Document no : 394 (cosinus = 0.4890443706939917)
+
+Document no : 528 (cosinus = 0.40836033116910564)
+
+Document no : 34 (cosinus = 0.31578560310621956)
+
+Document no : 333 (cosinus = 0.3142364113630746)
+
+Document no : 18 (cosinus = 0.2911207518637241)
+
+Document no : 597 (cosinus = 0.2864007174494743)
+
+Document no : 189 (cosinus = 0.2692367116319247)
+
+…
+
+Il se peut que vous obteniez des valeurs légèrement différentes (qui peuvent être dues notamment à des pertes de précision dans certains calculs), mais vous devriez obtenir des résultats comparables à ceux-ci.
+
+ 
+
+A tout à l’heure …
+
+ 
+
+---------------------------------------------------------------------------
+
+Florian Poulin
+
+Collaborateur scientifique
+Institute for Information and Communication Technologies IICT
+University of Applied Sciences of Western Switzerland HEIG-VD
+St-Roch, Avenue des Sports 20
+CH-1401 Yverdon-les-Bains
+
+ 
+
+florian.poulin@heig-vd.ch
+
+Tél.: +41 24 557 75 86
