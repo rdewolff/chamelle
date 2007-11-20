@@ -191,10 +191,11 @@ public class CACMRetriever implements Retriever
 			HashSet<Integer> setDocs = new HashSet<Integer>();
 			//Creation du set de documents qui contiennent les termes de la requete
 			for (String s: keys) {
-				if(tfIdf)
-					setDocs.addAll(indexInverse2.get(s).keySet());
-				else
-					setDocs.addAll(indexInverse.get(s).keySet());
+				if(indexInverse.containsKey(s))
+					if(tfIdf)
+						setDocs.addAll(indexInverse2.get(s).keySet());
+					else
+						setDocs.addAll(indexInverse.get(s).keySet());
 			}
 
 			//Parcours des documents concernes par notre requete
