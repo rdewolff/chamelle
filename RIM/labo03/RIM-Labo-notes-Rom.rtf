@@ -1,54 +1,85 @@
 {\rtf1\ansi\ansicpg1252\cocoartf949
-{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fmodern\fcharset0 CourierNewPSMT;}
 {\colortbl;\red255\green255\blue255;}
-\paperw11900\paperh16840\margl1440\margr1440\vieww11900\viewh12600\viewkind0
+\paperw11900\paperh16840\margl1440\margr1440\vieww12880\viewh10200\viewkind0
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
 
-\f0\b\fs24 \cf0 20/11/2207\
-\
-Objectifs\
+\f0\fs24 \cf0 20/11/2207\
 \
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
 
-\b0 \cf0 Dans le cadre du laboratoire de recherche d'information multim\'e9dia (RIM), nous continuons le moteur d'indexation pour la collection CACM. Nous avons d\'e9j\'e0 une base \'e0 r\'e9utiliser qui a \'e9t\'e9 faite avec le laboratoire pr\'e9c\'e9dant. \
+\b\fs28 \cf0 Objectifs
+\b0\fs24 \
+\
+Dans le cadre du laboratoire de recherche d'information multim\'e9dia (RIM), nous continuons le moteur d'indexation pour la collection CACM. Nous avons d\'e9j\'e0 une base \'e0 r\'e9utiliser qui a \'e9t\'e9 faite avec le laboratoire pr\'e9c\'e9dant. \
 \
 Durant ce travail, nous allons r\'e9aliser un outil de recherche plus performant en ajoutant la pond\'e9ration des termes et en impl\'e9mentant le mod\'e8le vectoriel vu en cours. \
 \
+
+\b\fs28 D\'e9marches adopt\'e9es\
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
 
-\b \cf0 D\'e9marches adopt\'e9es\
+\b0\fs24 \cf0 \
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
 
-\b0 \cf0 \
-
-\i Corrections\
-
-\i0 La premi\'e8re \'e9tape a \'e9t\'e9 de corriger les erreurs qu'il nous restait du laboratoire pr\'e9c\'e9dant. Nous avons donc, entre autres, corrig\'e9 la m\'e9thode qui supprime la ponctuation. Les expressions r\'e9guli\'e8res permettent en effet de faire ceci de mani\'e8re tr\'e8s simple.\
+\i \cf0 Corrections
+\i0 \
+La premi\'e8re \'e9tape a \'e9t\'e9 de corriger les erreurs qu'il nous restait du laboratoire pr\'e9c\'e9dant. Nous avons donc, entre autres, corrig\'e9 la m\'e9thode qui supprime la ponctuation. Les expressions r\'e9guli\'e8res permettent en effet de faire ceci de mani\'e8re tr\'e8s simple.\
 \
 
-\i Impl\'e9mentation des nouveaux fichier\
+\i Mise \'e0 jour du framework\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
 
-\i0 Nous avons remplac\'e9 nos fichier par les nouveaux fichiers re\'e7us pour faire ce laboratoire. Il a fallu adapter les sources existante en rempla\'e7ant les 
-\i entiers
-\b  
-\i0\b0 par des 
-\b long
-\b0 .\
-\
-\
-\
+\i0 \cf0 Nous avons remplac\'e9 nos fichier par les nouveaux fichiers re\'e7us pour faire ce laboratoire. Il a fallu adapter les sources existante en rempla\'e7ant les entiers par des long.\
 \
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
 
-\b \cf0 Analyse des r\'e9sultats obtenus\
+\i \cf0 Int\'e9gration des nouvelles m\'e9thodes\
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
 
-\b0 \cf0 \
+\i0 \cf0 Des nouvelles interfaces sont d\'e9finies. Nous allons les cr\'e9er dans les fichiers existant. La m\'e9thode 
+\f1 finalizeIndexation()
+\f0  est ajout\'e9e (on a en fait simplement d\'fb renommer notre m\'e9thode existante). \
+\
+Il nous faut aussi impl\'e9menter la nouvelle m\'e9thode 
+\f1 executeQuery(String)
+\f0  qui est d\'e9crite plus en d\'e9tail dans la section pr\'e9vue a cet effet.\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\b\fs28 \cf0 Pond\'e9ration des termes dans les documents\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\b0\fs24 \cf0 \
+Deux fichiers d'indexation sont cr\'e9\'e9s en fonction du type de pond\'e9ration choisit. \
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\b\fs28 \cf0 Mod\'e8le vectoriel\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\b0\fs24 \cf0 \
+Le classe 
+\b CACMRetriever
+\b0  contient la m\'e9thode qui nous a donn\'e9 le plus de travail. En effet il ne f\'fbt pas de tout repos d'impl\'e9menter le mod\'e8le vectoriel.\
+\
+Nous utilisons donc le calcul de similarit\'e9 par cosinus que voici ci dessous : \
+\
+\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\b\fs28 \cf0 Analyse des r\'e9sultats obtenus\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\b0\fs24 \cf0 \
 \
 \
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
 
-\b \cf0 Conclusion
+\b\fs28 \cf0 Conclusion
 \b0 \
-\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\fs24 \cf0 \
 }
