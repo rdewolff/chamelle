@@ -74,7 +74,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 	public void index(Integer id, String content){
 	
 		Set keys = null;
-		double freqMax = 0;
+		double freqMax = 0.0;
 		//Table des termes avec leur frequence
 		HashMap<String, Integer> elements = new HashMap<String, Integer>();
 		
@@ -87,11 +87,9 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		//--Creation des indexs--//
 		
 		//Parcours des termes du document et sotckage de leur frequence
-		for (String s: tokens)
-		{
+		for (String s: tokens) {
 			//Selection des termes qui ne sont pas des stop words
-			if(!commonwords.contains(s))
-			{
+			if(!commonwords.contains(s) && !s.equals("")) {
 				elements.put(s, elements.containsKey(s)?elements.get(s)+1:1);
 			}
 		}
@@ -100,8 +98,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		keys = elements.keySet();
 		
 		//Recherche de la frequence maximale
-		for(Object s: keys)
-		{
+		for(Object s: keys) {
 			if(elements.get(s) > freqMax)
 				freqMax = elements.get(s);
 		}
@@ -111,6 +108,8 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		//Table pour les termes/frequences absolues
 		HashMap<String, Integer> h2 = new HashMap<String, Integer>();
 		
+		//Recuperation de la liste des termes
+		keys = elements.keySet();
 		//Construction de la ligne d'index correspondant au document en cours de traitement
 		for(Object s: keys)
 		{
@@ -194,7 +193,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 			keys2 = indexInverse.keySet();
 			
 			//Ouverture du fichier
-			BufferedWriter os2 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("index_inverse.txt")));
+			os = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("index_inverse.txt")));
 			
 			/*-------------------------------------
 			*Remplissage du fichier d'index inverse
@@ -212,10 +211,10 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 
 				ligne = ligne + "}\r\n";
 				//Ecriture de la ligne
-				os2.write(ligne);
+				os.write(ligne);
 	   		}
-		    os2.flush();
-	        os2.close();
+		    os.flush();
+	        os.close();
 	        
 	        keys = index.keySet();
 	        
