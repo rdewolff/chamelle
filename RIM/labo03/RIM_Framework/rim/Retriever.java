@@ -26,7 +26,7 @@ public interface Retriever {
 	
 	/**
 	 * Retrieves the documents satisfying the given query. Each document is mapped to
-	 * its cosinus similarity. The keys (cosnus similarities) are sorted by descendant 
+	 * its cosinus similarity. The keys (cosinus similarities) are sorted by descendant 
 	 * value, so that the first key returned by {@link Map#keySet()} is mapped to the 
 	 * most similar document for the given query !
 	 * @param query a string query, containing a list of words.

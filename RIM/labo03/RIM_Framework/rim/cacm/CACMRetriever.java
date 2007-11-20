@@ -10,6 +10,9 @@ import rim.Retriever;
  */
 public class CACMRetriever implements Retriever
 {
+	//HashMap contenant les stop words a eliminer des documents
+	static HashSet<String> commonwords = new HashSet<String>();
+	
 	//Les deux Maps triees servant de memoire d'indexage
 	static TreeMap<Integer, HashMap<String, Double>> index = 
 		new TreeMap<Integer, HashMap<String, Double>>();
@@ -25,6 +28,27 @@ public class CACMRetriever implements Retriever
 	//Traitements statiques
 	static
 	{
+		String mot = null;
+		
+		try
+		{
+			//Ouverture du fichier de stop words
+			FileInputStream in = new FileInputStream("rim/ressources/common_words");
+			
+			//Stockage des stop words
+			BufferedReader d = new BufferedReader(new InputStreamReader(in));
+			while((mot=d.readLine())!= null)
+			{ 	
+				commonwords.add(mot);
+			}
+		}
+		catch(ClassCastException e)
+		{System.out.println("ClassCast");}
+		catch(FileNotFoundException e)
+		{System.out.println("Le fichier <common_words> n'existe pas");}
+		catch(IOException e)
+		{System.out.println("Problème lors de la mise en mémoire des stop words...");}
+		
 		File f = new File("index_object.txt");
 		//Si l'index n'a pas ete construit, on effectue l'indexage
 		if(!f.exists())
@@ -76,7 +100,21 @@ public class CACMRetriever implements Retriever
 
 		return list;
 	}
-
+	
+	private class plusPetit implements Comparator
+	{
+		public int compare(Object o1, Object o2)
+		{
+			if((Double)o1<(Double)o2)
+				return 1;
+			else if((Double)o1 == (Double)o2)
+				return 0;
+			else
+				return -1;
+		}
+		
+	}
+	
 	/* (non-Javadoc)
 	 * @see rim.Retriever#executeQuery(java.lang.String)
 	 * 
@@ -86,40 +124,84 @@ public class CACMRetriever implements Retriever
 	 */
 	public Map<Double,Integer> executeQuery (String query)
 	{
-		HashMap<Double, Integer> queryAnswer = new HashMap<Double, Integer>();
+		//Decapitalisation
+		query = query.toLowerCase();
+		
+		//Tokenisation de la ligne passee en parametre tout en enlevant la ponctuation
+		String[] tokens = query.split("[\\p{Punct} ]");
+		HashSet<String> set = new HashSet<String>();
+		
+		//--Creation des indexs--//
+		
+		//Parcours des termes du document et sotckage de leur frequence
+		for (String s: tokens)
+		{
+			//Selection des termes qui ne sont pas des stop words
+			if(!commonwords.contains(s))
+			{
+				set.add(s);
+			}
+		}
+		
+		//Comparateur descendant
+		plusPetit p = new plusPetit();
+		//Table de stockage des cosinus de reponse
+		TreeMap<Double, Integer> queryAnswer = new TreeMap<Double, Integer>(p);
 		try {
-			// on découpe la chaine de caractere (chaque terme separe par un espace)
-			String[] arQuery = query.split(" ");
-			HashMap<Integer, Double> tmpIndexInverse;
-			double sommeProduit = 0;
-			double sommePoidTerme = 0;
-			double sommeTfIdf = 0;
-
+			HashMap<Integer, Double> tmpIndexInverse = null;
+			double sommeProduit = 0.0;
+			double sommePoidTerme = 0.0;
+			double sommeTfIdf = 0.0;
+			HashSet<Integer> setDocs = new HashSet<Integer>();
+			for (String s: set) {
+				setDocs.addAll(indexInverse.get(s).keySet());
+			}
+			
 			Set<Integer> _keys = index.keySet();
 			for(Integer id: _keys)
 			{
 				// parcours tous les termes de la requete
-				for (int i=0; i<arQuery.length; i++) {
-					tmpIndexInverse = indexInverse.get(arQuery[i]);
+				for (String s: set) {
+					tmpIndexInverse = indexInverse.get(s);
+					//Si le terme existe dans notre collection
 					if (tmpIndexInverse != null) {
+						//Si le document courant contient le terme courant de la requete
 						if(tmpIndexInverse.get(id) != null) {
-							sommeProduit = tmpIndexInverse.get(id) * 1.0;
+							
+							sommeProduit += tmpIndexInverse.get(id) * 1.0;
 							sommePoidTerme += Math.pow(1.0, 2.0);
-							sommeTfIdf += Math.pow(tmpIndexInverse.get(id), 2.0); 
-						} else {
-							sommeProduit = 0.0;
+							
 						}
-					} else {
-						sommeProduit = 0.0;
 					}
-
 				}
-				// on insere le document ID ainsi que sa similarite par cosinus
-				queryAnswer.put(sommeProduit / Math.sqrt(sommeTfIdf*sommePoidTerme), (Integer)id);
+				
+				Set<String> keys = index.get(id).keySet();
+				HashMap<String, Double> h = new HashMap<String, Double>();
+				h = index.get(id);
+				
+				if(sommeProduit != 0.0)
+				{
+					for(String s: keys)
+					{
+						sommeTfIdf += Math.pow(h.get(s), 2.0);
+					}
+				}
+				
+				//On insere le document ID ainsi que sa similarite par cosinus
+				if(sommeProduit != 0.0) {
+//					System.out.println(sommeProduit);
+//					System.out.println(sommePoidTerme);
+//					System.out.println(sommeTfIdf);
+//					System.out.println(Math.sqrt(sommeTfIdf*sommePoidTerme));
+//					System.out.println("--");
+					queryAnswer.put(sommeProduit / Math.sqrt(sommeTfIdf*sommePoidTerme), id);
+					//System.out.println(sommeProduit / Math.sqrt(sommeTfIdf*sommePoidTerme));
+				}
+				
 				// reset
-				sommeProduit = 0;
-				sommePoidTerme = 0;
-				sommeTfIdf = 0;
+				sommeProduit = 0.0;
+				sommePoidTerme = 0.0;
+				sommeTfIdf = 0.0;
 			}
 		} catch (Exception e) {
 			System.out.println("Erreur dans la fonction executeQuery() : ");

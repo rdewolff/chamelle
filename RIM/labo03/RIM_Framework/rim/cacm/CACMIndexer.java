@@ -80,18 +80,8 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		
 		//Decapitalisation
 		content = content.toLowerCase();
-		//Suppression de la ponctuation // TODO : regexp
-//		content = content.replace("(","");
-//		content = content.replace(")","");
-//		content = content.replace(".","");
-//		content = content.replace(",","");
-//		content = content.replace(";","");
-//		content = content.replace(":","");
-//		content = content.replace("'s","");
-//		content = content.replace("\"","");
-		//content.replaceAll("\\p", "");
 		
-		//Tokenisation de la ligne passee en parametre
+		//Tokenisation de la ligne passee en parametre tout en enlevant la ponctuation
 		String[] tokens = content.split("[\\p{Punct} ]");
 		
 		//--Creation des indexs--//
@@ -308,7 +298,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 			
 			ObjectOutputStream os3 = new ObjectOutputStream(new FileOutputStream("index_object.txt"));
 			//Ecriture des deux TreeMaps
-			os3.writeObject(index2);
+			os3.writeObject(index);
 			os3.writeObject(indexInverse);
 			os3.flush();
 			os3.close();
