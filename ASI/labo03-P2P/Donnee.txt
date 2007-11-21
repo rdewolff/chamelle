@@ -1,0 +1,22 @@
+LABO PEER2PEER
+
+Elements important, notes
+*************************
+
+- concevoir un protocole
+- simple partage de fichiers (2 à n)
+- IFU la plus simple possible, même tout pourri
+	- un seul bouton permet de se connecter/déconnecter
+	- un boutton pour quitter le programme (proprement ferme les connexions)
+	- nom d'utilisateur passé en parametre
+	- affiche tous les fichiers partagé dans le meme endroit sous la forme : "nomFichier.ext - user"
+- le dossier "./share" est partagé, si le dossier n'existe pas, l'application ne se lance pas
+- tout les types de fichiers doivent pouvoir être partagé
+- l'ajout ou le retrait de fichier dans le rep "./share" se fait uniquement via le navigateur de fichier de l'utilisateur, pas dans le programme
+- l'ajout ou le retrait de fichier dans le rep "./download" se fait uniquement via le navigateur de fichier de l'utilisateur, pas dans le programme
+	- que ce passe-t-il si on efface un fichier en cours d'utilisation? a checker!
+- un utilisateur ne peut telecharger qu'un seul fichier a la fois! 
+- les fichiers téléchargé sont mis dans le dossier "./download", si le dossier n'existe pas, une erreur est retournée au lancement et le programme ne se lance pas
+- si le transfert est interrompu, l'application le _detect_ et le communique à l'utilisateur. le fichier partiellement telechargé est alors perdu
+- le réseau P2P utilisé est un réseau dédié a l'application du client. aucun broadcast n'est utilisé! -> il faut utiliser un noeud d'amorcage
+- contraintes : 
