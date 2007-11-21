@@ -1,7 +1,10 @@
 {\rtf1\ansi\ansicpg1252\cocoartf949
-{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fmodern\fcharset0 CourierNewPSMT;}
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fmodern\fcharset0 CourierNewPSMT;\f2\fnil\fcharset0 Monaco;
+}
 {\colortbl;\red255\green255\blue255;\red255\green15\blue0;\red255\green0\blue6;\red255\green0\blue29;
 }
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc2\leveljcn2\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid0\'02\'05.;}{\levelnumbers\'01;}}{\listname ;}\listid1}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
 \paperw11900\paperh16840\margl1440\margr1440\vieww14000\viewh14460\viewkind0
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
 
@@ -54,10 +57,12 @@ Il nous faut aussi impl\'e9menter la nouvelle m\'e9thode
 \b0\fs24 \cf0 \
 Deux fichiers d'indexation sont cr\'e9\'e9s en fonction du type de pond\'e9ration choisit. \
 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
 
 \b \cf2 TODO : expliquer un peu comment ca marche dans notre labo\cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
 
-\b0 \
+\b0 \cf0 \
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
 
 \b\fs28 \cf0 Mod\'e8le vectoriel\
@@ -109,6 +114,171 @@ Les r\'e9sultats concordent et le laboiratoire c'est sinon bien d\'e9roul\'e9.\
 
 \i \cf0 \
 Simon Hintermann et Romain de Wolff\
+\
+\
+--\
+\
+maj\
+\
+--\
+\
+
+\b Diff\'e9rence entre TF et TF*IDF\
+
+\b0 \
+	TF\
+\
+	
+\i0 Le "Terme Frequency" (TF) calcul le nombre de fois qu'un terme appara\'eet dans un document.\
+\
+	
+\i TF*IDF\
+\
+	
+\i0 La m\'e9thode de calcul qu'utilise le TF*IDF multiplie le TF par le calcul de l' "Inverse Document Frequency" (IDF). Cela repr\'e9sente la raret\'e9 d'un document parmi un corpus de documents. On peut donc parler du 
+\b poid
+\b0  qu'il a dans un 
+\b corpus
+\b0  de documents.  Un terme qui appara\'eet souvent dans le corpus aura une pond\'e9ration 
+\b plus faible
+\b0  qu'un autre document qui appara\'eet, par exemple, une seule fois.\
+
+\i \
+
+\b Exemple de requ\'eate\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\i0\b0 \cf0 Afin de v\'e9rifier que notre programme fonctionne correctement, nous allons faire un test.\
+\
+On  ouvre le fichier 
+\i index_inverse.txt
+\i0  et on trouve les deux termes suivants : 
+\b belzer
+\b0  et 
+\b bench
+\b0 . Les valeurs dans l'index invers\'e9 sont les suivantes :\
+\
+\pard\pardeftab720
+
+\f2\fs22 \cf0 [belzer]\{<1032,0.2>\}\
+[bench]\{<2592,0.2>\}\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\f0\i\fs24 \cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\i0 \cf0 La structure de ce fichier est de la forme : 
+\b [terme]\{<docId, TF>\}\
+\
+
+\b0 On va ensuite effectuer 3 requ\'eates \'e0 
+\b fr\'e9quences normalis\'e9es
+\b0  (\'e9l\'e9ment du menu num\'e9ro 5) diff\'e9rentes pour v\'e9rifier nos r\'e9sultats obtenus.\
+\
+1. Terme(s) de recherche : 
+\b belzer\
+
+\b0 R\'e9sultas: \
+\pard\pardeftab720
+
+\f2\fs22 \cf0 Documents trouve ainsi que similarite par cosinus:\
+Document no : 1032 (cosinus = 0.0839181358296689)\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\f0\i\fs24 \cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\i0 \cf0 2. Terme(s) de recherche : 
+\b belzer bench\
+
+\b0 R\'e9sultas: 
+\b \
+\pard\pardeftab720\ql\qnatural
+
+\f2\b0\fs22 \cf0 Documents trouve ainsi que similarite par cosinus:
+\f0\b\fs24 \
+\pard\pardeftab720
+
+\f2\b0\fs22 \cf0 Document no : 1032 (cosinus = 0.059339082909692656)\
+Document no : 2592 (cosinus = 0.051298917604257706)
+\f0\b\fs24 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+\cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\b0 \cf0 3. Terme(s) de recherche : 
+\b belzer belzer bench\
+
+\b0 R\'e9sultas: 
+\f2\fs22 \
+Documents trouve ainsi que similarite par cosinus:
+\f0\b\fs24 \
+\pard\pardeftab720
+
+\f2\b0\fs22 \cf0 Document no : 1032 (cosinus = 0.07505866250408015)\
+Document no : 2592 (cosinus = 0.03244428422615251)
+\f0\i\fs24 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+\cf0 \
+\pard\tx220\tx720\pardeftab720\li720\fi-720
+\ls1\ilvl0
+\i0 \cf0 Dans la recherche no 1, nous cherchons simplement le terme 
+\b belzer
+\b0 , qui nous renvoie une valeur de cosinus (ici ~ 0.083). \
+\
+\pard\tx220\tx720\pardeftab720
+\ls1\ilvl0\cf0 Dans la recherche no 2, nous effectuons une recherche sur les deux termes 
+\b belzer 
+\b0 et 
+\b bench
+\b0 . Le cosinus des documents est tr\'e8s proche (ici un delta \uc0\u8710   d'environ 0.008).\
+\
+C'est lors de la requ\'eate no 3 que les r\'e9sultats deviennent int\'e9ressant. En effet, on fait une recherche avec trois termes, dont 
+\b deux fois le m\'eame
+\b0  : 
+\b belzer belzer bench
+\b0 . Ce qui permet de se faire une meilleure id\'e9e sur l'efficacit\'e9 de notre programme. La requ\'eate retourne le document no 
+\b 1032
+\b0  avec un pond\'e9ration nettement plus \'e9lev\'e9e que le document 
+\b 2592 
+\b0 (ici un 
+\b delta
+\b0  \uc0\u8710  d'environ 
+\b 0.042
+\b0 ). Ceci car le document 1032 contient le terme 
+\b belzer
+\b0  et que ce terme recherch\'e9 
+\b a une pond\'e9ration plus \'e9lev\'e9e 
+\b0 car il a \'e9t\'e9 ins\'e9r\'e9 deux fois dans la requ\'eate.\
+\
+\
+En utilisant le TF*IDF, le r\'e9sultat des \'e9crats (\uc0\u8710 ) est tr\'e8s proche. Voila ce que le programme nous retourne : \
+\
+1. Terme(s) de recherche : 
+\b belzer\
+\ls1\ilvl0
+\b0 R\'e9sultats:\
+ \
+\
+\pard\pardeftab720\ql\qnatural
+\ls1\ilvl0\cf0 \
+\pard\tx220\tx720\pardeftab720\li720\fi-720
+\ls1\ilvl0\cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\i \cf0 \
+Documents \'e9cras\'e9s\
+\
+\pard\pardeftab720\ql\qnatural
+
+\f2\i0\fs22 \cf0 Document no : 1032 (cosinus = 0.17267927891257695)
+\f0\i\fs24 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+\cf0 \
+\
+\
+\
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
 
 \i0 \cf0 \
