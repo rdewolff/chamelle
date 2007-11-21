@@ -1,4 +1,4 @@
-package moteur;
+package core;
 
 public class Fichier {
 
