@@ -7,7 +7,7 @@
  *
  */
 
-// import moteur;
+import core;
 
 public class Client {
 
@@ -18,7 +18,7 @@ public class Client {
 		
 		System.out.println("Lancement du client");
 		
-		moteur.Ifu ifu = new moteur.Ifu();
+		Ifu ifu = new Ifu();
 		
 	}
 
