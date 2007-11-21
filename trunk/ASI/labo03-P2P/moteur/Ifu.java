@@ -1,7 +1,8 @@
+package moteur;
 
 public class Ifu {
-	
+	 
 	public Ifu() {
-		System.out.prinln("test");
+		System.out.println("test");
 	}
 }
