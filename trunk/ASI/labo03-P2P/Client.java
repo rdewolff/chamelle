@@ -7,7 +7,7 @@
  *
  */
 
-import core;
+// import core;
 
 public class Client {
 
@@ -18,7 +18,9 @@ public class Client {
 		
 		System.out.println("Lancement du client");
 		
-		Ifu ifu = new Ifu();
+		//core.Ifu ifu = new core.Ifu();
+		
+		// new MailClient();
 		
 	}
 
