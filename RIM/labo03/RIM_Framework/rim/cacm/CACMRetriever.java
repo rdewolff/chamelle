@@ -80,40 +80,6 @@ public class CACMRetriever implements Retriever
 		catch(IOException e)
 		{System.out.println("IOException");}
 	}
-	
-	public void reMem()
-	{
-		File f = new File("index_object.txt");
-		//Si l'index n'a pas ete construit, on effectue l'indexage
-		if(!f.exists())
-		{
-			System.out.println("Creation des indexs...");
-			CACMIndexer i = new CACMIndexer();
-			CACMFeeder c = new CACMFeeder();
-			c.parseCollection(java.net.URI.create("rim/ressources/cacm.all"), i);
-			i.finalizeIndexation();
-		}
-
-		//Lecture des deux TreeMaps stockes dans le fichier "index_object"
-		try
-		{
-			System.out.println("Mise en memoire des indexs...");
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream("index_object.txt"));
-			index = (TreeMap<Integer, HashMap<String, Double>>)in.readObject();
-			indexInverse = (TreeMap<String, HashMap<Integer, Double>>)in.readObject();
-			index2 = (TreeMap<Integer, HashMap<String, Double>>)in.readObject();
-			indexInverse2 = (TreeMap<String, HashMap<Integer, Double>>)in.readObject();
-			in.close();
-		}
-		catch(ClassNotFoundException e)
-		{System.out.println("classnfoundlect2");}
-		catch(ClassCastException e)
-		{System.out.println("ClassCast");}
-		catch(FileNotFoundException e)
-		{System.out.println("Le fichier n'existe pas");}
-		catch(IOException e)
-		{System.out.println("IOException");}
-	}
 
 	/* (non-Javadoc)
 	 * @see rim.Retriever#searchDocument(java.lang.Integer)
@@ -150,6 +116,10 @@ public class CACMRetriever implements Retriever
 		double sommeProduit = 0.0;
 		double sommePoidTerme = 0.0;
 		double sommeTfIdf = 0.0;
+		
+		/*
+		 * Traitement de la ponctuation et des stop words de la requete
+		 */
 		//Decapitalisation
 		query = query.toLowerCase();
 
@@ -181,8 +151,6 @@ public class CACMRetriever implements Retriever
 		for(String s: keys) {
 			sommePoidTerme += Math.pow(set.get(s), 2.0);
 		}
-		
-		int cpt=0;
 		
 		try {
 			HashMap<Integer, Double> tmpIndexInverse = null;
@@ -226,16 +194,14 @@ public class CACMRetriever implements Retriever
 				else
 					h = index.get(id);
 				
-				for(String s: _keys)
-				{
+				//Somme des TF-IDF normalises
+				for(String s: _keys) {
 					sommeTfIdf += Math.pow(h.get(s), 2.0);
 				}
-				if(id==394)
-					System.out.println("394::::::"+(sommeProduit / Math.sqrt(sommeTfIdf*sommePoidTerme)));
+				//Stockage du cosinus par rapport au document
 				queryAnswer.put((sommeProduit / Math.sqrt(sommeTfIdf*sommePoidTerme)), id);
-				cpt++;
 
-				// reset
+				//reset
 				sommeProduit = 0.0;
 				sommeTfIdf = 0.0;
 			}
@@ -244,8 +210,6 @@ public class CACMRetriever implements Retriever
 			e.printStackTrace();
 		}
 		
-		System.out.println("CPT : " + cpt);
-		System.out.println("TREE : " + queryAnswer.size());
-		return queryAnswer; //  HashMap<Double, Integer>();
+		return queryAnswer; 
 	};
 }
