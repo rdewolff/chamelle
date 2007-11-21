@@ -20,7 +20,7 @@ import java.io.*;
  * If you have any question, please ask the assistant or the professor.<br/>
  * Enjoy !
  */
-public class Labo2 {
+public class Labo {
    	
 	/**
 	 * Main entry point.
