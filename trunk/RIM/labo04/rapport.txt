@@ -1,4 +1,30 @@
 Rapport au format texte (a mettre en forme a la fin)
 ****************************************************
 
+Documentation sur :
 
+http://lucene.apache.org/
+http://lucene.zones.apache.org:8080/hudson/job/Lucene-Nightly/javadoc/overview-summary.html#overview_descriptionsummary.html%23overview_description
+
+Ca va :) C'est pas trop long comme URL!
+
+
+
+- Réponses aux questions -
+--------------------------
+
+1. Qu’est-ce que Lucene ? Est-ce destiné à Java uniquement ?
+
+Apache Lucene est un moteur de recherche de texte écrit completement en Java. C'est une technologie écrite entièrement en Java et qui est utilisable avec n'importe quelle application et sur n'importe quelle plateforme.
+
+C'est un projet Open Source.
+
+Il est destiné pour Java mais d'autres versions existe, comme en .NET ou en C.
+
+2. Dans Lucene, à quoi sert un Analyzer ? Peut-on écrire son propre Analyzer ?
+
+Un "Analyzer" est un 
+ 
+3. Comment un document est-il représenté dans Lucene ? 
+4. Quelles sont les possibilités offertes par Lucene pour la formulation d’une requête ? 
+5. Expliquez brièvement comment Lucene gère ses index (en termes de fichiers) et expliquez l’intérêt de cette façon de procéder. 
