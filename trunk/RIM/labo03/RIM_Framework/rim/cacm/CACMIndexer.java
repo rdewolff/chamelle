@@ -3,8 +3,7 @@ package rim.cacm;
 import rim.Indexer;
 import java.util.*;
 import java.io.*;
-//import java.net.*;
-//import java.math.*;
+
 
 /**
  * An indexer for the CACM collection.
@@ -30,8 +29,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 	static TreeMap<String, HashMap<Integer, Double>> indexInverse2 = 
 		new TreeMap<String, HashMap<Integer, Double>>();
 	
-	//Variable dernier ID indexer
-	static int lastId = 0;
+	//Nombre de documents indexés
 	static double n = 0;
 	
 	static
@@ -55,6 +53,12 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 			f.delete();
 			//Reinitialisation du fichier d'index inverse
 			f = new File("index_inverse.txt");
+			f.delete();
+			//Reinitialisation du fichier d'index
+			f = new File("index2.txt");
+			f.delete();
+			//Reinitialisation du fichier d'index inverse
+			f = new File("index_inverse2.txt");
 			f.delete();
 			//Reinitialisation du fichier du TreeMap de l'index
 			f = new File("index_object.txt");
@@ -168,7 +172,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 			BufferedWriter os = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("index.txt")));
 			
 			/*--------------------------------------------------
-			*Remplissage du fichier d'index frequence normalisee
+			*Ecriture du fichier d'index frequence normalisee
 			--------------------------------------------------*/
 			for(Object o: keys)
 			{
@@ -184,18 +188,19 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 				ligne = ligne + "}\r\n";	
 				os.write(ligne); //Ecriture de la ligne
 	   		}
+			//Fin de l'ecriture du fichier d'index avec les frequences normalisees
 		    os.flush();
 	        os.close();
 	        
-	        //Recuperation de la liste des lignes d'index
+	        //Recuperation de la liste des lignes d'index inverse
 			keys = indexInverse.keySet();
 			
-			//Ouverture du fichier
+			//Ouverture du fichier d'index inverse des frequences normalisees
 			os = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("index_inverse.txt")));
 			
-			/*-------------------------------------
-			*Remplissage du fichier d'index inverse
-			-------------------------------------*/
+			/*---------------------------------------------------------------
+			*Ecriture du fichier d'index inverse de frequences normalisees
+			---------------------------------------------------------------*/
 			for(Object o: keys)
 			{
 				ligne = "[" + o + "]{"; //Debut de ligne avec le terme
@@ -211,6 +216,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 				//Ecriture de la ligne
 				os.write(ligne);
 	   		}
+			//Fin de l'ecriture du fichier d'index inverse avec les frequences normalisees
 		    os.flush();
 	        os.close();
 	        
@@ -223,15 +229,11 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 	        /*--------------------------------------------------
 	        *Mise a jour du treemap d'index de fréquences tf-idf
 	        --------------------------------------------------*/
-			// TODO check selon cours maj des TFIDF
-			// si jamais ln(x)/ln(2) = log base 2(x)
-
 			/*--------------------------------------------------
-			*Remplissage du fichier d'index de fréquences tf-idf
+			*Ecriture du fichier d'index de fréquences tf-idf
 			--------------------------------------------------*/
-			for(Object o: keys)
-			{
-				//Le tfIdf max de tous les documents
+			for(Object o: keys) {
+				//Le tfIdf max de tous les termes
 		        double maxTfIdf = 0.0;
 		        //La variable du tf-idf
 				double tfidf = 0.0;
@@ -241,37 +243,39 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 				HashMap<String, Double> h = new HashMap<String, Double>();
 				
 				//Calcul des tfidf et de tfidf maximum
-				for(Object o2: _keys)
-				{
+				for(Object o2: _keys) {
+					//Nombre de documents contenant le terme courant
 					int ni = indexInverse.get(o2).keySet().size();
+					//TF-IDF
 					tfidf = (Math.log((double)frequences.get(o).get(o2)+1.0)/Math.log(2))*
 							(Math.log(n/ni)/Math.log(2));
+					//Mise à jour du max TF-IDF
 					if(tfidf > maxTfIdf) //Mise a jour tfidf Max
 						maxTfIdf = tfidf;
+					//Stockage du terme avec son TF-IDF
 					h.put((String)o2, tfidf);
 				}
 				
 				//Normalisation du tfidf
-				for(Object o2: _keys)
-				{
+				for(Object o2: _keys) {
 					h.put((String)o2, h.get(o2)/maxTfIdf);
 				}
 				//Stockage dans l'objet d'index
 				index2.put((Integer)o, h);
 				
+				//Recuperation de la liste des termes du document courant
 				_keys = index2.get(o).keySet();
 				ligne = "[" + o + "]{"; //Debut de ligne avec l'ID du document
 				
-				//Liste des terme/frequence
-				for(Object o2: _keys)
-				{
+				//Liste des termes/frequence
+				for(Object o2: _keys) {
 					ligne = ligne + "<" + (String)o2 + "," + index2.get(o).get(o2) + ">";
 				}
 				
 				ligne = ligne + "}\r\n";	
 				os.write(ligne); //Ecriture de la ligne
 	   		}
-			//Fin d'ecriture et fermeture du fichier d'index avec les frequences normalisees
+			//Fin d'ecriture et fermeture du fichier d'index avec les TF-IDF normalisés
 		    os.flush();
 	        os.close();
 			
@@ -288,9 +292,10 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 			*Remplissage du fichier d'index inverse de fréquences tf-idf
 			----------------------------------------------------------*/
 			for(Object s: keys) {
+				//Recuperation des documents concernes par le terme courant
 				_keys = indexInverse.get(s).keySet();
-				for(Object o: _keys)
-				{
+				//Stockage des documents avec leur TF-IDF normalises contenant le terme courant
+				for(Object o: _keys) {
 					//Si l'index inverse contient deja un terme, il faut rajouter le 
 					//terme courant et sa frequence normalisee
 					if(indexInverse2.containsKey(s)) {
@@ -316,7 +321,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 				ligne = ligne + "}\r\n";	
 				os.write(ligne); //Ecriture de la ligne
 			}
-			//Fin d'ecriture et fermeture du fichier d'index inverse avec les frequences normalisees
+			//Fin d'ecriture et fermeture du fichier d'index inverse avec TF-IDF normalise
 		    os.flush();
 	        os.close();
 			
