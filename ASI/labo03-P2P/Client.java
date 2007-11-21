@@ -7,14 +7,18 @@
  *
  */
 
+// import moteur;
+
 public class Client {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Ifu = new Ifu();
+		
+		System.out.println("Lancement du client");
+		
+		moteur.Ifu ifu = new moteur.Ifu();
 		
 	}
 
