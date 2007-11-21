@@ -1,4 +1,5 @@
 
+
 Comme demand� par certains de vos coll�gues, voici un exemple de r�sultat pour une requ�te donn�e, ceci afin que vous puissiez valider vos propres r�sultats.
 
 Pour commencer, voici un r�sultat en utilisant les index pond�r�s par fr�quence normalis�e :
