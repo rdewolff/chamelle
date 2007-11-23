@@ -1,8 +1,9 @@
-% --------------------------------------------------------------------------
+%==============================================================================
 % document template for a LaTeX file
 % Created : 22.11.2006 by Romain de Wolff
 % Modif : 8 octobre 2007, respect standart HEIG-VD pour travaux de diplômes
-% --------------------------------------------------------------------------
+%==============================================================================
+% configurations du document
 \documentclass[a4paper, 11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[cyr]{aeguill}
@@ -17,6 +18,7 @@
 \usepackage{fancyvrb}                     % pour avoir du verbatim encadré
 \usepackage{url}                          % pour inclure des URLs
 \usepackage{geometry}                     % See geometry.pdf to learn the layout options
+\usepackage{moreverb}					  % permet d'encadrer le verbatim à l'aide de la commande \begin{boxedverbatim}
 \geometry{a4paper}                        % ... or a4paper or a5paper or ... 
 %\geometry{landscape}                     % Activate for for rotated page geometry
 \usepackage[parfill]{parskip}             % Activate to begin paragraphs with an empty line rather than an indent
@@ -24,40 +26,72 @@
 %\usepackage{epstopdf}                    % Pour créer des références divers (webographie, etc) 
 \usepackage{bibtopic}
 \geometry{ hmargin=2.8cm, vmargin=2.5cm } % marges
+%==============================================================================
+% debut macro 
+% permet de mettre en gros la premiere lettre d'un paragraphe
+\font\capfont=cmbx12 at 44.87 pt % or yinit, or...?
+\newbox\capbox \newcount\capl \def\a{A}
+\def\docappar{\medbreak\noindent\setbox\capbox\hbox{%
+\capfont\a\hskip0.15em}\hangindent=\wd\capbox%
+\capl=\ht\capbox\divide\capl by\baselineskip\advance\capl by1%
+\hangafter=-\capl%
+\hbox{\vbox to8pt{\hbox to0pt{\hss\box\capbox}\vss}}}
+\def\cappar{\afterassignment\docappar\noexpand\let\a }
+% fin macro
+%==============================================================================
 
-% ------------------- TITRE ------------------------
-\title{%\includegraphics[width=100px]{heig-vd-logo.pdf} \\ \vspace{4cm}
-\small{Présentation personnel - PPE} \\ \vspace{2cm}
-\huge{WebDAV \\ \vspace{3cm} \small{Un protocole réseau pour l'édition collaborative à distance sur le web}} \vspace{2cm}} \author{Romain \bsc{de
-Wolff} \\ IL2008 \\ \vspace{2cm} \\ Professeurs Mme. Laura Elena Raileanu \\ et Mme Nastaran Fatemi \vspace{2cm} }
+%==============================================================================
+% première page
+\title{\includegraphics[width=100px]{HEIG-VD.jpg} \\ \vspace{4cm}
+\small{PPE - Présentation personnel} \\ \vspace{2cm}
+\huge{WebDAV} \\ \vspace{1cm} 
+Web-based Distributed Authoring and Versioning \\ 
+\small{Un protocole réseau pour l'édition collaborative sur le web}} 
+\vspace{2cm}
+\author{Romain \bsc{de
+Wolff} \\ IL2008 \\ \vspace{2cm} \\ Professeurs Mme. Laura Elena Raileanu \\ et Mme Nastaran Fatemi \vspace{2cm} 
+}
 \date{Lausanne, le 8 octobre 2007}  % Activate to display a given date or no date
 \pagebreak{}
 \begin{document}
 \maketitle
 \thispagestyle{empty} % enlève le numéro de page sur la page de titre (uniquement)
 \newpage
-% -----------------------------------------------------------------------------
-% Debut du document
+%==============================================================================
+% configuration des numérotations de pages (chiffres romains)
 \pagenumbering{roman} \setcounter{page}{1} 
 
+% Configuration de la distance d'interligne 
+{\setlength{\baselineskip}{1.2\baselineskip}
+% Configureation de la distance entre les paragraphes
+\parskip=12pt
+%==============================================================================
+
+%==============================================================================
 \section*{Remerciements} 
+%==============================================================================
 
 @end
 
+%==============================================================================
 \section*{Résumé}
+%==============================================================================
 
 @end
 
-% -----------------------------------------------------------------------------
+%==============================================================================
 % Table des matières
 \newpage
 \tableofcontents
 \newpage
+%==============================================================================
+% reconfiguration des numéro de pages (on recommence a compter a 1)
 \pagenumbering{arabic} \setcounter{page}{1} 
-% -----------------------------------------------------------------------------
-% Début principal
+%==============================================================================
 
+%==============================================================================
 \section{Introduction}
+%==============================================================================
 
 	% décrire le problème, l'objectif et la motivation
 	% attirer le lecteur
@@ -65,17 +99,17 @@ Wolff} \\ IL2008 \\ \vspace{2cm} \\ Professeurs Mme. Laura Elena Raileanu \\ et 
 
 	% problème - comment ca marchait dans le passé? - exemple - temps, etc..
 
-	Internet met aujourd'hui à disposition de tout le monde une quantité d'informations qui ne cesse de croître. Ces dernières années, la quantité d'information disponible a carrément explosé. N'importe quel ordinateur connecté à internet peut accéder à ce vaste réseau et à toute ces données. L'utilisateur peut naviguer de page en page et aux travers de gros index d'une manière très simple et efficace. De se fait il peut consulter des textes, des images, des vidéos sans fin. Ou presque. 
+	\cappar Internet met aujourd'hui à disposition de tout le monde une quantité d'informations qui ne cesse de croître. Ces dernières années, la quantité d'informations disponible a carrément explosé. N'importe quel ordinateur connecté à internet peut accéder à ce vaste réseau et à toute ces données. L'utilisateur peut naviguer de page en page et aux travers de gros index d'une manière très simple et efficace. De se fait il peut consulter des textes, des images, des vidéos sans fin. Ou presque. 
 	
-	Cette interopérabilité fut possible grâce a deux standards aujourd'hui : \emph{HyperText Markup Language} (HTML) et \emph{HyperText Transfer Protocol} (HTTP). Ces deux standards sont disponible sur tout type d'ordinateur, allant même, aujourd'hui, jusqu'au téléphone portable. Ainsi le nouveau téléphone d'Apple, le \emph{iPhone}, implémente \emph{Safari}, qui respectent les standards HTML actuels. Quelqu'un désireux de créer un site internet peut le faire à l'aide d'un ordinateur bon marché ainsi que d'une connexion internet. Une fois son document déposé sur le web, n'importe qui peut y accéder et y faire référence. C'est ce qui rend le \emph{World Wide Web} plus ouvert que n'importe quel système que l'humanité ait connu à ce jour. 
+	Cette interopérabilité fut possible grâce a deux standards aujourd'hui : \emph{HyperText Markup Language} (HTML) et \emph{HyperText Transfer Protocol} (HTTP). Ces deux standards sont disponible sur tout type d'ordinateur, allant même, aujourd'hui, jusqu'au téléphone portable. Ainsi le nouveau téléphone d'Apple, le \emph{iPhone}, implémente \emph{Safari}, qui respectent les standards HTML actuels. Quelqu'un désireux de créer un site internet peut le faire à l'aide d'un ordinateur bon marché ainsi que d'une connexion internet. Une fois son document déposé sur le web, n'importe qui peut y accéder et y faire référence. C'est ce qui rend le \emph{World Wide Web} plus ouvert que n'importe quel système connu à ce jour. 
 	
 	Quand Tim Berners-Lee écrit la première page HTML au CERN\footnote{Organisation Européenne pour la Recherche Nucléaire. A l'origine, c'était l'acronyme du Conseil Européen pour la Recherche Nucléaire. \url{http://www.cern.ch}. Un organe provisoire institué en 1952, qui avait pour mandat de créer en Europe une organisation de rang mondial pour la recherche en physique fondamentale} c'était dans le but de mettre des textes scientifique en ligne et de pouvoir se référer entre eux sans créer une base de données centralisée. % + collaboratifs 
 	
-	Quand le web apparu auprès du public, la plupart des clients pouvaient parcourir l'information mais pas l'éditer. Lire les informations était le plus important et le plus facile. L'édition est plus complexe. L'engouement du début se concentra sur la lecture et en oublia l'écriture. Quelques protocoles propriétaires émergèrent rapidement, mais durant près de 10 ans, aucun standard d'écriture sur le web n'était disponible. 
+	Quand le web apparu auprès du public, la plupart des clients pouvaient parcourir l'information mais pas l'éditer. Lire des informations était le plus important et le plus facile. Editer est plus complexe. L'engouement du début se concentra sur la lecture et en oublia l'écriture. Quelques protocoles propriétaires émergèrent rapidement, mais durant près de 10 ans, aucun standard d'écriture sur le web n'était disponible. 
 	
 	\subsection{Qu'est ce que WebDAV?}
 	
-		\emph{Web-based Distributed Authoring and Versioning} (WebDAV), est le premier protocole standard d'écriture sur le web. En Anglais, on utilise le mot \emph{authoring}, qui défini bien ce qu'offre WebDAV, aussi souvent appelé simplement \emph{DAV}. Cela signifie auteur, écrivain, créateur. WebDAV met en place une série de fonctionnalité qui permet de créer des documents sur internet en collaboration. La RFC 2518\footnote{La RFC 2518 est disponible en français à l'adresse \url{http://www.webdav.org/specs/rfc2518.fr.html}} décrit ses spécifications. Le but de WebDAV est de mettre à disposition l'écriture de la même manière que la lecture. Il est construit sur le protocole HTTP et y ajoute des fonctionnalités d'écriture et de gestions des documents. Il permet aussi de gérer l'évolution des modifications (\emph{versioning}) ainsi que le l'écriture d'un même document par plusieurs auteurs.
+	\emph{Web-based Distributed Authoring and Versioning} (WebDAV), est le premier protocole standard d'écriture sur le web. En Anglais, on utilise le mot \emph{authoring}, qui défini bien ce qu'offre WebDAV, aussi souvent appelé simplement \emph{DAV}. Cela signifie auteur, écrivain, créateur. WebDAV met en place une série de fonctionnalité qui permet de créer des documents sur internet en collaboration. La RFC 2518\footnote{La RFC 2518 est disponible en français à l'adresse \url{http://www.webdav.org/specs/rfc2518.fr.html}} décrit les spécifications que défini ce nouveau protocole. Le but de WebDAV est de mettre à disposition l'écriture de la même manière que la lecture. Il est construit sur le protocole HTTP et y ajoute des fonctionnalités d'écriture et de gestions des documents. Il permet aussi de gérer l'évolution des modifications (\emph{versioning}) ainsi que le l'écriture d'un même document par plusieurs auteurs.
 		
 		WebDAV nous permet donc d'éditer \emph{directement sur le serveur HTTP}, ce qui nous permet de ne pas utiliser simplement le web comme media de lecture, mais aussi comme média d'écriture collaboratif. 
 		
@@ -83,8 +117,10 @@ Wolff} \\ IL2008 \\ \vspace{2cm} \\ Professeurs Mme. Laura Elena Raileanu \\ et 
 		% TODO: objectif de WebDAV : répondu ?
 		
 		% ajouter : p 37 livre : top : partage de _tout_ type de documents !!
-		
+
+%==============================================================================
 \section{Un peu d'histoire}
+%==============================================================================
 
 	% TODO : référence au livre dont j'utilise les passages pour reprendre l'histoire
 	
@@ -140,76 +176,191 @@ Wolff} \\ IL2008 \\ \vspace{2cm} \\ Professeurs Mme. Laura Elena Raileanu \\ et 
 	% troisieme generation
 	\subsection{La formation de WebDAV}
 	
-		Les équipes partagent les mêmes ressources web devinrent de plus en plus grandes. L'accroissement économique du Web acquérit une telle importance que ce n'était plus un ou deux expert qui géraient un site web, mais toute une équipe.
+		Les équipes partagent les mêmes ressources web devinrent de plus en plus grandes. L'accroissement économique du Web acquérit une telle importance que ce n'était plus un ou deux experts qui géraient un site web, mais toute une équipe.
 		
 		Les outils étaient trop diversifiés pour que le travail se fasse de manière simple. Chacun modifiait ses fichiers de son côté et les plaçaient sur le serveur une fois le travail terminé. Il n'était pas rare que des données soit perdues.
 		
 		Finalement, en 1996, les vendeurs de plusieurs de ces programmes informatiques réussir à se regrouper et décidèrent de faire l'effort de créer un standard ensemble. Leurs désirs étaient de créer un protocole permettant d'utiliser n'importe quel outil Web ou de bureautique afin de modifier un fichier à distance sur une serveur web. Pour rendre ceci possible, il fallait créer un nouveau protocole ensemble.
 		
-		C'est comme ça que naquit WebDAV! Il créèrent un nouveau protocole car il n'était pas envisageable de choisir le protocole déjà établis par une entreprise. En effet, cela l'avantagerait de manière significative.  
+		C'est comme ça que naquit WebDAV! Il créèrent un nouveau protocole car il n'était pas envisageable de choisir le protocole déjà établis par une entreprise. En effet, cela avantagerait la société de manière considérable.
+
+		L'Internet Engineering Task Force (IETF) définit WebDAV comme un standard après des années de travail et de discussion. C'est en 1998 que fût proposé la version final du protocole. Il fût accepté en 1999 et devint un standard, dont nous connaissons aujourd'hui la RFC 2518.
 		
+%==============================================================================
 \section{Spécifications}
+%==============================================================================
 
+	C'est l'IETF qui maintient à jour les spécifications de WebDAV. L'IETF (\url{http://www.ietf.org}) est une large communauté international de réseaux de designer, opérateur, vendeurs et scientifiques concernés par l'évolution d'internet. Ils sont particulièrement concerné par l'architecture et le bon fonctionnement des opérations sur internet. La communauté est ouverte a tout le monde qui s'intéresse de près ou de loin à ce sujet. Les buts de l'IETF sont regroupé dans la RFC 3935.	
 	
+	\subsection{Problèmes à résoudre}
+	
+		% TODO
+	
+	\subsection{Solution proposées}
+	
+		% TODO
+	
+	\subsection{Architecture client-serveur}	
+	
+		% TODO
+	
+%==============================================================================
+\section{Mécanismes HTTP}
+%==============================================================================
 
-	Maintenu par IETF (The Internet Engineering Task Force)
+WebDAV est basé sur le protocole HTTP. Il utilise les mêmes requêtes, réponses, méthodes et code d'erreurs. Beaucoup d'en-tête de HTTP sont réutilisées dans WebDAV et d'autres sont rajoutées. Les requêtes et les réponses de WebDAV passent à travers les proxy et les pare-feux. C'est un des avantages de l'utilisation d'un protocole aussi répandu que HTTP.
 
-	RFC 2518 - WebDAV 
-	\subsection{Architecture client-serveur}
+WebDAV a de nombreuses fonctionnalités basée sur le protocole HTTP, et qui sont aussi uniquement documentée dans ces spécifications, il est donc important de passer en revue quelques points important de ce protocole. 
+
+Ce chapitre est un survol des possibilités offertes par le protocole HTTP, tout en mettant un accent sur les fonctionnalité ayant une corrélation plus forte avec le protocole WebDAV.
+
+Une section de chapitre (cf. section \ref{sub:modif_proto_http}, page \pageref{sub:modif_proto_http}) est consacrée aux modifications apportées au protocole HTTP décrit ci-dessous. Veuillez vous y référer pour plus de détails.
+
+	\subsection{URL}
 	
-	\subsection{Mécanismes HTTP}
+		Les \emph{Uniform Resource Locator} (URL) est une adresse vers une ressource digitale. Leur ordre et leur structure est définie de manière stricte.
+		
+		Par exemple : \url{http://www.exemple.com:8080/path/index.html} 
+		
+		\begin{itemize}
+			\item \verb$http://$ représente le protocole utilisé. Le client qui reconnaît ce protocole pourra déterminer la structure de la suite de l'adresse. Un autre protocole peut avoir une structure différente.
+			\item \verb$www.exemple.com$ l'adresse du serveur. Cette adresse est liée a une adresse IP qui est déterminée a l'aide des serveur de noms (DNS, Domain Name Server, dont le protocole est le défini dans la RFC 1035)
+			\item \verb$8080$ le port sur lequel la connexion TCP sera établie
+			\item \verb$/path/index.html$ indique le chemin qui sera demandé au serveur
+		\end{itemize}
+		
+	\subsection{Requêtes HTTP}
 	
-\section{Fonctionnalités (schémas!!)}
-	\subsection{Sécurité}
-		on est sur le web! faut faire gaffe!
-		http://www.tech-archive.net/Archive/Windows/microsoft.public.windows.server.sbs/2006-11/msg00989.html
-	\subsection{Propriétés}
-	\subsection{Gestion des versions}
+		Une requêtes HTTP doit comporter une méthode, une URL et la version du protocole utilisée. Elle peut contenir des en-têtes (chacune dans une ligne séparée), ainsi qu'un corps (body) optionnel. La figure \ref{fig:req_http} montre un exemple de requête HTTP envoyé à un serveur.
+		
+		\begin{figure}[ht]
+		\begin{boxedverbatim}
+			GET /index.html HTTP/1.1
+			Host: exemple.com:8080
+			Content-Length: 1200
+			
+			Le corps doit contenir le nombre de caractères spécifié dans l'en-tête
+		\end{boxedverbatim}
+		\caption{Un exemple de requête HTTP envoyé au serveur}
+		\label{fig:req_http}
+		\end{figure}
+		
+		\texttt{GET} spécifie la méthode utilisée. \texttt{/index.html} est l'URL relative et \texttt{HTTP/1.1} le protocole et sa version. Les deux lignes suivantes définissent les en-têtes. Après la ligne blanche qui est requise se trouve éventuellement le corps. 
+		
+	\subsection{Réponses HTTP}
+	
+		Les réponses HTTP ont une structure légèrement différentes. Elle comporte tout d'abord une ligne de statut, les en-têtes, une ligne vide puis les corps, toujours optionnel. 
+		
+		La ligne de statut comporte dans l'ordre, le protocole utilisé ainsi que sa version, le code de statut et une description du statut. La figure \ref{fig:rep_http} montre un exemple de réponse HTTP.
+		
+		\begin{figure}[ht]
+		\begin{boxedverbatim}
+			HTTP/1.1 200 OK
+			Date: Sun, 19 Sept 2007 23:30:12 GMT
+			Content-Length: 1200
+						
+			Le corps doit contenir le nombre de caractères spécifié dans l'en-tête
+		\end{boxedverbatim}
+		\caption{Un exemple de réponse HTTP retourné par le serveur}
+		\label{fig:rep_http}
+		\end{figure}
+
+	\subsection{Méthodes HTTP}
+	
+		\texttt{GET}, \texttt{PUT}, \texttt{DELETE}, \texttt{POST}, \texttt{HEAD} et \texttt{OPTIONS} sont toutes des méthodes HTTP utiles pour l'édition collaborative. Nous avons vu le GET
+		
+		\begin{itemize}
+			\item GET permet de récupérer un document spécifique. 
+			\item PUT % TODO
+			\item 
+		\end{itemize}
+		
+
+%==============================================================================
+\section{Le protocole WebDAV}
+\label{sec:proto_webdav}
+%==============================================================================
+
+petite introduction. pas de -V- au début
+
+	\subsection{URL, URI et Namespaces}
+
+	\subsection{Sécurité (MetaData)} 
+	
 	\subsection{Locking}
-	\subsection{Namespace et URI}
-	\subsection{Intégration Subversion}
+	
+	\subsection{Modifications du protocole HTTP}
+	\label{sub:modif_proto_http}
+	
+	
+	\subsection{Opérations}
+	
+		collections, MOVE, Propriétés
+		
+	\subsection{Versioning}
+	
+	\subsection{Sécurité (Access control)}
+	
 	\subsection{XML}
-		Procédure simplifiée
+
+%==============================================================================
 \section{Logiciels}
+%==============================================================================
 	Implémenté direct dans WindowsXP et MacOS (tocheck)
 	\subsection{Client}
 	\subsection{Serveur}
 		Apache mod\_dav
 		Mise en place overview ?
+		
+%==============================================================================
 \section{Autres systèmes similaires existants}
+%==============================================================================
 	\subsection{CVS}
 	\subsection{Subversion}
-		WebDAV dans subversion ?!
+		WebDAV dans subversion ?! wtf?
 		http://subversion.tigris.org/webdav-usage.html
 	\subsection{FTP}
 		avantages : pp. 36 livre
 		créé avant HTTP
 		pas de versioning
 	\subsection{SSH}
+%==============================================================================
 \section{Scénarios d'utilisation}
+%==============================================================================
 
+%==============================================================================
 \section{Conclusion}
+%==============================================================================
 -fin (pas résumé)
 tester? http://test.webdav.org/
 
+%==============================================================================
 \section{Liste des figures}
+%==============================================================================
 
+%==============================================================================
 \section{Bibliographie} % bibtex? livre, articles, liens web
+%==============================================================================
 %\nocite{*} % put all database entries into the reference list
 %
 %\cite{knuth83}
 %\bibdata{Book}
 %\bibliographystyle{plain} % Style des references: abbrv, plain, ... 
 %\bibliography{bibliographie.bib} % Nom du fichier *.bib 
-
+\begin{Verbatim}
+http://www.ietf.org/
+\end{Verbatim}
+	
+%==============================================================================
 \section{Terminologies}
-
+%==============================================================================
 HTTP
 FTP
 HTML
 
-
+%==============================================================================
 \section{Annexe}
+%==============================================================================
 
 Any ?
 
