@@ -34,16 +34,16 @@ public class Message {
 		// il doit comporter des lettres
 		String user = "[a-z0-9\\-\\_]++((\\.?[a-z0-9\\-\\_]++)+)?";
 
-		// traiter les sous-domaines
+		// traiter les sous-domaines (entre 1 et 63 caracteres), separes par des points
 		String host = "[a-z0-9\\-]{1,63}((\\.[a-z0-9\\-]{1,63})?)+"; 
 		String dom = "\\.[a-z0-9]{2,6}"; // domaine entre 2 et 6 caractères
-		String regexp = user + "@" + host + dom;
+		String regexp = user + "@" + host + dom; // on compose l'expression reguliere
 		Pattern p = Pattern.compile(regexp); // on prepare l'expression regulière
-		Matcher m = p.matcher(email); // insenssible à la casse
+		Matcher m = p.matcher(email); 
 		if (m.matches()) { // on verifie que le format est valide
 			return true; // ok
 		}
-		// si on arrive ici, l'email n'est pas valable
+		// si on arrive jusqu'ici, l'email n'est pas valable
 		return false;
 	}
 
@@ -121,7 +121,8 @@ public class Message {
 		} else {
 			Headers += "Content-Type: text/html;";
 		}
-
+		Headers += CRLF;
+		
 		Body = text;
 	}
 

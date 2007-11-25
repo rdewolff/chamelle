@@ -98,7 +98,7 @@ public class SMTPConnection {
 
 	/* Envoyer une commande SMTP au serveur. Contrôler le code de réponse, il doit
 	 * etre RC et eventuellement RC2.
-	 * Si RC2 n'est pas utilise, il faut lui donner la valeur 0 */
+	 * Si RC2 n'est pas utilise, il faut lui attribuer la valeur 0 */
 	private void sendCommand(String command, int rc, int rc2) throws IOException {
 
 		// Ecrire la commande au serveur et lire la réponse du serveur
