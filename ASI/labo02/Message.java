@@ -35,7 +35,7 @@ public class Message {
 		String user = "[a-z0-9\\-\\_]++((\\.?[a-z0-9\\-\\_]++)+)?";
 
 		// traiter les sous-domaines
-		String host = "[a-z0-9\\-]{2,63}((\\.[a-z0-9\\-]{1,63})?)+"; 
+		String host = "[a-z0-9\\-]{1,63}((\\.[a-z0-9\\-]{1,63})?)+"; 
 		String dom = "\\.[a-z0-9]{2,6}"; // domaine entre 2 et 6 caractères
 		String regexp = user + "@" + host + dom;
 		Pattern p = Pattern.compile(regexp); // on prepare l'expression regulière
@@ -95,12 +95,14 @@ public class Message {
 
 		Headers = "From: " + From + CRLF;
 		Headers += "To: " + To + CRLF;
-		
+
 		// si il y a des Carbon Copy, on les ajoutes
-		if (cc.trim().length() != 0) {
+		if (cc.trim().length() != 0)
 			Headers += "Cc: " + cc + CRLF;
-		}
-		Headers += "Subject: " + subject.trim() + CRLF;
+
+		if (subject.trim().length() != 0)
+			Headers += "Subject: " + subject.trim() + CRLF;
+		
 		// on met la priorité au max pour tous les emails envoyes
 		Headers += "X-Priority: 1" + CRLF; // methode generale
 		Headers += "X-MSMail-Priority: High" + CRLF; // pour les clients microsoft

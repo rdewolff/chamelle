@@ -86,13 +86,21 @@ public class Envelope {
 	/* Parser le message et doubler tous les points au début d'une
        ligne. */
 	private Message escapeMessage(Message message) {
+		
+		String RetourLigne = "\n";
 		String escapedBody = "";
-		String[] parser = message.Body.split("\n");
-
+		String[] parser = message.Body.split(RetourLigne);
+		
+		// passe en revue tout les lignes du message 
 		for (int x=0; x<parser.length; x++) {
-			parser[x] += "\n";
-			if(parser[x].startsWith(".")) { parser[x] += "."; }
+			// si la ligne commence par un point, on dupilque le point
+			if(parser[x].startsWith("."))
+				parser[x] = ".." + parser[x].substring(1); 
+			// ajoute le retour a la ligne
+			parser[x] += RetourLigne;
+			// ajoute dans le corps de message temporaire
 			escapedBody += parser[x];
+			
 		}
 		message.Body = escapedBody;
 		return message;
