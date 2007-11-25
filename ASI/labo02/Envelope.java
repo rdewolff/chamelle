@@ -33,7 +33,7 @@ public class Envelope {
 		String domaine;
 		String domaine2;
  
-		// si le domaine contient un point on determine le deomaine secondaire
+		// si le domaine contient un point on determine le domaine secondaire
 		if (host.contains(".")) {
 			// prend le dernier point jusqu'à la fin du host (ex: .ch)
 			domaine =  host.substring(host.lastIndexOf('.'), host.length() );
@@ -51,7 +51,7 @@ public class Envelope {
 		return domaine;
 	}
 	
-	/* Créer lenveloppe. */
+	/* Créer l'enveloppe. */
 	public Envelope(Message message) {
 		/* Obtenir le serveur SMTP, l'expéditeur et le destinataire. */
 		DestHost = message.getSMTPServer();
@@ -84,16 +84,17 @@ public class Envelope {
 	}
 
 	/* Parser le message et doubler tous les points au début d'une
-       ligne. */
+       ligne, pour éviter que le serveur recoivent une fin de message
+ 	   avant que voulu */
 	private Message escapeMessage(Message message) {
 		
 		String RetourLigne = "\n";
 		String escapedBody = "";
 		String[] parser = message.Body.split(RetourLigne);
 		
-		// passe en revue tout les lignes du message 
+		// passe en revue toutes les lignes du message 
 		for (int x=0; x<parser.length; x++) {
-			// si la ligne commence par un point, on dupilque le point
+			// si la ligne commence par un point, on duplique le point 
 			if(parser[x].startsWith("."))
 				parser[x] = ".." + parser[x].substring(1); 
 			// ajoute le retour a la ligne
@@ -106,7 +107,7 @@ public class Envelope {
 		return message;
 	}
 
-	/* Pour imprimer l'enveloppe et le message. Seulement pour debug. */
+	/* Pour imprimer l'enveloppe et le message. Pour debug. */
 	public String toString() {
 		String res = "Expediteur: " + Sender + '\n';
 		res += "Destinataire(s): " + Recipient + '\n';
