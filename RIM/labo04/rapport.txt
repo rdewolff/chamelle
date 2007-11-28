@@ -19,7 +19,7 @@ Apache Lucene est un moteur de recherche de texte écrit completement en Java. C
 
 C'est un projet Open Source.
 
-Il est destiné pour Java mais d'autres versions existe, comme en .NET ou en C.
+Il est destiné pour Java mais d'autres versions existent, comme en .NET ou en C.
 
 2. Dans Lucene, à quoi sert un Analyzer ? Peut-on écrire son propre Analyzer ?
 
