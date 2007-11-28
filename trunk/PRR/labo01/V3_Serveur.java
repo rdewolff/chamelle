@@ -111,7 +111,7 @@ public class V3_Serveur extends Config
 
 			// associe un port de communication au groupe
 			InetAddress groupe = InetAddress.getByName(GROUPE);
-			MulticastSocket socketMulti = new MulticastSocket(PORT_UDP);
+			MulticastSocket socketMulti = new MulticastSocket(PORT);
 
 			/* 
 			 * Diffusion de la matrice B a tout les clients
