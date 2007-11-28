@@ -7,7 +7,7 @@
  */
 public abstract class Config {
 
-	static final int 	N 				= 5;
+	static final int 	N 				= 3;
 	static final String HOST 			= "localhost";
 	static final int 	PORT 			= 6000;
 	static final int 	PORT_MULTICAST 	= 6001;
