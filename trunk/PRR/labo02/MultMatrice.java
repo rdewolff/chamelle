@@ -2,6 +2,6 @@ import java.rmi.*;
 
 public interface MultMatrice extends Remote 
 {
-	public Message getParams();
-	public void setLigneUpdate(int[], int n);
+	public Message getParams() throws RemoteException;
+	public void setLigneUpdate(int[] l, int n) throws RemoteException;
 }
