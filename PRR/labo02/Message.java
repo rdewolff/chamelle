@@ -2,7 +2,7 @@
 public class Message {
 	
 	private int n;
-	private int[]][] matrice;
+	private int[][] matrice;
 	private int[] ligne;
 	
 	Message(int n, int[] ligne, int[][] matrice)
