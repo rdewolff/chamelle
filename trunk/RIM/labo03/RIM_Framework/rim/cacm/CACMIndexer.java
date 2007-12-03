@@ -1,5 +1,5 @@
 package rim.cacm;
-
+ 
 import rim.Indexer;
 import java.util.*;
 import java.io.*;

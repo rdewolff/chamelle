@@ -1,6 +1,6 @@
 package rim;
 import java.util.Map;
-
+ 
 /**
  * An object that aims to retrieve data from an indexed collection. Such a retriever
  * will probably need an access to the indexes created by an {@link Indexer}.

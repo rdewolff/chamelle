@@ -1,5 +1,6 @@
 package rim;
 
+import org.apache.lucene.document.Document;
 import rim.cacm.CACMFeeder;
 import rim.cacm.CACMIndexer;
 import rim.cacm.CACMRetriever;
@@ -45,13 +46,13 @@ public class Labo {
 			while(requete != 6)
 			{
 				//Choix de l'utilisateur
-				System.out.println("Commandes disponibles:");
-				System.out.println("1: Rechercher un document (freq norm)");
-				System.out.println("2: Rechercher un terme (freq norm)");
-				System.out.println("3: Indexer la collection");
-				System.out.println("4: Entrer une requete (freq norm)");
-				System.out.println("5: Entrer une requete (tf-idf)");
-				System.out.println("6: Quitter");
+				System.out.println("* Commandes disponibles: *");
+				System.out.println("* 1: Rechercher un document (freq norm)");
+				System.out.println("* 2: Rechercher un terme (freq norm)");
+				System.out.println("* 3: Indexer la collection");
+				System.out.println("* 4: Entrer une requete (freq norm)");
+				System.out.println("* 5: Entrer une requete (tf-idf)");
+				System.out.println("* 6: Quitter");
 				
 				//Boucle de saisie
 				while(true)
@@ -66,7 +67,9 @@ public class Labo {
 					}
 					//En cas d'erreur de format ou de bornes, on signale l'erreur
 					catch(NumberFormatException e)
-					{System.out.println("Veuillez entrer un numero de la liste");}
+					{
+						System.out.println("Veuillez entrer un numero de la liste");
+					}
 				}
 				
 				//Si l'utilisateur veut quitter
