@@ -1,5 +1,5 @@
 package rim;
-
+ 
 /**
  * An object that aims to index the content of documents. The created index(es) will 
  * then probably be used by a {@link Retriever} to perform efficient searches.

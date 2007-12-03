@@ -1,6 +1,6 @@
 package rim;
 import java.net.URI;
-
+ 
 /**
  * An object that aims to parse a collection and <i>feed</i> an indexer.
  */
