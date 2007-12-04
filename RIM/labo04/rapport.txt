@@ -20,11 +20,14 @@ C'est aussi un projet Open Source. Il est destiné pour Java mais d'autres versi
 
 2. Dans Lucene, à quoi sert un Analyzer ? Peut-on écrire son propre Analyzer ?
 Un "Analyzer" crée des "TokenStreams" en parsant le texte. Il permet de découper un fichier source en token. C'est dans l'analyzer que l'on va spécifier les stop words par exemple. Ainsi, nous pouvons tout à fait créer un analyzer en français. A noter qu'il existe déjà beaucoup d'analyzer existant qui sont disponibles sur internet.  
- 
+   
 3. Comment un document est-il représenté dans Lucene ? 
+
+ 
 
 4. Quelles sont les possibilités offertes par Lucene pour la formulation d’une requête ?
 Les possibilités offertes par Lucene sont nombreuses. La syntaxe complète est décrite à l'adresse suivante : http://lucene.apache.org/java/docs/queryparsersyntax.html
 Nous allons survoler les éléments qui nous intéressent le plus et sont le plus proche du cours. 
  
 5. Expliquez brièvement comment Lucene gère ses index (en termes de fichiers) et expliquez l’intérêt de cette façon de procéder. 
+
