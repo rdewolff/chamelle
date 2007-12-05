@@ -1,5 +1,6 @@
+import java.io.*;
 
-public class Message {
+public class Message implements Serializable {
 	
 	private int n;
 	private int[][] matrice;
