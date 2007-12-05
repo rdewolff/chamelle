@@ -9,12 +9,12 @@ public class Serveur extends UnicastRemoteObject implements MultMatrice {
 	Serveur() throws RemoteException
 	{super();}
 	
-	public Message getParams() throws RemoteException
+	public synchronized Message getParams() throws RemoteException
 	{
 		return new Message(3, l, m);
 	}
 	
-	public void setLigneUpdate(int[] ligne, int n) throws RemoteException
+	public synchronized void setLigneUpdate(int[] ligne, int n) throws RemoteException
 	{;}
 	
 	/**
