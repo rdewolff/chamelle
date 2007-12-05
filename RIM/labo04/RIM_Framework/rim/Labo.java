@@ -1,6 +1,5 @@
 package rim;
 
-import org.apache.lucene.document.Document;
 import rim.cacm.CACMFeeder;
 import rim.cacm.CACMIndexer;
 import rim.cacm.CACMRetriever;
@@ -8,7 +7,7 @@ import java.util.*;
 import java.io.*;
 
 /**
- * Second laboratory for the RIM course (Multimedia Information Retrieval). This work
+ * Fourth laboratory for the RIM course (Multimedia Information Retrieval). This work
  * is proposed by the University of Applied Science of Western Switzerland (HEIG-VD).
  * <br/><br/>
  * The main method must perform the following tasks :
@@ -33,26 +32,21 @@ public class Labo {
 		//Tampon de lecture du clavier
 		BufferedReader inFromUser = 
           		new BufferedReader(new InputStreamReader(System.in));
-		int requete = 0;
-		int document = 0;
+		int requete = -1; // utilise pour stocker la reponse de l'utilisateur
 		String terme = null;
 		
 		//En-tete du programme
 		System.out.println("\n-- Moteur d'indexation, RIM --\n");
 		System.out.println("Auteurs: Simon Hintermann et Romain de Wolff\n\n");
-		
 		try
 		{
-			while(requete != 6)
+			while(requete != 0)
 			{
 				//Choix de l'utilisateur
 				System.out.println("* Commandes disponibles: *");
-				System.out.println("* 1: Rechercher un document (freq norm)");
-				System.out.println("* 2: Rechercher un terme (freq norm)");
-				System.out.println("* 3: Indexer la collection");
-				System.out.println("* 4: Entrer une requete (freq norm)");
-				System.out.println("* 5: Entrer une requete (tf-idf)");
-				System.out.println("* 6: Quitter");
+				System.out.println("* 1: Indexer la collection");
+				System.out.println("* 2: Entrer une requete");
+				System.out.println("* 0: Quitter");
 				
 				//Boucle de saisie
 				while(true)
@@ -61,7 +55,7 @@ public class Labo {
 					{
 						requete = Integer.valueOf(inFromUser.readLine());
 						//Si l'entree au clavier est erronnee, on envoie une erreur
-						if(requete < 1 || requete > 6)
+						if(requete < 0 || requete > 2)
 							throw new NumberFormatException();
 						break;
 					}
@@ -73,7 +67,7 @@ public class Labo {
 				}
 				
 				//Si l'utilisateur veut quitter
-				if(requete == 6)
+				if(requete == 0)
 				{
 					System.out.println("Fin du programme...");
 					break;
@@ -81,58 +75,33 @@ public class Labo {
 				//Selection de la requete
 				try
 				{
+					Set<Double> keys;
+					
 					switch(requete)
 					{
-						//Cherche un document
-						case 1: 	System.out.println("Entrez le document recherche:");
-									document = Integer.valueOf(inFromUser.readLine());
-									System.out.println("Termes trouves dans le document avec leur frequence:");
-									Map<String, Double> t = r.searchDocument(document);
-									Set keys = t.keySet();
-									for(Object s: keys)
-										System.out.println(s + ", " + t.get(s));
-									break;
-						//Cherche un terme
-						case 2: 	System.out.println("Entrez le terme recherche:");
-									terme = inFromUser.readLine();
-									System.out.println("Documents contenant ce terme avec leur frequence:");
-									terme = terme.trim();
-									Map<Integer, Double> t2 = r.searchTerm(terme);
-									keys = t2.keySet();
-									for(Object s: keys)
-										System.out.println(s + ", " + t2.get(s));
-									break;
 						//Reindexage
-						case 3: 	System.out.println("Creation des indexs...");
+						case 1: 	System.out.println("Creation des indexs...");
 									CACMIndexer i = new CACMIndexer();
 									CACMFeeder c = new CACMFeeder();
-									c.parseCollection(java.net.URI.create("rim/ressources/cacm.all"), i);
+									// TODO chemin fichiers ??
+									//c.parseCollection(java.net.URI.create("rim/ressources/cacm.all"), i);
+									c.parseCollection(java.net.URI.create("RIM/labo04/RIM_Framework/rim/ressources/cacm.all"), i);
 									i.finalizeIndexation();
 									break;
+									
 						// Requete sur la collection indexee avec les frequences normalisees
-						case 4: 	System.out.println("Entrer le(s) terme(s) recherche:");
+						case 2: 	System.out.println("Entrer le(s) terme(s) recherche:");
 									terme = inFromUser.readLine();
 									System.out.println("Documents trouve ainsi " +
 											"que similarite par cosinus:");
-									terme = terme.trim();
-									Map<Double,Integer> t3 = r.executeQuery(terme, false);
-									keys = t3.keySet();
+									// terme = terme.trim();
+									Map<Double,Integer> t = r.executeQuery(terme, false);
+									System.out.println("Nombre de resultat(s): "+t.size());
+									keys = t.keySet();
 									for(Object s: keys)
 										// affichage des resultats 
-										System.out.println("Document no : "+t3.get(s)+
-												" (cosinus = "+s+")");
-									break;
-						// Requete sur la collection indexee avec tf-idf
-						case 5: 	System.out.println("Entrer le(s) terme(s) recherche:");
-									terme = inFromUser.readLine();
-									System.out.println("Documents trouve ainsi " +
-											"que similarite par cosinus:");
-									terme = terme.trim();
-									Map<Double,Integer> t4 = r.executeQuery(terme, true);
-									keys = t4.keySet();
-									for(Object s: keys)
-										System.out.println("Document no : "+t4.get(s)+
-												" (cosinus = "+s+")");
+										System.out.println("Document no : "+t.get(s)+
+												" (cosinus = "+s+")"); 
 									break;
 					}
 				}

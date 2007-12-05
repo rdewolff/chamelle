@@ -1,17 +1,21 @@
 package rim.cacm;
-
+ 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
-
 import rim.Feeder;
 import rim.Indexer;
 
 /**
  * A feeder for the CACM collection.
+ * Parcours le document passe en parametre et insere chaque valeur
+ * en utilisant la methode de l'indexeur (Index.index(id, contenu))
+ * 
  * @author Florian Poulin <i>(florian.poulin at heig-vd.ch)</i>
+ * @author Romain de Wolff
+ * @author Simon Hintermann
  */
 public class CACMFeeder implements Feeder {
 
@@ -40,7 +44,7 @@ public class CACMFeeder implements Feeder {
 		String readLine = null;
 		int count = 0;
 		
-		// parse collection
+		// parse collection contained in the source files
 		try {
 			while ((readLine = br.readLine()) != null) {
 				if (dotRead = (readLine.length() > 0 && readLine.charAt(0) == '.')) {
@@ -55,7 +59,7 @@ public class CACMFeeder implements Feeder {
 						if (firstDoc) {
 							firstDoc = false;
 						} else {
-							indexer.index(docID, docContent);
+							indexer.index(docID, docContent); 
 							count++;
 						}
 						
@@ -75,7 +79,7 @@ public class CACMFeeder implements Feeder {
 			System.err.println("malformed document id : " + e);
 			System.exit(0);
 		} catch (IOException e) {
-			System.err.println("oups : " + e);
+			System.err.println("oops : " + e);
 			e.printStackTrace();
 			System.exit(0);
 		}
@@ -83,7 +87,6 @@ public class CACMFeeder implements Feeder {
 		// index the last document
 		indexer.index(docID, docContent);
 		count++;
-
 		return count;
 	}
 }
