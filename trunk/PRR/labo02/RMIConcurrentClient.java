@@ -1,4 +1,4 @@
-// Fichier: RMIConcurrentClient.java
+
 
 import java.rmi.*;
 
@@ -6,7 +6,7 @@ public class RMIConcurrentClient
 {
    public static void main(String argv[])
    {
-      String siteServeur = "sunst51";
+      String siteServeur = "localhost";
       if (argv.length != 1) {
          System.out.println("Usage 1 RMIConcurrentClient {1|2}");
          System.exit(1);
@@ -15,7 +15,9 @@ public class RMIConcurrentClient
          System.out.println("Usage RMIConcurrentClient {1|2}");
          System.exit(1);
       }
-      System.setSecurityManager(new RMISecurityManager());
+      
+      // pas de sécurité pour nos test
+      // System.setSecurityManager(new RMISecurityManager());
       String serveurNom = "rmi://" + siteServeur + "/RMIConcurrent";
       RMIConcurrent serveur = null;
       try {
