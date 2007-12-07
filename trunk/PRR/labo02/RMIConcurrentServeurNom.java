@@ -9,9 +9,9 @@
 import java.rmi.*;
 import java.rmi.server.*;
 
-public class RMIConcurrentServeur extends UnicastRemoteObject implements RMIConcurrent
+public class RMIConcurrentServeurNom extends UnicastRemoteObject implements RMIConcurrent
 {
-  public RMIConcurrentServeur() throws RemoteException
+  public RMIConcurrentServeurNom() throws RemoteException
   {
      super();
   }
@@ -42,7 +42,7 @@ public class RMIConcurrentServeur extends UnicastRemoteObject implements RMIConc
 	 // System.setSecurityManager(new RMISecurityManager());
      try {
         String serveurNom = "RMIConcurrent";
-        RMIConcurrent serveur = new RMIConcurrentServeur();
+        RMIConcurrent serveur = new RMIConcurrentServeurNom();
         Naming.rebind(serveurNom,serveur);
         System.out.println("Serveur " + serveurNom + " pret");
      } catch (Exception e) {
