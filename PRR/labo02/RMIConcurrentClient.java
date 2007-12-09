@@ -1,12 +1,27 @@
-
+/**
+ * 
+ * Le client va se connecter au serveur de nom puis mettre à disposition les
+ * methodes necessaires pour que le serveur puisse effectuer les calculs
+ * necessaire sur celui-ci.
+ * 
+ * Etapes
+ * ------
+ *  1. Connexion au serveur de nom
+ *  2. Mise a disposition des methodes de calcul des matrices
+ *  3. Quitte proprement le programme
+ * 
+ * @author Romain de Wolff
+ * @author Simon Hintermann
+ *
+ */
 
 import java.rmi.*;
-
 public class RMIConcurrentClient
 {
    public static void main(String argv[])
    {
-      String siteServeur = "localhost";
+	   // Initialisation
+      String siteServeur = "localhost"; // inutile car pas de securite
       if (argv.length != 1) {
          System.out.println("Usage 1 RMIConcurrentClient {1|2}");
          System.exit(1);
@@ -15,9 +30,8 @@ public class RMIConcurrentClient
          System.out.println("Usage RMIConcurrentClient {1|2}");
          System.exit(1);
       }
-      
-      // pas de sécurité pour nos test
-      // System.setSecurityManager(new RMISecurityManager());
+      // Connexion
+      // pas de sécurité pour nos test // System.setSecurityManager(new RMISecurityManager());
       String serveurNom = "rmi://" + siteServeur + "/RMIConcurrent";
       RMIConcurrent serveur = null;
       try {
@@ -26,6 +40,7 @@ public class RMIConcurrentClient
          System.out.println("Erreur de connexion au serveur: " + e);
          System.exit(1);
       } 
+      // calculs
       try {
          for (int i = 0; i < 10; i++) {
             if (argv[0].charAt(0) == '1')
@@ -37,5 +52,6 @@ public class RMIConcurrentClient
       } catch (Exception e) {
          System.out.println("Erreur de traitement: " + e);
       } 
+      // fin
    }
 }
