@@ -27,7 +27,11 @@ public class RMIConcurrentServeurNom extends UnicastRemoteObject implements RMIC
 	 * @param adr L'adresse du client
 	 */
 	synchronized public void inscription( int id, String adr) throws RemoteException {
-
+		String[] temp = new String[adrClients.length];
+		temp = adrClients;
+		adrClients = new String[adrClients.length + 1];
+		adrClients = temp;
+		adrClients[adrClients.length+1] = adr;
 	}
 
 	/**
