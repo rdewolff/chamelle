@@ -16,7 +16,6 @@ public class RMIConcurrentServeur extends UnicastRemoteObject implements RMIConc
 	private int[][] matriceA;
 	private int[][] matriceB;
 	private int[][] matriceC;
-	private int N; // nombre de ligne x colonne des matrices
 
 	public RMIConcurrentServeur() throws RemoteException
 	{
@@ -63,8 +62,23 @@ public class RMIConcurrentServeur extends UnicastRemoteObject implements RMIConc
 		System.out.println("Serveur -- sortie Acces2");
 	}
 
-	public static void main(String args[])
+	public static void main(String argv[])
 	{
+		if (argv.length != 1) {
+			System.out.println("Demarrer en passant le parametre N (taille des matrices)");
+			System.exit(1);
+		}
+		
+		// determine la taille des matrices en fonction de l'argument passe
+		try {
+			int N = Integer.parseInt(argv[0]);
+		} catch (NumberFormatException e) {
+			System.out.println(e);
+		}
+
+		// obitent les cliens depuis le serveur de noms
+		
+		
 		// pas de sécurité pour nos test
 		// System.setSecurityManager(new RMISecurityManager());
 		try {
