@@ -11,9 +11,12 @@ import java.rmi.server.*;
 
 public class RMIConcurrentServeurNom extends UnicastRemoteObject implements RMIConcurrent
 {
+	static private final int MAX_CLIENTS = 5;
+
 	// tableau contenant l'adresse des clients
-	private String[] adrClients;
+	private String[] adrClients = new String[MAX_CLIENTS];
 	private String	 adrServeur;
+	private static int compteur = 0;
 
 	public RMIConcurrentServeurNom() throws RemoteException
 	{
@@ -27,11 +30,15 @@ public class RMIConcurrentServeurNom extends UnicastRemoteObject implements RMIC
 	 * @param adr L'adresse du client
 	 */
 	synchronized public void inscription( int id, String adr) throws RemoteException {
+		/*// TODO allocation a la volee ? 
 		String[] temp = new String[adrClients.length];
 		temp = adrClients;
 		adrClients = new String[adrClients.length + 1];
 		adrClients = temp;
 		adrClients[adrClients.length+1] = adr;
+		 */
+		this.adrClients[id] = adr;
+		compteur++; // compte le client connecte
 	}
 
 	/**
