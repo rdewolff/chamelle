@@ -12,8 +12,8 @@ import java.rmi.server.*;
 public class RMIConcurrentServeurNom extends UnicastRemoteObject implements RMIConcurrent
 {
 	// tableau contenant l'adresse des clients
-	private String[] 	adrClients;
-	private String	adrServeur;
+	private String[] adrClients;
+	private String	 adrServeur;
 
 	public RMIConcurrentServeurNom() throws RemoteException
 	{
