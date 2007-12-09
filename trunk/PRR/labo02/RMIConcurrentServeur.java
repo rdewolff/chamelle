@@ -11,42 +11,69 @@ import java.rmi.server.*;
 
 public class RMIConcurrentServeur extends UnicastRemoteObject implements RMIConcurrent
 {
-  public RMIConcurrentServeur() throws RemoteException
-  {
-     super();
-  }
+	// tableau contenant l'adresse des clients
+	private String[] 			adrClients;
+	private int[][] matriceA;
+	private int[][] matriceB;
+	private int[][] matriceC;
+	private int N; // nombre de ligne x colonne des matrices
 
-  synchronized public void Acces1() throws RemoteException
-  {
-     // Signaler qu'un processus est dedans
-     System.out.println("Serveur -- dedans Acces1");
-     for (int i = 0; i < 100000; i++)
-        for (int j = 0; j < 10000; j++);
-     
-     System.out.println("Serveur -- sortie Acces1");
-  }
+	public RMIConcurrentServeur() throws RemoteException
+	{
+		super();
+	}
 
-  synchronized public void Acces2() throws RemoteException
-  {	
-     // Signaler qu'un processus est dedans
-     System.out.println("Serveur -- dedans Acces2");
-     for (int i = 0; i < 100000; i++)
-        for (int j = 0; j < 10000; j++);
-     
-     System.out.println("Serveur -- sortie Acces2");
-  }
+	/**
+	 * Remplis la ligne "id" de la matrice C avec les valeurs passee en 
+	 * parametre dans le tableau val. Cette methode est appelee par les clients
+	 * a l'aide de RMI.
+	 * @param id
+	 * @param val
+	 */
+	synchronized public void mettreResultat(int id, int[] val) throws RemoteException {
 
-  public static void main(String args[])
-  {
-     // pas de sécurité pour nos test
-	 // System.setSecurityManager(new RMISecurityManager());
-     try {
-        String serveurNom = "RMIConcurrent";
-        RMIConcurrent serveur = new RMIConcurrentServeur();
-        Naming.rebind(serveurNom,serveur);
-        System.out.println("Serveur " + serveurNom + " pret");
-     } catch (Exception e) {
-        System.out.println("Exception a l'enregistrement: " + e);
-     }
-  }
+	}
+
+	/**
+	 * Affiche les valeurs des matrices
+	 */
+	private void afficheMatrices() {
+		System.out.println("Affichages des matrices : ");
+
+	}
+
+
+	synchronized public void Acces1() throws RemoteException
+	{
+		// Signaler qu'un processus est dedans
+		System.out.println("Serveur -- dedans Acces1");
+		for (int i = 0; i < 100000; i++)
+			for (int j = 0; j < 10000; j++);
+
+		System.out.println("Serveur -- sortie Acces1");
+	}
+
+	synchronized public void Acces2() throws RemoteException
+	{	
+		// Signaler qu'un processus est dedans
+		System.out.println("Serveur -- dedans Acces2");
+		for (int i = 0; i < 100000; i++)
+			for (int j = 0; j < 10000; j++);
+
+		System.out.println("Serveur -- sortie Acces2");
+	}
+
+	public static void main(String args[])
+	{
+		// pas de sécurité pour nos test
+		// System.setSecurityManager(new RMISecurityManager());
+		try {
+			String serveurNom = "RMIConcurrent";
+			RMIConcurrent serveur = new RMIConcurrentServeur();
+			Naming.rebind(serveurNom,serveur);
+			System.out.println("Serveur " + serveurNom + " pret");
+		} catch (Exception e) {
+			System.out.println("Exception a l'enregistrement: " + e);
+		}
+	}
 }
