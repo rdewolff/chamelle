@@ -16,7 +16,7 @@
  */
 
 import java.rmi.*;
-public class RMIConcurrentClient implements RMIConcurrentClientInterface
+public class RMIClient implements RMIClientInterface
 {
 	// variables utilises
 	private String 	adrServeur;

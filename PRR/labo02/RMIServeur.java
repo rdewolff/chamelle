@@ -9,7 +9,7 @@
 import java.rmi.*;
 import java.rmi.server.*;
 
-public class RMIConcurrentServeur extends UnicastRemoteObject implements RMIConcurrent
+public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterface
 {
 	// tableau contenant l'adresse des clients
 	private String[] 			adrClients;
@@ -17,7 +17,7 @@ public class RMIConcurrentServeur extends UnicastRemoteObject implements RMIConc
 	private int[][] matriceB;
 	private int[][] matriceC;
 
-	public RMIConcurrentServeur() throws RemoteException
+	public RMIServeur() throws RemoteException
 	{
 		super();
 	}
@@ -82,7 +82,7 @@ public class RMIConcurrentServeur extends UnicastRemoteObject implements RMIConc
 		// System.setSecurityManager(new RMISecurityManager());
 		try {
 			String serveurNom = "RMIConcurrent";
-			RMIConcurrent serveur = new RMIConcurrentServeur();
+			RMIServeurInterface serveur = new RMIServeur();
 			Naming.rebind(serveurNom,serveur);
 			System.out.println("Serveur " + serveurNom + " pret");
 		} catch (Exception e) {
