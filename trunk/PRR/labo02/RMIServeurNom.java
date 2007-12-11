@@ -11,13 +11,13 @@ import java.rmi.server.*;
 import java.util.LinkedList;
 
 
-public class RMIConcurrentServeurNom extends UnicastRemoteObject implements RMIConcurrentServeurNomInterface
+public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomInterface
 {
 	// tableau contenant l'adresse des clients
 	private LinkedList<String> clients = new LinkedList<String>();
 	private String	 adrServeur;
 
-	public RMIConcurrentServeurNom() throws RemoteException
+	public RMIServeurNom() throws RemoteException
 	{
 		super();
 	}
@@ -46,7 +46,7 @@ public class RMIConcurrentServeurNom extends UnicastRemoteObject implements RMIC
 		// System.setSecurityManager(new RMISecurityManager());
 		try {
 			String serveurNom = "ServeurNoms";
-			RMIConcurrent serveur = new RMIConcurrentServeurNom();
+			RMIServeurNomInterface serveur = new RMIServeurNom();
 			Naming.rebind(serveurNom,serveur);
 			System.out.println("Serveur " + serveurNom + " pret");
 		} catch (Exception e) {
