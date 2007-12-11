@@ -94,14 +94,35 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 			}
 		}			
 		
-		// envoie les donnees aux clients (matrice + ligne a calculer)
+		for (int as=0; as<1000000000; as++) {
+			//for (int a1s=0; a1s<1000000000; a1s++) {
+				// null
+			//}
+		}
+			 
+		
+		// TEMP
+		System.out.println("Connexion aux clients pour lui envoyer les infos");
+		
+		serveurNom = "rmi://localhost/RMIClientInterface";
+		RMIClientInterface client = null;
+		try {
+			client = (RMIClientInterface)Naming.lookup(serveurNom);
+		} catch (Exception e) {
+			System.out.println("Erreur de connexion au serveur (1) : " + e);
+			System.exit(1);
+		} 
+		
+		
+		/*
+		// envoie les donnees aux clients
 		int cmp = 0; // compteur
 		RMIClientInterface serveurClient = null;
 		int[] ligneA = new int[N]; // la ligne de B envoyee
 		for ( String cli : clients) {
 			cmp++;
-			System.out.println( "Connexion au client " + cmp + "("+cli+")");
 			serveurNom = "rmi://" + cli + "/Client"+cmp;
+			System.out.println( "Connexion au client " + cmp + " ("+serveurNom+")");
 			try {
 				serveurClient = (RMIClientInterface)Naming.lookup(serveurNom);
 			} catch (Exception e) {
@@ -119,6 +140,7 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 				System.out.println("Erreur de traitement: " + e);
 			} 
 		}
+		*/
 		
 		// attente des donnees de tous les clients
 		

@@ -13,9 +13,13 @@ import java.util.LinkedList;
 
 public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomInterface
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	// tableau contenant l'adresse des clients
 	private LinkedList<String> clients = new LinkedList<String>();
-	private String	 adrServeur;
 	private int nbClientsVoulus = 0;
 
 	public RMIServeurNom() throws RemoteException
@@ -54,15 +58,16 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 		if (clients.size() < n) {
 			nbClientsVoulus = n;
 			try {
+				// met en attente
 				wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			} catch (Exception e) {
+				System.out.println(e);
 			}
 		}
 		// retourne les clients 
 		return clients;	  
 	}
-
+ 
 	public static void main(String args[])
 	{
 		// pas de sécurité pour nos test
