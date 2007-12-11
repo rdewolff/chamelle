@@ -35,6 +35,8 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		Directory directory = null;
 
 		try {
+			// mise en memoire sur le disque des index 
+			// (dans le repertoire au dessus du dossier /rim)
 			directory = FSDirectory.getDirectory("./LucensIndex");
 		} catch (IOException e) {
 			System.out.println(e.toString());
