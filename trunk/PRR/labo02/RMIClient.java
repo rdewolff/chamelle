@@ -79,16 +79,17 @@ public class RMIClient implements RMIClientInterface
 		//System.setSecurityManager(new RMISecurityManager());
 		try {
 			String srvClient = "Client"+id;
+			srvClient = "RMIClientInterface"; // TEMP
 			RMIServeurNomInterface srv = new RMIServeurNom();
 			Naming.rebind(srvClient,srv);
-			System.out.println("Serveur " + srvClient + " pret");
+			System.out.println(srvClient + " pret pour la reception des donnees");
 		} catch (Exception e) {
 			System.out.println("Exception a l'enregistrement: " + e);
 		}
 		
 		// quand les donnees sont remplis, effectue les calculs
-		RMIClient meuh = new RMIClient();
-		meuh.calculs();
+		//RMIClient meuh = new RMIClient();
+		//meuh.calculs();
 		
 		// retourne les resultats au serveur
 		
