@@ -13,9 +13,7 @@ import java.util.LinkedList;
 
 public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomInterface
 {
-	/**
-	 * 
-	 */
+	// TODO ??? suggere par eclipse..
 	private static final long serialVersionUID = 1L;
 	
 	// tableau contenant l'adresse des clients
@@ -74,6 +72,7 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 		// System.setSecurityManager(new RMISecurityManager());
 		try {
 			String serveurNom = "RMIServeurNomInterface";
+			//serveurNom = "rmi://localhost/RMIServeurNomInterface";
 			RMIServeurNomInterface serveur = new RMIServeurNom();
 			Naming.rebind(serveurNom,serveur);
 			System.out.println("Serveur " + serveurNom + " pret");
