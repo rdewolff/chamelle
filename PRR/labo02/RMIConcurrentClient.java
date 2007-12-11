@@ -16,24 +16,28 @@
  */
 
 import java.rmi.*;
-public class RMIConcurrentClient
+public class RMIConcurrentClient implements RMIConcurrentClientInterface
 {
-	private String adrServeur;
-	private int id;
-	private int[] ligneA;
+	// variables utilises
+	private String 	adrServeur;
+	private int 	id;
+	private int[] 	ligneA;
 	private int[][] matriceB;
-	private int[] ligneC;
+	private int[] 	ligneC;
 	
-	synchronized public void remplirMatrice(int id, int[] ligneA, int[][] matriceB) {
-		
+	// permet d'introduire les informations dans le client (RMI)
+	synchronized public void remplirMatrice(int id, int[] ligneA, int[][] matriceB) throws RemoteException {
+		this.id = id;
+		this.ligneA = ligneA;
+		this.matriceB = matriceB;
 	}
 	
+	// effectue les calculs 
 	private void calcul(){
-		// miaw
 		System.out.println("Client " + id + " calcul la matrice");
 	}
 	
-
+	// programme principal
 	public static void main(String argv[])
 	{
 		// Initialisation
@@ -48,7 +52,7 @@ public class RMIConcurrentClient
 		}
 		// Connexion
 		// pas de sécurité pour nos test // System.setSecurityManager(new RMISecurityManager());
-		String serveurNom = "rmi://" + siteServeur + "/RMIConcurrent";
+		String serveurNom = "rmi://" + siteServeur + "/ServeurNoms";
 		RMIConcurrent serveur = null;
 		try {
 			serveur = (RMIConcurrent)Naming.lookup(serveurNom);
@@ -68,6 +72,5 @@ public class RMIConcurrentClient
 		} catch (Exception e) {
 			System.out.println("Erreur de traitement: " + e);
 		} 
-		// fin
 	}
 }

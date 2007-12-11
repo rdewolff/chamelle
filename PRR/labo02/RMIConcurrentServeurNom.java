@@ -8,15 +8,14 @@
 
 import java.rmi.*;
 import java.rmi.server.*;
+import java.util.LinkedList;
 
-public class RMIConcurrentServeurNom extends UnicastRemoteObject implements RMIConcurrent
+
+public class RMIConcurrentServeurNom extends UnicastRemoteObject implements RMIConcurrentServeurNomInterface
 {
-	static private final int MAX_CLIENTS = 5;
-
 	// tableau contenant l'adresse des clients
-	private String[] adrClients = new String[MAX_CLIENTS];
+	private LinkedList<String> clients = new LinkedList<String>();
 	private String	 adrServeur;
-	private static int compteur = 0;
 
 	public RMIConcurrentServeurNom() throws RemoteException
 	{
@@ -29,24 +28,16 @@ public class RMIConcurrentServeurNom extends UnicastRemoteObject implements RMIC
 	 * 			calculer
 	 * @param adr L'adresse du client
 	 */
-	synchronized public void inscription( int id, String adr) throws RemoteException {
-		/*// TODO allocation a la volee ? 
-		String[] temp = new String[adrClients.length];
-		temp = adrClients;
-		adrClients = new String[adrClients.length + 1];
-		adrClients = temp;
-		adrClients[adrClients.length+1] = adr;
-		 */
-		this.adrClients[id] = adr;
-		compteur++; // compte le client connecte
+	synchronized public void inscription( String adr) throws RemoteException {
+		clients.add(adr);
 	}
 
 	/**
-	 * Renvoie les adresses des clients inscrits sur le serveur de nom
-	 * @return
+	 * Renvoie les adresses des clients inscrits sur le serveur de nom 
+	 * @return 
 	 */
-	synchronized public String[] getClients() throws RemoteException {
-		return adrClients;	  
+	synchronized public LinkedList<String> getClients() throws RemoteException {
+		return clients;	  
 	}
 
 
@@ -75,7 +66,7 @@ public class RMIConcurrentServeurNom extends UnicastRemoteObject implements RMIC
 		// pas de sécurité pour nos test
 		// System.setSecurityManager(new RMISecurityManager());
 		try {
-			String serveurNom = "RMIConcurrent";
+			String serveurNom = "ServeurNoms";
 			RMIConcurrent serveur = new RMIConcurrentServeurNom();
 			Naming.rebind(serveurNom,serveur);
 			System.out.println("Serveur " + serveurNom + " pret");
