@@ -16,7 +16,7 @@
  */
 
 import java.rmi.*;
-public class RMIClient implements RMIClientInterface
+public class RMIClient implements RMIClientInterface 
 {
 	// variables utilises
 	private String 		adrServeur;
@@ -26,21 +26,35 @@ public class RMIClient implements RMIClientInterface
 	private int[] 		ligneC;
 	
 	// permet d'introduire les informations dans le client (RMI)
-	synchronized public void remplirMatrice(int id, int[] ligneA, int[][] matriceB) throws RemoteException {
-		this.id = id;
-		this.ligneA = ligneA;
-		this.matriceB = matriceB;
+	synchronized public void remplirMatrice(int[] ligne, int[][] matrice) throws RemoteException {
+		System.out.println("Matrices recue!");
+		this.ligneA = ligne;
+		this.matriceB = matrice;
+		// notify();
 	}
 	
+	// effectue les calculs sur les matrices
+	private void calculs() {
+		System.out.println("Calculs");
+		
+		/*try {
+			wait();
+		} catch (InterruptedException e) {
+			System.out.println(e);
+		}
+		*/
+		// continue les calculs sur les matrices
+		
+	}
 	// programme principal
 	public static void main(String argv[])
 	{
 		System.out.println("Lancement du client");
 		
-		// Connexion
+		// Connexion au serveur de nom
+		
 		// pas de sécurité pour nos test TODO mettre la securite
 		// System.setSecurityManager(new RMISecurityManager());
-		
 		String serveurNom = "rmi://localhost/RMIServeurNomInterface";
 		RMIServeurNomInterface serveur = null;
 		try {	
@@ -72,6 +86,11 @@ public class RMIClient implements RMIClientInterface
 			System.out.println("Exception a l'enregistrement: " + e);
 		}
 		
+		// quand les donnees sont remplis, effectue les calculs
+		RMIClient meuh = new RMIClient();
+		meuh.calculs();
+		
+		// retourne les resultats au serveur
 		
 		
 		// fin
