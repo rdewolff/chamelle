@@ -16,6 +16,7 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 	// tableau contenant l'adresse des clients
 	private LinkedList<String> clients = new LinkedList<String>();
 	private String	 adrServeur;
+	private int nbClientsVoulus = 0;
 
 	public RMIServeurNom() throws RemoteException
 	{
@@ -28,16 +29,37 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 	 * 				calculer
 	 * @param adr 	L'adresse du client
 	 */
-	synchronized public void inscription( String adr) throws RemoteException {
-		System.out.println("Clients " + clients.size()+1 + " inscrit!");
+	synchronized public int inscription(String adr) throws RemoteException {
+		System.out.println("Clients " + (clients.size()+1) + " inscrit!");
 		clients.add(adr);
+		// si un serveur/coordinateur est deja venu et qu'il n'y a pas encore
+		// le nombre de clients voulu, verifie si ce nombre est atteint
+		if (nbClientsVoulus != 0) {
+			if (clients.size() == nbClientsVoulus) {
+				// si c'est le cas, on notifie la methode en attente
+				System.out.println("C'est partie le serveur!");
+				// notifie la methode qui renvoie les clients (RMI)
+				notify();
+			}
+		}
+		// renvoie un numero qui correspond a l'identifiant du client
+		return clients.size();
 	}
 
 	/**
 	 * Renvoie les adresses des clients inscrits sur le serveur de nom 
 	 * @return 
 	 */
-	synchronized public LinkedList<String> getClients() throws RemoteException {
+	synchronized public LinkedList<String> getClients(int n) throws RemoteException {
+		if (clients.size() < n) {
+			nbClientsVoulus = n;
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		// retourne les clients 
 		return clients;	  
 	}
 
@@ -53,5 +75,6 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 		} catch (Exception e) {
 			System.out.println("Exception a l'enregistrement: " + e);
 		}
+		
 	}
 }

@@ -16,27 +16,20 @@
  */
 
 import java.rmi.*;
-public class RMIClient
+public class RMIClient implements RMIClientInterface
 {
 	// variables utilises
-	private String 	adrServeur;
-	private int 	id;
-	private int[] 	ligneA;
-	private int[][] matriceB;
-	private int[] 	ligneC;
+	private String 		adrServeur;
+	private static int 	id;
+	private int[] 		ligneA;
+	private int[][] 	matriceB;
+	private int[] 		ligneC;
 	
-	/*
 	// permet d'introduire les informations dans le client (RMI)
 	synchronized public void remplirMatrice(int id, int[] ligneA, int[][] matriceB) throws RemoteException {
 		this.id = id;
 		this.ligneA = ligneA;
 		this.matriceB = matriceB;
-	}
-	*/
-	
-	// effectue les calculs sur les matrices necessaires
-	private void calcul(){
-		System.out.println("Client " + id + " calcul la matrice");
 	}
 	
 	// programme principal
@@ -56,12 +49,33 @@ public class RMIClient
 			System.out.println("Erreur de connexion au serveur: " + e);
 			System.exit(1);
 		} 
-		// connection
+			
+		// inscription et recuperation de son identifiant
 		try {
-			serveur.inscription("localhost");
+			id = serveur.inscription("localhost");
 		} catch (Exception e) {
 			System.out.println("Erreur de traitement: " + e);
 		} 
-		// inscription
+		
+		// calculs
+		System.out.println("Clients " + id);
+		
+		// se met a disposition du serveur/coordinateur
+		// pas de sécurité pour nos test
+		//System.setSecurityManager(new RMISecurityManager());
+		try {
+			String srvClient = "Client"+id;
+			RMIServeurNomInterface srv = new RMIServeurNom();
+			Naming.rebind(srvClient,srv);
+			System.out.println("Serveur " + srvClient + " pret");
+		} catch (Exception e) {
+			System.out.println("Exception a l'enregistrement: " + e);
+		}
+		
+		
+		
+		// fin
+		System.out.println("Fin du client");
 	}
+
 }

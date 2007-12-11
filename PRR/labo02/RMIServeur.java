@@ -8,6 +8,7 @@
 
 import java.rmi.*;
 import java.rmi.server.*;
+import java.util.LinkedList;
 
 public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterface
 {
@@ -16,6 +17,7 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 	private int[][] matriceA;
 	private int[][] matriceB;
 	private int[][] matriceC;
+	private static LinkedList<String> clients;
 
 	public RMIServeur() throws RemoteException
 	{
@@ -40,27 +42,6 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 		System.out.println("Affichages des matrices : ");
 	}
 
-
-	synchronized public void Acces1() throws RemoteException
-	{
-		// Signaler qu'un processus est dedans
-		System.out.println("Serveur -- dedans Acces1");
-		for (int i = 0; i < 100000; i++)
-			for (int j = 0; j < 10000; j++);
-
-		System.out.println("Serveur -- sortie Acces1");
-	}
-
-	synchronized public void Acces2() throws RemoteException
-	{	
-		// Signaler qu'un processus est dedans
-		System.out.println("Serveur -- dedans Acces2");
-		for (int i = 0; i < 100000; i++)
-			for (int j = 0; j < 10000; j++);
-
-		System.out.println("Serveur -- sortie Acces2");
-	}
-
 	public static void main(String argv[])
 	{
 		if (argv.length != 1) {
@@ -68,25 +49,46 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 			System.exit(1);
 		}
 		
+		int N = 0;
+		
 		// determine la taille des matrices en fonction de l'argument passe
 		try {
-			int N = Integer.parseInt(argv[0]);
+			N = Integer.parseInt(argv[0]);
 		} catch (NumberFormatException e) {
 			System.out.println(e);
 		}
 
 		// obitent les cliens depuis le serveur de noms
 		
-		
-		// pas de sécurité pour nos test
+		// Connexion
+		// pas de sécurité pour nos test TODO mettre la securite
 		// System.setSecurityManager(new RMISecurityManager());
-		try {
-			String serveurNom = "RMIConcurrent";
-			RMIServeurInterface serveur = new RMIServeur();
-			Naming.rebind(serveurNom,serveur);
-			System.out.println("Serveur " + serveurNom + " pret");
+		
+		String serveurNom = "rmi://localhost/RMIServeurNomInterface";
+		RMIServeurNomInterface serveur = null;
+		try {	
+			serveur = (RMIServeurNomInterface)Naming.lookup(serveurNom);
 		} catch (Exception e) {
-			System.out.println("Exception a l'enregistrement: " + e);
+			System.out.println("Erreur de connexion au serveur: " + e);
+			System.exit(1);
+		} 
+		
+		// inscription et recuperation de son identifiant
+		try {
+			clients = serveur.getClients(N); 
+		} catch (Exception e) {
+			System.out.println("Erreur de traitement: " + e);
+		} 
+		
+		System.out.println("Nombre de clients : " + clients.size());
+		
+		// Effectue le calcul de la matrice pour chaque client
+		for ( String cli : clients) {
+			System.out.println( "Client" + 1);
 		}
+		
+		// fin
+		System.out.println("Fin du serveur/coordinateur");
+		
 	}
 }
