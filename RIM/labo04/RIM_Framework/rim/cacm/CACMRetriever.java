@@ -45,8 +45,17 @@ public class CACMRetriever implements Retriever
 	 */
 	public Map<Double,Integer> executeQuery (String query, boolean tfIdf)
 	{
-		// Variable utilisee pour stocker le resultat temporaire
-		Map<Double,Integer> result = new TreeMap<Double,Integer>();
+		// Variable utilisee pour stocker le resultat temporaire qui 
+		// gere l'ordonnancement lors de l'insertion (valeur plus grande =
+		// au debut de la liste
+		TreeMap<Double, Integer> result = new TreeMap<Double, Integer>( 
+				new Comparator<Double>()
+				{   
+					public int compare( Double x, Double y ) 
+					{
+						return x < y ? 1 : x > y ? -1 : 0;
+					}
+				});  
 
 		// Pour la recherche
 		Searcher searcher = null;

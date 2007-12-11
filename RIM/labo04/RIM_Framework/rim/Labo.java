@@ -1,5 +1,6 @@
 package rim;
 
+
 import rim.cacm.CACMFeeder;
 import rim.cacm.CACMIndexer;
 import rim.cacm.CACMRetriever;
@@ -83,9 +84,7 @@ public class Labo {
 						case 1: 	System.out.println("Creation des indexs...");
 									CACMIndexer i = new CACMIndexer();
 									CACMFeeder c = new CACMFeeder();
-									// TODO chemin fichiers ??
-									//c.parseCollection(java.net.URI.create("rim/ressources/cacm.all"), i);
-									c.parseCollection(java.net.URI.create("RIM/labo04/RIM_Framework/rim/ressources/cacm.all"), i);
+									c.parseCollection(java.net.URI.create("rim/ressources/cacm.all"), i);
 									i.finalizeIndexation();
 									break;
 									

@@ -92,7 +92,7 @@ Une fois les classes modifiées nous effectuons des tests pour voir si les résu
 \section{Réponses aux questions} 
 %==============================================================================
 
-Voici les questions posées durant le laboratoire et les réponses trouvées. 
+Voici les réponses aux questions posées durant le laboratoire.
 
 \subsection{Qu’est-ce que Lucene ? Est-ce destiné à Java uniquement ?}
 
@@ -100,7 +100,7 @@ Apache Lucene est un moteur de recherche de texte écrit completement en Java. C
 C'est aussi un projet Open Source. Il est destiné pour Java mais d'autres versions existent, comme en .NET ou en C.
 
 \subsection{Dans Lucene, à quoi sert un Analyzer ? Peut-on écrire son propre Analyzer ?}
-Un “Analyzer” crée des “TokenStreams” en parcourant le texte. Il permet de découper un fichier source en token. C'est dans l'analyzer que l'on va spécifier les stop words. Ainsi, nous pouvons tout à fait créer un analyzer en français. A noter qu'il existe déjà beaucoup d'analyzer existant dans différentes langues disponibles, comme en anglais, français ou encore allemand. 
+Un “Analyzer” crée des “TokenStreams” en parcourant le texte. Il permet de découper un fichier source en token. C'est dans l'analyzer que l'on va spécifier les stop words. Ainsi, nous pouvons tout à fait créer un analyzer en français, ou en fonction de nos données à indexer. A noter qu'il existe déjà beaucoup d'analyzer existant dans différentes langues disponibles, comme en anglais, français ou encore allemand. 
    
 \subsection{Comment un document est-il représenté dans Lucene ?}
 Voyons comment créer un document. Pour ce faire, nous utilisons la classe \texttt{Document}. La méthode \texttt{add()} permet d'ajouter un document au corpus des documents. Nous pouvons ajouter autant de champs dans un document que désiré. Nous allons utiliser deux champs, à savoir \texttt{id} et \texttt{content}. 
@@ -147,13 +147,44 @@ En sauvegardant les index sur le disque dur, on peut voir leur structure. Ces fi
 \section{Analyse des résultats obtenus} 
 %==============================================================================
 	
-	compre with others first
-	
+Analysons une requête ensemble pour voir comment ce déroule les recherche avec Lucene.
+\begin{verbatim}
+	Entrer le(s) terme(s) recherche:
+	automatic
+	Documents trouve ainsi que similarite par cosinus:
+	Nombre de resultat(s): 23
+	Document no : 273 (cosinus = 0.9999999403953552)
+	Document no : 631 (cosinus = 0.75)
+	Document no : 1624 (cosinus = 0.7071067690849304)
+	Document no : 2415 (cosinus = 0.625)
+	Document no : 329 (cosinus = 0.5787580609321594)
+	Document no : 1167 (cosinus = 0.5412658452987671)
+	Document no : 1044 (cosinus = 0.5303300619125366)
+	Document no : 987 (cosinus = 0.4999999701976776)
+	Document no : 3184 (cosinus = 0.4419417083263397)
+	Document no : 1516 (cosinus = 0.4375)
+	Document no : 2210 (cosinus = 0.37888607382774353)
+	Document no : 1858 (cosinus = 0.375)
+	Document no : 2972 (cosinus = 0.3535533845424652)
+	Document no : 1415 (cosinus = 0.32475951313972473)
+	Document no : 3193 (cosinus = 0.3125)
+	Document no : 2871 (cosinus = 0.30935919284820557)
+	Document no : 3047 (cosinus = 0.2651650309562683)
+	Document no : 3102 (cosinus = 0.2499999850988388)
+	Document no : 2354 (cosinus = 0.22097085416316986)
+	Document no : 3166 (cosinus = 0.21875)
+	Document no : 2990 (cosinus = 0.1875)
+	Document no : 1665 (cosinus = 0.1767766922712326)
+	Document no : 2035 (cosinus = 0.15625)
+\end{verbatim}	
+
 %==============================================================================
 \section{Conclusion personnelle} 
 %==============================================================================
 
 L'utilisation des classes définies par Lucene nous permet de très facilement indexer des documents et effectuer des recherches sur un corpus. 
+
+L'implémentation s'est déroulée sans problème.
 
 %==============================================================================
 \end{document}  
