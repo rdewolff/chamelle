@@ -32,7 +32,7 @@ public class RMIClient implements RMIClientInterface
 		this.matriceB = matriceB;
 	}
 	
-	// effectue les calculs 
+	// effectue les calculs sur les matrices necessaires
 	private void calcul(){
 		System.out.println("Client " + id + " calcul la matrice");
 	}
@@ -40,37 +40,27 @@ public class RMIClient implements RMIClientInterface
 	// programme principal
 	public static void main(String argv[])
 	{
+		System.out.println("Lancement du client");
 		// Initialisation
 		String siteServeur = "localhost"; // inutile car pas de securite
-		if (argv.length != 1) {
-			System.out.println("Usage 1 RMIConcurrentClient {1|2}");
-			System.exit(1);
-		}
-		if (argv[0].charAt(0) != '1' && argv[0].charAt(0) != '2') {
-			System.out.println("Usage RMIConcurrentClient {1|2}");
-			System.exit(1);
-		}
+		
 		// Connexion
-		// pas de sécurité pour nos test // System.setSecurityManager(new RMISecurityManager());
-		String serveurNom = "rmi://" + siteServeur + "/ServeurNoms";
-		RMIConcurrent serveur = null;
+		// pas de sécurité pour nos test TODO mettre la securite
+		// System.setSecurityManager(new RMISecurityManager());
+		String serveurNom = "rmi://" + siteServeur + "/ServeurNom";
+		RMIServeurNom serveur = null;
 		try {
-			serveur = (RMIConcurrent)Naming.lookup(serveurNom);
+			serveur = (RMIServeurNom)Naming.lookup(serveurNom);
 		} catch (Exception e) {
 			System.out.println("Erreur de connexion au serveur: " + e);
 			System.exit(1);
 		} 
-		// calculs
+		// connection
 		try {
-			for (int i = 0; i < 10; i++) {
-				if (argv[0].charAt(0) == '1')
-					serveur.Acces1();
-				else
-					serveur.Acces2();
-				for (int j = 0; j < 100000; j++);
-			}
+			serveur.inscription("localhost");
 		} catch (Exception e) {
 			System.out.println("Erreur de traitement: " + e);
 		} 
+		// inscription
 	}
 }

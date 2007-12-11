@@ -29,6 +29,7 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 	 * @param adr 	L'adresse du client
 	 */
 	synchronized public void inscription( String adr) throws RemoteException {
+		System.out.println("Clients " + clients.size()+1 + " inscrit!");
 		clients.add(adr);
 	}
 
@@ -45,7 +46,7 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 		// pas de sécurité pour nos test
 		// System.setSecurityManager(new RMISecurityManager());
 		try {
-			String serveurNom = "ServeurNoms";
+			String serveurNom = "ServeurNom";
 			RMIServeurNomInterface serveur = new RMIServeurNom();
 			Naming.rebind(serveurNom,serveur);
 			System.out.println("Serveur " + serveurNom + " pret");
