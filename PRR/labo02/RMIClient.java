@@ -16,7 +16,7 @@
  */
 
 import java.rmi.*;
-public class RMIClient implements RMIClientInterface
+public class RMIClient
 {
 	// variables utilises
 	private String 	adrServeur;
@@ -25,12 +25,14 @@ public class RMIClient implements RMIClientInterface
 	private int[][] matriceB;
 	private int[] 	ligneC;
 	
+	/*
 	// permet d'introduire les informations dans le client (RMI)
 	synchronized public void remplirMatrice(int id, int[] ligneA, int[][] matriceB) throws RemoteException {
 		this.id = id;
 		this.ligneA = ligneA;
 		this.matriceB = matriceB;
 	}
+	*/
 	
 	// effectue les calculs sur les matrices necessaires
 	private void calcul(){
@@ -41,16 +43,15 @@ public class RMIClient implements RMIClientInterface
 	public static void main(String argv[])
 	{
 		System.out.println("Lancement du client");
-		// Initialisation
-		String siteServeur = "localhost"; // inutile car pas de securite
 		
 		// Connexion
 		// pas de sécurité pour nos test TODO mettre la securite
 		// System.setSecurityManager(new RMISecurityManager());
-		String serveurNom = "rmi://" + siteServeur + "/ServeurNom";
-		RMIServeurNom serveur = null;
-		try {
-			serveur = (RMIServeurNom)Naming.lookup(serveurNom);
+		
+		String serveurNom = "rmi://localhost/RMIServeurNomInterface";
+		RMIServeurNomInterface serveur = null;
+		try {	
+			serveur = (RMIServeurNomInterface)Naming.lookup(serveurNom);
 		} catch (Exception e) {
 			System.out.println("Erreur de connexion au serveur: " + e);
 			System.exit(1);

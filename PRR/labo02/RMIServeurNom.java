@@ -46,7 +46,7 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 		// pas de sécurité pour nos test
 		// System.setSecurityManager(new RMISecurityManager());
 		try {
-			String serveurNom = "ServeurNom";
+			String serveurNom = "RMIServeurNomInterface";
 			RMIServeurNomInterface serveur = new RMIServeurNom();
 			Naming.rebind(serveurNom,serveur);
 			System.out.println("Serveur " + serveurNom + " pret");
