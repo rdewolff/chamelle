@@ -38,7 +38,6 @@ public class RMIConcurrentServeur extends UnicastRemoteObject implements RMIConc
 	 */
 	private void afficheMatrices() {
 		System.out.println("Affichages des matrices : ");
-
 	}
 
 
