@@ -25,8 +25,8 @@ public class RMIConcurrentServeurNom extends UnicastRemoteObject implements RMIC
 	/** 
 	 * Permet a un client de s'inscrire aupres du serveur de nom
 	 * @param id	L'id du client qui va correspondre a la ligne qu'il va
-	 * 			calculer
-	 * @param adr L'adresse du client
+	 * 				calculer
+	 * @param adr 	L'adresse du client
 	 */
 	synchronized public void inscription( String adr) throws RemoteException {
 		clients.add(adr);
@@ -38,27 +38,6 @@ public class RMIConcurrentServeurNom extends UnicastRemoteObject implements RMIC
 	 */
 	synchronized public LinkedList<String> getClients() throws RemoteException {
 		return clients;	  
-	}
-
-
-	synchronized public void Acces1() throws RemoteException
-	{
-		// Signaler qu'un processus est dedans
-		System.out.println("Serveur -- dedans Acces1");
-		for (int i = 0; i < 100000; i++)
-			for (int j = 0; j < 10000; j++);
-
-		System.out.println("Serveur -- sortie Acces1");
-	}
-
-	synchronized public void Acces2() throws RemoteException
-	{		
-		// Signaler qu'un processus est dedans
-		System.out.println("Serveur -- dedans Acces2");
-		for (int i = 0; i < 100000; i++)
-			for (int j = 0; j < 10000; j++);
-
-		System.out.println("Serveur -- sortie Acces2");
 	}
 
 	public static void main(String args[])
