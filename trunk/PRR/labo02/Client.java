@@ -7,8 +7,8 @@ public class Client implements Serializable{
 	private String host; // adresse 
 	private String nomAcces; // nom
 
-	public Client(String adr, String nom) {
-		this.host = adr;
+	public Client(String host, String nom) {
+		this.host = host;
 		this.nomAcces = nom;
 	}
 	

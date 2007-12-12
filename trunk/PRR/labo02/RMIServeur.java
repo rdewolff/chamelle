@@ -90,7 +90,7 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 		} 
 
 		// inscription et recuperation des addresses des clients
-		LinkedList<String> clients = null;
+		LinkedList<Client> clients = null;
 		try {
 			clients = serveur.getClients(N); 
 		} catch (Exception e) {
@@ -129,9 +129,9 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 		int cmp = 0; // compteur
 		RMIClientInterface serveurClient = null;
 		int[] ligneA = new int[N]; // la ligne de B envoyee
-		for ( String cli : clients) {
+		for ( Client cli : clients) {
 			cmp++;
-			serveurNom = "rmi://" + cli + "/Client"+cmp;
+			serveurNom = "rmi://" + cli.getHost() + "/" + cli.getNomAcces();
 			System.out.println( "Connexion au client " + cmp + " ("+serveurNom+")");
 			try {
 				serveurClient = (RMIClientInterface)Naming.lookup(serveurNom);

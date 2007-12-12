@@ -36,6 +36,8 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 	private int[] 			ligneA;
 	private int[][] 		matriceB;
 	private static int[] 	ligneC;
+	
+	private static int nano = (int) System.nanoTime();
 
 	/**
 	 * Permet d'introduire les informations dans le client (RMI) 
@@ -106,10 +108,13 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 			System.out.println("Erreur de connexion au serveur: " + e);
 			System.exit(1);
 		}
-
+		
+		// Determine son nom qui sera accessible par le serveur/coordinateur
+		String nomClientRMI = "Client" + nano;
+		
 		// inscription et recuperation de son identifiant
 		try {
-			id = serveur.inscription("localhost");
+			id = serveur.inscription("localhost", nomClientRMI);
 		} catch (Exception e) {
 			System.out.println("Erreur de traitement: " + e);
 		} 
@@ -118,15 +123,13 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 		 * se met a disposition du serveur/coordinateur
 		 */
 		
-		System.out.println("Client " + id);
 		// pas de sécurité pour nos test
 		//System.setSecurityManager(new RMISecurityManager());
 		RMIClientInterface srv = null;
 		try {
-			String srvClient = "Client"+id;
 			srv = new RMIClient();
-			Naming.rebind(srvClient,srv);
-			System.out.println(srvClient + " pret pour la reception des donnees");
+			Naming.rebind(nomClientRMI,srv);
+			System.out.println(nomClientRMI + " pret pour la reception des donnees");
 		} catch (Exception e) {
 			System.out.println("Exception a l'enregistrement: " + e);
 		}
@@ -145,6 +148,7 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 		 * Retourne les resultats au serveur
 		 */
 
+		// TODO Change
 		System.out.println("Connexion au serveur/coordinateur");
 		String serveurCoordinateur = "rmi://localhost/Coordinateur";
 		RMIServeurInterface coordinateur = null; 
