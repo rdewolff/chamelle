@@ -1,5 +1,5 @@
 /**
- * Outils pour afficher des matrices et pour gerer des conversions bytes-int
+ * Outils pour afficher des matrices
  * 
  * Note: methodes de gestion des conversions fournies par m. Evequoz
  * 
