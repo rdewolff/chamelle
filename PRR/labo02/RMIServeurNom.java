@@ -16,7 +16,8 @@ import java.rmi.*;
 import java.rmi.server.*;
 import java.util.LinkedList;
 
-public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomInterface
+public class RMIServeurNom extends UnicastRemoteObject 
+		implements RMIServeurNomInterface
 {
 	// identifiant
 	private static final long serialVersionUID = 1L;
@@ -41,7 +42,8 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 	 * 				calculer
 	 * @param adr 	L'adresse du client
 	 */
-	synchronized public int inscription(String adr, String nom) throws RemoteException {
+	synchronized public int inscription(String adr, String nom) 
+				throws RemoteException {
 		
 		// cree un object Client qui stock les information
 		System.out.println("Clients " + (clients.size()+1) + " inscrit!");
@@ -68,7 +70,8 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 	 * Permet au coordinateur de s'y inscrire pour que chaque client puisse
 	 * recuperer son adresse et son nom.
 	 */
-	synchronized public void inscriptionCoordinateur(Host cli) throws RemoteException {
+	synchronized public void inscriptionCoordinateur(Host cli) 
+				throws RemoteException {
 		coordinateur = cli; 
 	}
 	
@@ -84,7 +87,8 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 	 * en linkedlist.
 	 * @return LinkedList<Host> Une liste des hotes (Hosts)
 	 */
-	synchronized public LinkedList<Host> getClients(int n) throws RemoteException {
+	synchronized public LinkedList<Host> getClients(int n) 
+				throws RemoteException {
 		if (clients.size() < n) {
 			nbClientsVoulus = n;
 			try {
