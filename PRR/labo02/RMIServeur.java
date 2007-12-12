@@ -123,8 +123,6 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 		// inscription et recuperation des addresses des clients
 		LinkedList<Host> clients = null;
 		try {
-			Host moi = new Host("localhost", "Coordinateur");
-			serveur.inscriptionCoordinateur(moi);
 			clients = serveur.getClients(N); 
 		} catch (Exception e) {
 			System.out.println("Erreur de traitement: " + e);
@@ -177,8 +175,9 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 				ligneA[i] = matriceA[cmp-1][i];
 			}
 
+			Host moi = new Host("localhost", "Coordinateur");
 			try {
-				serveurClient.remplirMatrice(ligneA, matriceB);
+				serveurClient.remplirMatrice(ligneA, matriceB, moi);
 			} catch (Exception e) {
 				System.out.println("Erreur de traitement: " + e);
 			} 
