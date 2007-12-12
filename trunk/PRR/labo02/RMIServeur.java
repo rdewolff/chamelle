@@ -13,15 +13,13 @@ import java.util.Random;
 
 public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterface
 {
+	private static final long serialVersionUID = -7229048203890999957L;
+	
 	// taille de la matrice
 	static int N;
 	// les matrices
 	static int[][]  matriceA, matriceB, matriceC;
 	int nombreLignesRecues = 0;
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7229048203890999957L;
 
 	public RMIServeur() throws RemoteException
 	{
@@ -90,7 +88,7 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 		} 
 
 		// inscription et recuperation des addresses des clients
-		LinkedList<Client> clients = null;
+		LinkedList<Host> clients = null;
 		try {
 			clients = serveur.getClients(N); 
 		} catch (Exception e) {
@@ -129,7 +127,7 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 		int cmp = 0; // compteur
 		RMIClientInterface serveurClient = null;
 		int[] ligneA = new int[N]; // la ligne de B envoyee
-		for ( Client cli : clients) {
+		for ( Host cli : clients) {
 			cmp++;
 			serveurNom = "rmi://" + cli.getHost() + "/" + cli.getNomAcces();
 			System.out.println( "Connexion au client " + cmp + " ("+serveurNom+")");

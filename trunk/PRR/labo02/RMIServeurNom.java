@@ -18,7 +18,8 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 	private static final long serialVersionUID = 1L;
 	
 	// tableau contenant l'adresse des clients
-	private LinkedList<Client> clients = new LinkedList<Client>();
+	private LinkedList<Host> clients = new LinkedList<Host>();
+	private Host coordinateur = null;
 	private int nbClientsVoulus = 0;
 
 	public RMIServeurNom() throws RemoteException
@@ -36,7 +37,7 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 		
 		// cree un object Client qui stock les information
 		System.out.println("Clients " + (clients.size()+1) + " inscrit!");
-		Client cli = new Client(adr, nom);
+		Host cli = new Host(adr, nom);
 		
 		// ajoute ce client a la linkedlist local
 		clients.add(cli); 
@@ -55,12 +56,20 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 		return clients.size();
 		
 	}
+	
+	synchronized public void inscriptionServeur(Host cli) throws RemoteException {
+		coordinateur = cli; 
+	}
+	
+	synchronized public Host getCoordinateur() throws RemoteException {
+		return coordinateur;
+	}
 
 	/**
 	 * Renvoie les adresses des clients inscrits sur le serveur de nom 
 	 * @return 
 	 */
-	synchronized public LinkedList<Client> getClients(int n) throws RemoteException {
+	synchronized public LinkedList<Host> getClients(int n) throws RemoteException {
 		if (clients.size() < n) {
 			nbClientsVoulus = n;
 			try {
