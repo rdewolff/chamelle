@@ -28,8 +28,6 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 	 */
 	private static final long serialVersionUID = 0L;
 
-	private static final String RMIClient = null;
-
 	// variables utilises
 	private String 			adrServeur;
 	private static int 		id;
