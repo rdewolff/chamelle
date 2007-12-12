@@ -10,11 +10,10 @@ import java.rmi.*;
 import java.rmi.server.*;
 import java.util.LinkedList;
 
-
 public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomInterface
 {
 	// TODO ??? suggere par eclipse..
-	private static final long serialVersionUID = 1L;
+	//private static final long serialVersionUID = 1L;
 	
 	// tableau contenant l'adresse des clients
 	private LinkedList<String> clients = new LinkedList<String>();
@@ -32,6 +31,7 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 	 * @param adr 	L'adresse du client
 	 */
 	synchronized public int inscription(String adr) throws RemoteException {
+		
 		System.out.println("Clients " + (clients.size()+1) + " inscrit!");
 		clients.add(adr);
 		// si un serveur/coordinateur est deja venu et qu'il n'y a pas encore
@@ -46,6 +46,7 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 		}
 		// renvoie un numero qui correspond a l'identifiant du client
 		return clients.size();
+		
 	}
 
 	/**
@@ -64,15 +65,16 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 		}
 		// retourne les clients 
 		return clients;	  
+		
 	}
  
 	public static void main(String args[])
-	{
+	{	
+		System.out.println("Lancement du serveur de noms");
 		// pas de sécurité pour nos test
-		// System.setSecurityManager(new RMISecurityManager());
+		//System.setSecurityManager(new RMISecurityManager());
 		try {
 			String serveurNom = "RMIServeurNomInterface";
-			//serveurNom = "rmi://localhost/RMIServeurNomInterface";
 			RMIServeurNomInterface serveur = new RMIServeurNom();
 			Naming.rebind(serveurNom,serveur);
 			System.out.println("Serveur " + serveurNom + " pret");

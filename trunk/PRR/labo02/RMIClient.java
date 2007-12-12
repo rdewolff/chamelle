@@ -16,42 +16,74 @@
  */
 
 import java.rmi.*;
-public class RMIClient implements RMIClientInterface 
+import java.rmi.server.UnicastRemoteObject;
+
+public class RMIClient extends UnicastRemoteObject implements RMIClientInterface 
 {
+	protected RMIClient() throws RemoteException {
+		super();
+	}
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 0L;
+
+	private static final String RMIClient = null;
+
 	// variables utilises
 	private String 		adrServeur;
 	private static int 	id;
 	private int[] 		ligneA;
 	private int[][] 	matriceB;
 	private int[] 		ligneC;
-	
-	// permet d'introduire les informations dans le client (RMI)
+
+	/**
+	 * Permet d'introduire les informations dans le client (RMI) 
+	 */
 	synchronized public void remplirMatrice(int[] ligne, int[][] matrice) throws RemoteException {
-		System.out.println("Matrices recue!");
 		this.ligneA = ligne;
 		this.matriceB = matrice;
-		// notify();
+		System.out.println("Matrice recue");
+		Outils.afficheMatrice(matriceB);
+		// affiche la ligne calculee
+		System.out.println("Ligne a calculer recue");
+		for (int i=0; i<ligne.length; i++) {
+			System.out.print(ligneA[i] + " ");
+		}
+		System.out.print("\n");
+		notify();
 	}
-	
-	// effectue les calculs sur les matrices
-	private void calculs() {
-		System.out.println("Calculs");
-		
-		/*try {
+
+	/**
+	 * Effectue les calculs sur les matrices
+	 */
+	synchronized public void calculs() throws RemoteException {
+		// met en attente si les donnes ne sont pas disponibles
+		try {
 			wait();
 		} catch (InterruptedException e) {
 			System.out.println(e);
 		}
-		*/
-		// continue les calculs sur les matrices
+		System.out.println("Calculs");
+
+		/*
+		 * Calcul la ligne correspondante de C
+		 */
+		ligneC = new int[matriceB.length];
 		
+		for (short i=0; i<matriceB.length; i++) 
+			for(short j=0; j<matriceB.length; j++)
+				ligneC[i] += matriceB[j][i] * ligneC[j];
 	}
+	
 	// programme principal
 	public static void main(String argv[])
 	{
 		System.out.println("Lancement du client");
-		
-		// Connexion au serveur de nom
+
+		/*
+		 * Connexion au serveur de nom
+		 */
 		
 		// pas de sécurité pour nos test TODO mettre la securite
 		// System.setSecurityManager(new RMISecurityManager());
@@ -63,7 +95,7 @@ public class RMIClient implements RMIClientInterface
 			System.out.println("Erreur de connexion au serveur: " + e);
 			System.exit(1);
 		} 
-			
+
 		// inscription et recuperation de son identifiant
 		try {
 			id = serveur.inscription("localhost");
@@ -71,31 +103,41 @@ public class RMIClient implements RMIClientInterface
 			System.out.println("Erreur de traitement: " + e);
 		} 
 		
-		// calculs
-		System.out.println("Clients " + id);
-		
-		// se met a disposition du serveur/coordinateur
+		/* 
+		 * se met a disposition du serveur/coordinateur
+		 */
+		System.out.println("Client " + id);
 		// pas de sécurité pour nos test
 		//System.setSecurityManager(new RMISecurityManager());
+		RMIClientInterface srv = null;
 		try {
 			String srvClient = "Client"+id;
-			srvClient = "RMIClientInterface"; // TEMP
-			RMIServeurNomInterface srv = new RMIServeurNom();
+			srv = new RMIClient();
 			Naming.rebind(srvClient,srv);
 			System.out.println(srvClient + " pret pour la reception des donnees");
 		} catch (Exception e) {
 			System.out.println("Exception a l'enregistrement: " + e);
 		}
+
+		/*
+		 * Effectue les calculs sur les matrices 
+		 */ 
+		try {
+			srv.calculs();
+		} catch (RemoteException e) {
+			System.out.println(e);
+		} 
 		
-		// quand les donnees sont remplis, effectue les calculs
-		//RMIClient meuh = new RMIClient();
-		//meuh.calculs();
-		
-		// retourne les resultats au serveur
+		/*
+		 * Retourne les resultats au serveur
+		 */
 		
 		
+		
+		
+
 		// fin
 		System.out.println("Fin du client");
+		System.exit(1);
 	}
-
 }

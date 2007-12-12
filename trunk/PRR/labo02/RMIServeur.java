@@ -14,6 +14,11 @@ import java.util.Random;
 public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterface
 {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7229048203890999957L;
+
 	public RMIServeur() throws RemoteException
 	{
 		super();
@@ -39,11 +44,17 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 
 	public static void main(String argv[])
 	{
+		/*
+		 * Initialisation
+		 */
+
+		// determine la taille des matrice a l'aide de l'argument de lancement
+		// du programme
 		if (argv.length != 1) {
 			System.out.println("Demarrer en passant le parametre N (taille des matrices)");
 			System.exit(1);
 		}
-		
+
 		// determine la taille des matrices en fonction de l'argument passe
 		// qui va correspondre aussi au nombre de clients necessaires
 		int N = 0;
@@ -53,8 +64,17 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 			System.out.println(e);
 		}
 
-		// obitent les clients depuis le serveur de noms
+		/*
+		 * Demarrage du mode serveur afin que les clients puisse se connecter
+		 * tout de suite
+		 */
+
 		
+		
+		/*
+		 * Obtient la liste des clients depuis le serveur de noms
+		 */
+
 		// Connexion
 		// System.setSecurityManager(new RMISecurityManager()); // TODO security!
 		String serveurNom = "rmi://localhost/RMIServeurNomInterface";
@@ -65,7 +85,7 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 			System.out.println("Erreur de connexion au serveur (1) : " + e);
 			System.exit(1);
 		} 
-		
+
 		// inscription et recuperation des addresses des clients
 		LinkedList<String> clients = null;
 		try {
@@ -73,10 +93,14 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 		} catch (Exception e) {
 			System.out.println("Erreur de traitement: " + e);
 		} 
-		
+
 		// pour debug, affichage du nombre de clients recus
 		System.out.println("Nombre de client recupere : " + clients.size());
-		
+
+		/* 
+		 * Initialise les matrices
+		 */
+
 		// creation des matrices sur lequelles on va faire des calculs
 		// et les remplis avec des valeurs aleatoires
 		int[][]  matriceA, matriceB, matriceC;
@@ -93,29 +117,13 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 				matriceB[i][j] = hasard.nextInt(10);
 			}
 		}			
-		
-		for (int as=0; as<1000000000; as++) {
-			//for (int a1s=0; a1s<1000000000; a1s++) {
-				// null
-			//}
-		}
-			 
-		
-		// TEMP
+
 		System.out.println("Connexion aux clients pour lui envoyer les infos");
-		
-		serveurNom = "rmi://localhost/RMIClientInterface";
-		RMIClientInterface client = null;
-		try {
-			client = (RMIClientInterface)Naming.lookup(serveurNom);
-		} catch (Exception e) {
-			System.out.println("Erreur de connexion au serveur (1) : " + e);
-			System.exit(1);
-		} 
-		
-		
+
 		/*
-		// envoie les donnees aux clients
+		 * Envoie les donnees aux clients
+		 */
+
 		int cmp = 0; // compteur
 		RMIClientInterface serveurClient = null;
 		int[] ligneA = new int[N]; // la ligne de B envoyee
@@ -133,19 +141,21 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 			for (int i=0;i<N;i++) {
 				ligneA[i] = matriceA[cmp-1][i];
 			}
-			
+
 			try {
 				serveurClient.remplirMatrice(ligneA, matriceB);
 			} catch (Exception e) {
 				System.out.println("Erreur de traitement: " + e);
 			} 
 		}
-		*/
-		
-		// attente des donnees de tous les clients
-		
+
+		/* 
+		 * Attente des donnees de tous les clients
+		 */
+
+
 		// fin
 		System.out.println("Fin du serveur/coordinateur");
-		
+
 	}
 }
