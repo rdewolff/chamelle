@@ -1,0 +1,109 @@
+%==============================================================================
+% document template for a LaTeX file
+% Created : 22.11.2006 by Romain de Wolff
+% Modif : 8 octobre 2007, respect standart HEIG-VD pour travaux de diplômes
+%==============================================================================
+% configurations du document
+\documentclass[a4paper, 11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[cyr]{aeguill}
+\usepackage[frenchb]{babel}               % \og et \fg pour les guillemets
+\usepackage{url}                          % pour inclure des URLs
+\usepackage{color}                        % utilisé pour le code source
+\usepackage{listings}                     % pour inclure le code source
+\usepackage{geometry}                     % pour les marges
+\usepackage{algorithmic}                  % pour présenter les algos
+\usepackage{algorithm}                    % pour présenter les algos
+\usepackage{graphicx}                     % pour inclure des images
+\usepackage{fancyvrb}                     % pour avoir du verbatim encadré
+\usepackage{url}                          % pour inclure des URLs
+\usepackage{geometry}                     % See geometry.pdf to learn the layout options
+\usepackage{moreverb}					  % permet d'encadrer le verbatim à l'aide de la commande \begin{boxedverbatim}
+\usepackage{longtable}
+
+\geometry{a4paper}                        % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                     % Activate for for rotated page geometry
+\usepackage[parfill]{parskip}             % Activate to begin paragraphs with an empty line rather than an indent
+%\usepackage{amssymb}
+%\usepackage{epstopdf}                    % Pour créer des références divers (webographie, etc) 
+\usepackage{bibtopic}
+\geometry{ hmargin=2.8cm, vmargin=2.5cm } % marges
+%==============================================================================
+% debut macro 
+% permet de mettre en gros la premiere lettre d'un paragraphe
+\font\capfont=cmbx12 at 44.87 pt % or yinit, or...?
+\newbox\capbox \newcount\capl \def\a{A}
+\def\docappar{\medbreak\noindent\setbox\capbox\hbox{%
+\capfont\a\hskip0.15em}\hangindent=\wd\capbox%
+\capl=\ht\capbox\divide\capl by\baselineskip\advance\capl by1%
+\hangafter=-\capl%
+\hbox{\vbox to8pt{\hbox to0pt{\hss\box\capbox}\vss}}}
+\def\cappar{\afterassignment\docappar\noexpand\let\a }
+% fin macro
+%==============================================================================
+
+%==============================================================================
+% première page
+\title{ %\includegraphics[width=100px]{HEIG-VD.jpg} \\ \vspace{4cm}
+\small{BDD - Base de Données} \\ \vspace{2cm}
+\huge{Cahier des Charges} \\ \vspace{1cm} 
+EJB, Netbeans et XML\\ 
+\small{description}} 
+\vspace{2cm}
+\author{Romain \bsc{de Wolff}, Simon \bsc{Hintermann} et Alberto \bsc{Asuero Arroyo}\\ IL2008 \\ \vspace{2cm} \\ Professeurs M. Abdelali Guerid \vspace{2cm} 
+}
+\date{Lausanne, le 7 décembre 2007}  % Activate to display a given date or no date
+\pagebreak{}
+\begin{document}
+\maketitle
+\thispagestyle{empty} % enlève le numéro de page sur la page de titre (uniquement)
+\newpage
+%==============================================================================
+% configuration des numérotations de pages (chiffres romains)
+\pagenumbering{arabic} \setcounter{page}{1} 
+
+% Configuration de la distance d'interligne 
+{\setlength{\baselineskip}{1.2\baselineskip}
+% Configureation de la distance entre les paragraphes
+\parskip=12pt
+%==============================================================================
+%==============================================================================
+\section*{Cahier des charges} 
+%==============================================================================
+
+\section{Introduction}
+
+	Ce cahier des charges a pour but de décrire les éléments de
+
+	Java
+	
+	Schéma BD
+	
+	BD
+
+\section{Objectifs}
+
+	Dans le cadre du cours de base de données, nous allons effectuer des recherches sur un sujet choisi : \emph{Entreprise Java Beans} (EJB), Netbeans 1.6 et \emph{Extensible Markup Language} (XML). 
+
+\section{Structure du projet}
+
+	Nous allons documenter les éléments suivants dans notre rapport : 
+	
+	\begin{itemize}
+		\item Introduction EJB
+		\item Tutorial utilisation Netbeans 6.0 avec EJB
+		\item XML au seins des EJB
+	\end{itemize}
+	
+	Voici une description plus précise du contenu de ces document.
+	
+	\subsection{Introduction EJB}
+	
+		Ce document va comporter simplement une introduction  au EJB. 
+	
+\section{Délais}
+
+Les documents doivent être rendu au plus tard le 25 janvier. 
+
+%==============================================================================
+\end{document}  
