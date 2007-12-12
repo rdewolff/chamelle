@@ -12,6 +12,11 @@ import java.util.LinkedList;
 
 public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomInterface
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	// TODO ??? suggere par eclipse..
 	//private static final long serialVersionUID = 1L;
 	
