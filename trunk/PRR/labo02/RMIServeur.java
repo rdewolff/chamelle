@@ -76,7 +76,7 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 		 * Obtient la liste des clients depuis le serveur de noms
 		 */
 
-		// Connexion
+		// Connexion au serveur de nom
 		// System.setSecurityManager(new RMISecurityManager()); // TODO security!
 		String serveurNom = "rmi://localhost/RMIServeurNomInterface";
 		RMIServeurNomInterface serveur = null;
@@ -90,6 +90,8 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 		// inscription et recuperation des addresses des clients
 		LinkedList<Host> clients = null;
 		try {
+			Host moi = new Host("localhost", "Coordinateur"); // TODO determiner adresse IP
+			serveur.inscriptionCoordinateur(moi);
 			clients = serveur.getClients(N); 
 		} catch (Exception e) {
 			System.out.println("Erreur de traitement: " + e);

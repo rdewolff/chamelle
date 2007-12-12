@@ -57,7 +57,7 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 		
 	}
 	
-	synchronized public void inscriptionServeur(Host cli) throws RemoteException {
+	synchronized public void inscriptionCoordinateur(Host cli) throws RemoteException {
 		coordinateur = cli; 
 	}
 	
