@@ -155,9 +155,6 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 
 	public static void main(String argv[]) throws InterruptedException
 	{
-		/*
-		 * Initialisation
-		 */
 
 		// determine la taille des matrice a l'aide de l'argument de lancement
 		// du programme
