@@ -60,10 +60,13 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 	 * Une fois que le dernier client a rendu ses informations, on affiche 
 	 * les resultats.
 	 * 
-	 * @param id	L'identifant du client qui correspond a la ligne de la matrice calculee
-	 * @param val	Tableau a une dimension d'entier qui correspond a la ligne calculee
+	 * @param id	L'identifant du client qui correspond a la ligne de la 
+	 * 				matrice calculee
+	 * @param val	Tableau a une dimension d'entier qui correspond a la ligne 
+	 * 				calculee
 	 */
-	synchronized public void mettreResultat(int id, int[] val) throws RemoteException {
+	synchronized public void mettreResultat(int id, int[] val) 
+				throws RemoteException {
 		// remplis la ligne 
 		for (int i=0; i<val.length; i++) 
 			matriceC[id-1][i] = val[i];
@@ -163,7 +166,7 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 		for ( Host cli : clients) {
 			cmp++;
 			serveurNom = "rmi://" + cli.getHost() + "/" + cli.getNomAcces();
-			System.out.println( "Connexion au client " + cmp + " ("+serveurNom+")");
+			System.out.println("Connexion au client " + cmp + " ("+serveurNom+")");
 			try {
 				serveurClient = (RMIClientInterface)Naming.lookup(serveurNom);
 			} catch (Exception e) {
@@ -191,7 +194,8 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 		// determine la taille des matrice a l'aide de l'argument de lancement
 		// du programme
 		if (argv.length != 1) {
-			System.out.println("Demarrer en passant le parametre N (taille des matrices)");
+			System.out.println("Demarrer en passant le parametre N " +
+					"(taille des matrices)");
 			System.exit(1);
 		}
 
