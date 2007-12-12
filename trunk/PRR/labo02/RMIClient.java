@@ -49,7 +49,8 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 	private int[] 			ligneA; 
 	private int[][] 		matriceB; 
 	private static int[] 	ligneC; // la ligne calculee
-	
+	private Host 			adrCoord;
+
 	// pour la creation d'un nom unique de client
 	private static int nano = (int) System.nanoTime();
 
@@ -59,10 +60,12 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 	 * @param ligne	Tableau a une dimension de la ligne a calculer
 	 * @param matrice La matrice que l'on va utiliser pour faire la multiplication
 	 */
-	synchronized public void remplirMatrice(int[] ligne, int[][] matrice) throws RemoteException {
+	synchronized public void remplirMatrice(
+			int[] ligne, int[][] matrice, Host host) throws RemoteException {
 		// assignation des variables
 		this.ligneA = ligne; 
 		this.matriceB = matrice;
+		this.adrCoord = host; 
 		// affichage
 		System.out.println("Matrice recue");
 		Outils.afficheMatrice(matriceB);
@@ -89,23 +92,45 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 		/*
 		 * Calcul la ligne correspondante de C
 		 */
-		
+
 		System.out.println("Calculs");
-		
+
 		// initialise la variable a la bonne taille
 		ligneC = new int[matriceB.length];
-		
+
 		// effectue les calculs
 		for (short i=0; i<matriceB.length; i++) 
 			for(short j=0; j<matriceB.length; j++)
 				ligneC[i] += matriceB[j][i] * ligneA[j];
-		
+
 		// affiche la ligne calculee
 		System.out.println("Ligne de C calculee : ");
 		for (int i=0; i<ligneC.length;i++) 
 			System.out.print(ligneC[i] + " ");
 		System.out.println("\n");
 	}
+
+	public void retournerResultats() {
+
+		System.out.println("Connexion au serveur/coordinateur");
+		String serveurCoordinateur = "rmi://" + adrCoord.getHost() + "/" + 
+			adrCoord.getNomAcces();
+		RMIServeurInterface coordinateur = null; 
+		try {
+			coordinateur = (RMIServeurInterface)Naming.lookup(serveurCoordinateur);
+		} catch (Exception e) {
+			System.out.println("Erreur de connexion au serveur: " + e);
+			System.exit(1);
+		} 
+
+		// utilise la methode du serveur/coordinateur pour retourner ses resultats
+		try {
+			coordinateur.mettreResultat(id, ligneC);
+		} catch (Exception e) {
+			System.out.println("Erreur de traitement: " + e);
+		} 
+	}
+	
 	/**
 	 * Programme principal
 	 */
@@ -127,27 +152,21 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 			System.out.println("Erreur de connexion au serveur: " + e);
 			System.exit(1);
 		}
-		
+
 		// Determine son nom qui sera accessible par le serveur/coordinateur
 		String nomClientRMI = "Client" + nano;
-		
-		Host coord = null; // les informations sur le coordinateur
-		
+
 		// inscription et recuperation de son identifiant
 		try {
 			id = serveur.inscription("localhost", nomClientRMI);
-			coord = serveur.getCoordinateur();
 		} catch (Exception e) {
 			System.out.println("Erreur de traitement: " + e);
 		} 
-		
-		// TODO : coord
-		// coord = new Host("localhost", "Coordinateur");
-		
+
 		/* 
 		 * Se met a disposition du serveur/coordinateur
 		 */
-		
+
 		RMIClientInterface srv = null;
 		try {
 			srv = new RMIClient();
@@ -160,7 +179,7 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 		/*
 		 * Appel la methode qui effectue les calculs sur les matrices 
 		 */ 
-		
+
 		try {
 			srv.calculs();
 		} catch (RemoteException e) {
@@ -171,22 +190,7 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 		 * Retourne les resultats au serveur
 		 */
 
-		System.out.println("Connexion au serveur/coordinateur");
-		String serveurCoordinateur = "rmi://" + coord.getHost() + "/" + coord.getNomAcces();
-		RMIServeurInterface coordinateur = null; 
-		try {
-			coordinateur = (RMIServeurInterface)Naming.lookup(serveurCoordinateur);
-		} catch (Exception e) {
-			System.out.println("Erreur de connexion au serveur: " + e);
-			System.exit(1);
-		} 
-
-		// utilise la methode du serveur/coordinateur pour retourner ses resultats
-		try {
-			coordinateur.mettreResultat(id, ligneC);
-		} catch (Exception e) {
-			System.out.println("Erreur de traitement: " + e);
-		} 
+		srv.retournerResultats();
 
 		// fin
 		System.out.println("Fin du client");
