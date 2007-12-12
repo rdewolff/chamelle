@@ -1,25 +1,33 @@
 /**
- * Avant de lancer le serveur il faut utiliser la commande : 
- *  rmiregistry
- * et avant, il a fallu lancer la commande sur les fichier compilé (*.class) 
- * suivante :
- *  rmic RMIConcurrentClient
+ * Fichier : RMIServeur.java
+ * Date    : 12 decembre 2007
+ * 
+ * C'est le premier element du reseau a lancer, car les autres tente de s'y 
+ * connecter.
+ * 
+ * Le serveur de noms demarre et se met a disposition pour s'y 
+ * enregistrer ou recuperer.
+ *  
+ * @author Romain de Wolff
+ * @author Simon Hintermann
+ *
  */
-
 import java.rmi.*;
 import java.rmi.server.*;
 import java.util.LinkedList;
 
 public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomInterface
 {
-	/**
-	 * 
-	 */
+	// identifiant
 	private static final long serialVersionUID = 1L;
 	
 	// tableau contenant l'adresse des clients
 	private LinkedList<Host> clients = new LinkedList<Host>();
+	
+	// le serveur/coordinateur
 	private Host coordinateur = null;
+	
+	// afin de savoir combien de clients desire le serveur/coordinateur
 	private int nbClientsVoulus = 0;
 
 	public RMIServeurNom() throws RemoteException
@@ -54,20 +62,27 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 		}
 		// renvoie un numero qui correspond a l'identifiant du client
 		return clients.size();
-		
 	}
 	
+	/**
+	 * Permet au coordinateur de s'y inscrire pour que chaque client puisse
+	 * recuperer son adresse et son nom.
+	 */
 	synchronized public void inscriptionCoordinateur(Host cli) throws RemoteException {
 		coordinateur = cli; 
 	}
 	
+	/**
+	 * Retourne le nom et l'adresse du coordinateur
+	 */
 	synchronized public Host getCoordinateur() throws RemoteException {
 		return coordinateur;
 	}
 
 	/**
 	 * Renvoie les adresses des clients inscrits sur le serveur de nom 
-	 * @return 
+	 * en linkedlist.
+	 * @return LinkedList<Host> Une liste des hotes (Hosts)
 	 */
 	synchronized public LinkedList<Host> getClients(int n) throws RemoteException {
 		if (clients.size() < n) {
@@ -83,7 +98,10 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 		return clients;	  
 		
 	}
- 
+	
+	/**
+	 * Programme principal
+	 */
 	public static void main(String args[])
 	{	
 		/*

@@ -1,9 +1,32 @@
 /**
- * Avant de lancer le serveur il faut utiliser la commande : 
- *  rmiregistry
- * et avant, il a fallu lancer la commande sur les fichier compilé (*.class) 
- * suivante :
- *  rmic RMIConcurrentClient
+ * Fichier : RMIServeur.java
+ * Date    : 12 decembre 2007
+ * 
+ * Le serveur prend un parametre N (entier entre 3 et 5) qui permet de definir 
+ * avec quelle taille de matrice on desire travailler.
+ * 
+ * Avant de recuperer les clients, nous allons demarrer le "serveur RMI" du 
+ * coordinateur/serveur afin que les clients puissent retourner les valeurs 
+ * calculee au plus vite.
+ * 
+ * Puis le serveur se connecte au serveur de nom et tente d'y recuperer le 
+ * nombre de clients voulus. Si les clients ne sont pas disponibles, le serveur
+ * sera mis en attente passive. 
+ * 
+ * Une fois que le nombre de clients voulus se seront presente au serveur de
+ * noms, le serveur recuperera leur nom et adresses afin de pouvoir s'y connecter
+ * en RMI.
+ * 
+ * Apres avoir genere des matrices aleatoires, le serveur envoie a chaque client 
+ * une ligne de A et la matrice B.  
+ * 
+ * Il met une methode a disposition qui permet a chaque client de retourner les
+ * valeurs qu'il a calculee.
+ * 
+ *  
+ * @author Romain de Wolff
+ * @author Simon Hintermann
+ *
  */
 
 import java.rmi.*;
@@ -13,14 +36,17 @@ import java.util.Random;
 
 public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterface
 {
+	// identifiant
 	private static final long serialVersionUID = -7229048203890999957L;
 	
-	// taille de la matrice
+	// taille des matrices
 	static int N;
+	
 	// les matrices
 	static int[][]  matriceA, matriceB, matriceC;
 	int nombreLignesRecues = 0;
 
+	// appel de la classe parente
 	public RMIServeur() throws RemoteException
 	{
 		super();
@@ -30,17 +56,24 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 	 * Remplis la ligne "id" de la matrice C avec les valeurs passee en 
 	 * parametre dans le tableau val. Cette methode est appelee par les clients
 	 * a l'aide de RMI.
-	 * @param id
-	 * @param val
+	 * 
+	 * Une fois que le dernier client a rendu ses informations, on affiche 
+	 * les resultats.
+	 * 
+	 * @param id	L'identifant du client qui correspond a la ligne de la matrice calculee
+	 * @param val	Tableau a une dimension d'entier qui correspond a la ligne calculee
 	 */
 	synchronized public void mettreResultat(int id, int[] val) throws RemoteException {
 		// remplis la ligne 
 		for (int i=0; i<val.length; i++) 
 			matriceC[id-1][i] = val[i];
-
+		// compte le nombre de lignes recues
 		nombreLignesRecues++;
+		
+		// affiche qu'on a bien recu des resultats
 		System.out.println("Resultats recus du client " + id);
 		
+		// si on a recu tout les resultats, on affiche les matrices 
 		if (nombreLignesRecues == val.length) {
 			// affiche les matrices
 			System.out.println("Matrice A : ");
@@ -53,7 +86,7 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 	}
 
 	/**
-	 * Affiche les valeurs des matrices
+	 * Demarre l'execution du serveur/coordinateur
 	 */
 	synchronized public void demarre() {
 
@@ -77,7 +110,7 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 		 */
 
 		// Connexion au serveur de nom
-		// System.setSecurityManager(new RMISecurityManager()); // TODO security!
+		// System.setSecurityManager(new RMISecurityManager()); 
 		String serveurNom = "rmi://localhost/RMIServeurNomInterface";
 		RMIServeurNomInterface serveur = null;
 		try {	
@@ -90,7 +123,7 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 		// inscription et recuperation des addresses des clients
 		LinkedList<Host> clients = null;
 		try {
-			Host moi = new Host("localhost", "Coordinateur"); // TODO determiner adresse IP
+			Host moi = new Host("localhost", "Coordinateur");
 			serveur.inscriptionCoordinateur(moi);
 			clients = serveur.getClients(N); 
 		} catch (Exception e) {
@@ -171,8 +204,13 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 		} catch (NumberFormatException e) {
 			System.out.println(e);
 		}
+		// verifie que le nombre est entre 3 et 5 (compris)
+		if (N<3 || N>5) {
+			System.out.println("Entrer une valeur entre 3 et 5 (borne comprises)");
+			System.exit(1);
+		}
 
-		// demarre
+		// lance l'execution du serveur 
 		RMIServeur monCoordinateur = null;
 		try {
 			monCoordinateur = new RMIServeur();

@@ -1,3 +1,6 @@
+/**
+ * Interface du client
+ */
 
 import java.rmi.*;
 public interface RMIClientInterface extends Remote

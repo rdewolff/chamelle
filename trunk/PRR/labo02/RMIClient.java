@@ -1,14 +1,30 @@
 /**
+ * Fichier : RMIClient.java
+ * Date    : 12 decembre 2007
  * 
  * Le client va se connecter au serveur de nom puis mettre à disposition les
  * methodes necessaires pour que le serveur puisse effectuer les calculs
  * necessaire sur celui-ci.
  * 
+ * Il determine aussi son propre nom unique afin que le coordinateur puisse
+ * s'y connecter.
+ * 
  * Etapes
  * ------
  *  1. Connexion au serveur de nom
- *  2. Mise a disposition des methodes de calcul des matrices
- *  3. Quitte proprement le programme
+ *  2. Se met a disposition pour le coordinateur (attente passive)
+ *  3. Effectue les calculs sur les matrices une fois les informations necessaires
+ *     disponibles.
+ *     
+ * Deux methodes sont mises a disposition : 
+ * 
+ * 	- remplirMatrice(int[] ligne, int[][] matrice) :
+ * 		permet au coordinateur de placer la ligne et la matrice a calculer
+ * 
+ *  - calculs() :
+ *  	utilise en local pour effectuer les calculs des matrices. Synchornisee 
+ *  	afin de pouvoir mettre en attente tant que les donnees ne sont pas arrivee
+ *  	du serveur.
  * 
  * @author Romain de Wolff
  * @author Simon Hintermann
@@ -20,37 +36,43 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class RMIClient extends UnicastRemoteObject implements RMIClientInterface 
 {
+	// appel du constructeur parent
 	protected RMIClient() throws RemoteException {
 		super();
 	}
-	/**
-	 * 
-	 */
+
+	// identifiant de la version demande par java
 	private static final long serialVersionUID = 0L;
 
 	// variables utilises
-	private static Host 	coordinateur;
-	private static int 		id;
-	private int[] 			ligneA;
-	private int[][] 		matriceB;
-	private static int[] 	ligneC;
+	private static int 		id; // identifiant du client courant
+	private int[] 			ligneA; 
+	private int[][] 		matriceB; 
+	private static int[] 	ligneC; // la ligne calculee
 	
+	// pour la creation d'un nom unique de client
 	private static int nano = (int) System.nanoTime();
 
 	/**
-	 * Permet d'introduire les informations dans le client (RMI) 
+	 * Permet au coordinateur de deposer ses valeurs
+	 * 
+	 * @param ligne	Tableau a une dimension de la ligne a calculer
+	 * @param matrice La matrice que l'on va utiliser pour faire la multiplication
 	 */
 	synchronized public void remplirMatrice(int[] ligne, int[][] matrice) throws RemoteException {
-		this.ligneA = ligne;
+		// assignation des variables
+		this.ligneA = ligne; 
 		this.matriceB = matrice;
+		// affichage
 		System.out.println("Matrice recue");
 		Outils.afficheMatrice(matriceB);
-		// affiche la ligne calculee
 		System.out.println("Ligne a calculer recue");
 		for (int i=0; i<ligne.length; i++) {
 			System.out.print(ligneA[i] + " ");
 		}
 		System.out.print("\n");
+		// on peut continuer l'execution et faire les calculs maintenant
+		// qu'on a les donnees
 		notify();
 	}
 
@@ -58,23 +80,22 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 	 * Effectue les calculs sur les matrices
 	 */
 	synchronized public void calculs() throws RemoteException {
-		// met en attente si les donnes ne sont pas disponibles
+		// mise en attente tant que les donnees ne sont pas presentes
 		try {
 			wait();
 		} catch (InterruptedException e) {
 			System.out.println(e);
 		}
-		System.out.println("Calculs");
-
 		/*
 		 * Calcul la ligne correspondante de C
 		 */
+		
+		System.out.println("Calculs");
+		
 		// initialise la variable a la bonne taille
 		ligneC = new int[matriceB.length];
 		
-		/*
-		 * Effectue les calculs
-		 */
+		// effectue les calculs
 		for (short i=0; i<matriceB.length; i++) 
 			for(short j=0; j<matriceB.length; j++)
 				ligneC[i] += matriceB[j][i] * ligneA[j];
@@ -96,7 +117,7 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 		 * Connexion au serveur de nom
 		 */
 
-		// pas de sécurité pour nos test TODO mettre la securite
+		// Securite (debug)
 		// System.setSecurityManager(new RMISecurityManager());
 		String serveurNom = "rmi://localhost/RMIServeurNomInterface";
 		RMIServeurNomInterface serveur = null;
@@ -110,20 +131,23 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 		// Determine son nom qui sera accessible par le serveur/coordinateur
 		String nomClientRMI = "Client" + nano;
 		
+		Host coord = null; // les informations sur le coordinateur
+		
 		// inscription et recuperation de son identifiant
 		try {
 			id = serveur.inscription("localhost", nomClientRMI);
-			coordinateur = serveur.getCoordinateur();
+			coord = serveur.getCoordinateur();
 		} catch (Exception e) {
 			System.out.println("Erreur de traitement: " + e);
 		} 
-
+		
+		// TODO : coord
+		// coord = new Host("localhost", "Coordinateur");
+		
 		/* 
-		 * se met a disposition du serveur/coordinateur
+		 * Se met a disposition du serveur/coordinateur
 		 */
 		
-		// pas de sécurité pour nos test
-		//System.setSecurityManager(new RMISecurityManager());
 		RMIClientInterface srv = null;
 		try {
 			srv = new RMIClient();
@@ -134,7 +158,7 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 		}
 
 		/*
-		 * Effectue les calculs sur les matrices 
+		 * Appel la methode qui effectue les calculs sur les matrices 
 		 */ 
 		
 		try {
@@ -147,9 +171,8 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 		 * Retourne les resultats au serveur
 		 */
 
-		// TODO Change
 		System.out.println("Connexion au serveur/coordinateur");
-		String serveurCoordinateur = "rmi://" + coordinateur.getHost() + "/" + coordinateur.getNomAcces();
+		String serveurCoordinateur = "rmi://" + coord.getHost() + "/" + coord.getNomAcces();
 		RMIServeurInterface coordinateur = null; 
 		try {
 			coordinateur = (RMIServeurInterface)Naming.lookup(serveurCoordinateur);

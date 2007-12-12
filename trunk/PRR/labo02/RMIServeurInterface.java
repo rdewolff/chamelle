@@ -1,4 +1,6 @@
-
+/**
+ * Interface du serveur/coordinateur
+ */
 import java.rmi.*;
 public interface RMIServeurInterface extends Remote
 {

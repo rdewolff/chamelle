@@ -7,5 +7,4 @@ public interface RMIServeurNomInterface extends Remote
 	public LinkedList<Host> getClients(int n) throws RemoteException;
 	public void inscriptionCoordinateur(Host cli) throws RemoteException; 
 	public Host getCoordinateur() throws RemoteException;
-	
 }
