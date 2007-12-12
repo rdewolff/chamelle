@@ -13,7 +13,11 @@ import java.util.Random;
 
 public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterface
 {
-
+	// taille de la matrice
+	static int N;
+	// les matrices
+	static int[][]  matriceA, matriceB, matriceC;
+	static int nombreLignesRecues = 0;
 	/**
 	 * 
 	 */
@@ -32,45 +36,37 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 	 * @param val
 	 */
 	synchronized public void mettreResultat(int id, int[] val) throws RemoteException {
-
+		// remplis la ligne 
+		for (int i=0; i<N; i++) 
+			matriceC[id-1][i] = val[i];
+		nombreLignesRecues++;
+		if (nombreLignesRecues == N) {
+			System.out.println("Continue!!!");
+			notify();
+		}
+		System.out.println("Resultats recus du client " + id);
 	}
 
 	/**
 	 * Affiche les valeurs des matrices
 	 */
-	private void afficheMatrices() {
-		System.out.println("Affichages des matrices : ");
-	}
-
-	public static void main(String argv[])
-	{
-		/*
-		 * Initialisation
-		 */
-
-		// determine la taille des matrice a l'aide de l'argument de lancement
-		// du programme
-		if (argv.length != 1) {
-			System.out.println("Demarrer en passant le parametre N (taille des matrices)");
-			System.exit(1);
-		}
-
-		// determine la taille des matrices en fonction de l'argument passe
-		// qui va correspondre aussi au nombre de clients necessaires
-		int N = 0;
-		try {
-			N = Integer.parseInt(argv[0]);
-		} catch (NumberFormatException e) {
-			System.out.println(e);
-		}
-
+	private void demarre() {
+	
 		/*
 		 * Demarrage du mode serveur afin que les clients puisse se connecter
 		 * tout de suite
 		 */
 
-		
-		
+		RMIServeurInterface srv = null;
+		try {
+			String srvCoord = "Coordinateur"; // TODO changer
+			srv = new RMIServeur();
+			Naming.rebind(srvCoord,srv);
+			System.out.println(srvCoord + " pret pour la reception des donnees");
+		} catch (Exception e) {
+			System.out.println("Exception a l'enregistrement: " + e);
+		}
+
 		/*
 		 * Obtient la liste des clients depuis le serveur de noms
 		 */
@@ -103,7 +99,6 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 
 		// creation des matrices sur lequelles on va faire des calculs
 		// et les remplis avec des valeurs aleatoires
-		int[][]  matriceA, matriceB, matriceC;
 		matriceA = new int[N][N];
 		matriceB = new int[N][N];
 		matriceC = new int[N][N];
@@ -148,14 +143,56 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 				System.out.println("Erreur de traitement: " + e);
 			} 
 		}
+		
+		// attente
+		try {
+			wait();
+		} catch (Exception e) {}
+		
+		// affiche les matrices
+		System.out.println("Matrice A : ");
+		Outils.afficheMatrice(matriceA);
+		System.out.println("Matrice B : ");
+		Outils.afficheMatrice(matriceB);
+		System.out.println("Matrice C : ");
+		Outils.afficheMatrice(matriceC);
 
-		/* 
-		 * Attente des donnees de tous les clients
+	}
+
+	public static void main(String argv[]) throws InterruptedException
+	{
+		/*
+		 * Initialisation
 		 */
 
+		// determine la taille des matrice a l'aide de l'argument de lancement
+		// du programme
+		if (argv.length != 1) {
+			System.out.println("Demarrer en passant le parametre N (taille des matrices)");
+			System.exit(1);
+		}
 
+		// determine la taille des matrices en fonction de l'argument passe
+		// qui va correspondre aussi au nombre de clients necessaires
+		N = 0;
+		try {
+			N = Integer.parseInt(argv[0]);
+		} catch (NumberFormatException e) {
+			System.out.println(e);
+		}
+		
+		// demarre
+		RMIServeur monCoordinateur = null;
+		try {
+			monCoordinateur = new RMIServeur();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		monCoordinateur.demarre();
+		
 		// fin
 		System.out.println("Fin du serveur/coordinateur");
+		System.exit(1);
 
 	}
 }

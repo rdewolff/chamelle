@@ -31,11 +31,11 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 	private static final String RMIClient = null;
 
 	// variables utilises
-	private String 		adrServeur;
-	private static int 	id;
-	private int[] 		ligneA;
-	private int[][] 	matriceB;
-	private int[] 		ligneC;
+	private String 			adrServeur;
+	private static int 		id;
+	private int[] 			ligneA;
+	private int[][] 		matriceB;
+	private static int[] 	ligneC;
 
 	/**
 	 * Permet d'introduire les informations dans le client (RMI) 
@@ -69,14 +69,25 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 		/*
 		 * Calcul la ligne correspondante de C
 		 */
+		// initialise la variable a la bonne taille
 		ligneC = new int[matriceB.length];
 		
+		/*
+		 * Effectue les calculs
+		 */
 		for (short i=0; i<matriceB.length; i++) 
 			for(short j=0; j<matriceB.length; j++)
-				ligneC[i] += matriceB[j][i] * ligneC[j];
+				ligneC[i] += matriceB[j][i] * ligneA[j];
+		
+		// affiche la ligne calculee
+		System.out.println("Ligne de C calculee : ");
+		for (int i=0; i<ligneC.length;i++) 
+			System.out.print(ligneC[i] + " ");
+		System.out.println("\n");
 	}
-	
-	// programme principal
+	/**
+	 * Programme principal
+	 */
 	public static void main(String argv[])
 	{
 		System.out.println("Lancement du client");
@@ -84,7 +95,7 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 		/*
 		 * Connexion au serveur de nom
 		 */
-		
+
 		// pas de sécurité pour nos test TODO mettre la securite
 		// System.setSecurityManager(new RMISecurityManager());
 		String serveurNom = "rmi://localhost/RMIServeurNomInterface";
@@ -94,7 +105,7 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 		} catch (Exception e) {
 			System.out.println("Erreur de connexion au serveur: " + e);
 			System.exit(1);
-		} 
+		}
 
 		// inscription et recuperation de son identifiant
 		try {
@@ -102,10 +113,11 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 		} catch (Exception e) {
 			System.out.println("Erreur de traitement: " + e);
 		} 
-		
+
 		/* 
 		 * se met a disposition du serveur/coordinateur
 		 */
+		
 		System.out.println("Client " + id);
 		// pas de sécurité pour nos test
 		//System.setSecurityManager(new RMISecurityManager());
@@ -122,19 +134,33 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 		/*
 		 * Effectue les calculs sur les matrices 
 		 */ 
+		
 		try {
 			srv.calculs();
 		} catch (RemoteException e) {
 			System.out.println(e);
 		} 
-		
+
 		/*
 		 * Retourne les resultats au serveur
 		 */
-		
-		
-		
-		
+
+		System.out.println("Connexion au serveur/coordinateur");
+		String serveurCoordinateur = "rmi://localhost/Coordinateur";
+		RMIServeurInterface coordinateur = null; 
+		try {
+			coordinateur = (RMIServeurInterface)Naming.lookup(serveurCoordinateur);
+		} catch (Exception e) {
+			System.out.println("Erreur de connexion au serveur: " + e);
+			System.exit(1);
+		} 
+
+		// utilise la methode du serveur/coordinateur pour retourner ses resultats
+		try {
+			coordinateur.mettreResultat(id, ligneC);
+		} catch (Exception e) {
+			System.out.println("Erreur de traitement: " + e);
+		} 
 
 		// fin
 		System.out.println("Fin du client");
