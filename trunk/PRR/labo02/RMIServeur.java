@@ -17,7 +17,7 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 	static int N;
 	// les matrices
 	static int[][]  matriceA, matriceB, matriceC;
-	static int nombreLignesRecues = 0;
+	int nombreLignesRecues = 0;
 	/**
 	 * 
 	 */
@@ -37,21 +37,28 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 	 */
 	synchronized public void mettreResultat(int id, int[] val) throws RemoteException {
 		// remplis la ligne 
-		for (int i=0; i<N; i++) 
+		for (int i=0; i<val.length; i++) 
 			matriceC[id-1][i] = val[i];
+
 		nombreLignesRecues++;
-		if (nombreLignesRecues == N) {
-			System.out.println("Continue!!!");
-			notify();
-		}
 		System.out.println("Resultats recus du client " + id);
+		
+		if (nombreLignesRecues == val.length) {
+			// affiche les matrices
+			System.out.println("Matrice A : ");
+			Outils.afficheMatrice(matriceA);
+			System.out.println("Matrice B : ");
+			Outils.afficheMatrice(matriceB);
+			System.out.println("Matrice C : ");
+			Outils.afficheMatrice(matriceC);
+		}
 	}
 
 	/**
 	 * Affiche les valeurs des matrices
 	 */
-	private void demarre() {
-	
+	synchronized public void demarre() {
+
 		/*
 		 * Demarrage du mode serveur afin que les clients puisse se connecter
 		 * tout de suite
@@ -144,19 +151,6 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 			} 
 		}
 		
-		// attente
-		try {
-			wait();
-		} catch (Exception e) {}
-		
-		// affiche les matrices
-		System.out.println("Matrice A : ");
-		Outils.afficheMatrice(matriceA);
-		System.out.println("Matrice B : ");
-		Outils.afficheMatrice(matriceB);
-		System.out.println("Matrice C : ");
-		Outils.afficheMatrice(matriceC);
-
 	}
 
 	public static void main(String argv[]) throws InterruptedException
@@ -180,7 +174,7 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 		} catch (NumberFormatException e) {
 			System.out.println(e);
 		}
-		
+
 		// demarre
 		RMIServeur monCoordinateur = null;
 		try {
@@ -188,6 +182,7 @@ public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterfa
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+		
 		monCoordinateur.demarre();
 		
 		// fin
