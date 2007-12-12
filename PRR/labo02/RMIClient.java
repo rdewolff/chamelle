@@ -29,7 +29,7 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 	private static final long serialVersionUID = 0L;
 
 	// variables utilises
-	private String 			adrServeur;
+	private static Host 	coordinateur;
 	private static int 		id;
 	private int[] 			ligneA;
 	private int[][] 		matriceB;
@@ -113,6 +113,7 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 		// inscription et recuperation de son identifiant
 		try {
 			id = serveur.inscription("localhost", nomClientRMI);
+			coordinateur = serveur.getCoordinateur();
 		} catch (Exception e) {
 			System.out.println("Erreur de traitement: " + e);
 		} 
@@ -148,7 +149,7 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 
 		// TODO Change
 		System.out.println("Connexion au serveur/coordinateur");
-		String serveurCoordinateur = "rmi://localhost/Coordinateur";
+		String serveurCoordinateur = "rmi://" + coordinateur.getHost() + "/" + coordinateur.getNomAcces();
 		RMIServeurInterface coordinateur = null; 
 		try {
 			coordinateur = (RMIServeurInterface)Naming.lookup(serveurCoordinateur);
