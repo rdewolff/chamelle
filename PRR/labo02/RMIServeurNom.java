@@ -17,11 +17,8 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	// TODO ??? suggere par eclipse..
-	//private static final long serialVersionUID = 1L;
-	
 	// tableau contenant l'adresse des clients
-	private LinkedList<String> clients = new LinkedList<String>();
+	private LinkedList<Client> clients = new LinkedList<Client>();
 	private int nbClientsVoulus = 0;
 
 	public RMIServeurNom() throws RemoteException
@@ -35,10 +32,15 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 	 * 				calculer
 	 * @param adr 	L'adresse du client
 	 */
-	synchronized public int inscription(String adr) throws RemoteException {
+	synchronized public int inscription(String adr, String nom) throws RemoteException {
 		
+		// cree un object Client qui stock les information
 		System.out.println("Clients " + (clients.size()+1) + " inscrit!");
-		clients.add(adr);
+		Client cli = new Client(adr, nom);
+		
+		// ajoute ce client a la linkedlist local
+		clients.add(cli); 
+		
 		// si un serveur/coordinateur est deja venu et qu'il n'y a pas encore
 		// le nombre de clients voulu, verifie si ce nombre est atteint
 		if (nbClientsVoulus != 0) {
@@ -58,11 +60,11 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
 	 * Renvoie les adresses des clients inscrits sur le serveur de nom 
 	 * @return 
 	 */
-	synchronized public LinkedList<String> getClients(int n) throws RemoteException {
+	synchronized public LinkedList<Client> getClients(int n) throws RemoteException {
 		if (clients.size() < n) {
 			nbClientsVoulus = n;
 			try {
-				// met en attente
+				// met en attente car le nombre de client n'est pas encore disponible
 				wait();
 			} catch (Exception e) {
 				System.out.println(e);
@@ -75,6 +77,10 @@ public class RMIServeurNom extends UnicastRemoteObject implements RMIServeurNomI
  
 	public static void main(String args[])
 	{	
+		/*
+		 * Lance le serveur de nom et met ses methodes a dispositions
+		 */
+		
 		System.out.println("Lancement du serveur de noms");
 		// pas de sécurité pour nos test
 		//System.setSecurityManager(new RMISecurityManager());
