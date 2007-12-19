@@ -34,7 +34,8 @@ import java.rmi.server.*;
 import java.util.LinkedList;
 import java.util.Random;
 
-public class RMIServeur extends UnicastRemoteObject implements RMIServeurInterface
+public class RMIServeur extends UnicastRemoteObject 
+		implements RMIServeurInterface
 {
 	// identifiant
 	private static final long serialVersionUID = -7229048203890999957L;
