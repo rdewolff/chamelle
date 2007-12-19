@@ -49,7 +49,7 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 	private int[] 			ligneA; 
 	private int[][] 		matriceB; 
 	private static int[] 	ligneC; // la ligne calculee
-	private Host 			adrCoord;
+	private Host 			adrCoord;	
 
 	// pour la creation d'un nom unique de client
 	private static int nano = (int) System.nanoTime();
@@ -142,7 +142,7 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 		 * Connexion au serveur de nom
 		 */
 
-		// Securite (debug)
+		// Securite
 		// System.setSecurityManager(new RMISecurityManager());
 		String serveurNom = "rmi://localhost/RMIServeurNomInterface";
 		RMIServeurNomInterface serveur = null;
