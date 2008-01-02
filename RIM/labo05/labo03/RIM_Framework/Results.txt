@@ -1,0 +1,56 @@
+
+
+Comme demand� par certains de vos coll�gues, voici un exemple de r�sultat pour une requ�te donn�e, ceci afin que vous puissiez valider vos propres r�sultats.
+
+Pour commencer, voici un r�sultat en utilisant les index pond�r�s par fr�quence normalis�e :
+------------------------------------------------------------------------
+Results for query 'Automatic Data Processing' :
+------------------------------------------------------------------------
+Document no : 987 (cosinus = 0.5962847939999439)
+Document no : 528 (cosinus = 0.5773502691896258)
+Document no : 696 (cosinus = 0.5661385170722981)
+Document no : 1359 (cosinus = 0.5388602512436508)
+Document no : 2727 (cosinus = 0.48038446141526137)
+Document no : 333 (cosinus = 0.47140452079103173)
+Document no : 2999 (cosinus = 0.45291081365783825)
+Document no : 86 (cosinus = 0.4472135954999579)
+
+
+Et avec les index pond�r�s par tfidf normalis� :
+------------------------------------------------------------------------
+Results for query 'Automatic Data Processing' :
+------------------------------------------------------------------------
+Document no : 987 (cosinus = 0.5782391905125097)
+Document no : 394 (cosinus = 0.4890443706939917)
+Document no : 528 (cosinus = 0.40836033116910564)
+Document no : 34 (cosinus = 0.31578560310621956)
+Document no : 333 (cosinus = 0.3142364113630746)
+Document no : 18 (cosinus = 0.2911207518637241)
+Document no : 597 (cosinus = 0.2864007174494743)
+Document no : 189 (cosinus = 0.2692367116319247)
+
+�
+
+Il se peut que vous obteniez des valeurs l�g�rement diff�rentes (qui peuvent �tre dues notamment � des pertes de pr�cision dans certains calculs), mais vous devriez obtenir des r�sultats comparables � ceux-ci.
+
+ 
+
+A tout � l�heure �
+
+ 
+
+---------------------------------------------------------------------------
+
+Florian Poulin
+
+Collaborateur scientifique
+Institute for Information and Communication Technologies IICT
+University of Applied Sciences of Western Switzerland HEIG-VD
+St-Roch, Avenue des Sports 20
+CH-1401 Yverdon-les-Bains
+
+ 
+
+florian.poulin@heig-vd.ch
+
+T�l.: +41 24 557 75 86
