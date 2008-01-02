@@ -1,4 +1,4 @@
-package rimlabo5bon;
+package rim;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
