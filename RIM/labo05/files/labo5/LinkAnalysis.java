@@ -15,11 +15,8 @@ public class LinkAnalysis {
 	 */
 	public static AdjacencyMatrix calculateBC (AdjacencyMatrix m) {
 		
-		AdjacencyMatrix result = new ArrayListMatrix(m.size());
+		return Matrix.multiply(m, Matrix.transpose(m));
 		
-		/* complete content of result here */
-		
-		return result; 
 	}
 	
 	/**
@@ -29,11 +26,8 @@ public class LinkAnalysis {
 	 */
 	public static AdjacencyMatrix calculateCC (AdjacencyMatrix m) {
 		
-		AdjacencyMatrix result = new ArrayListMatrix(m.size());
-		
-		/* complete content of result here */
-		
-		return result; 
+		return Matrix.multiply(Matrix.transpose(m), m);
+      
 	}
 	
 	/**
@@ -44,11 +38,8 @@ public class LinkAnalysis {
 	 */
 	public static Vector<Double> calculateHc (AdjacencyMatrix m, Vector<Double> ac) {
 		
-		Vector<Double> result = new Vector<Double>(m.size());
+      return Matrix.multiply(m, ac);
 		
-		/* complete content of result here */
-		
-		return result; 
 	}
 	
 	/**
@@ -59,11 +50,8 @@ public class LinkAnalysis {
 	 */
 	public static Vector<Double> calculateAc (AdjacencyMatrix m, Vector<Double> hc) {
 		
-		Vector<Double> result = new Vector<Double>(m.size());
-		
-		/* complete content of result here */
-		
-		return result; 
+		return Matrix.multiply(Matrix.transpose(m), hc);
+      
 	}
 	
 	/**
@@ -74,10 +62,7 @@ public class LinkAnalysis {
 	 */
 	public static Vector<Double> calculatePRc (AdjacencyMatrix m, Vector<Double> pr) {
 		
-		Vector<Double> result = new Vector<Double>(m.size());
-		
-		/* complete content of result here */
-		
-		return result; 
+		return Matrix.multiply(m, pr);
+      
 	}
 }
