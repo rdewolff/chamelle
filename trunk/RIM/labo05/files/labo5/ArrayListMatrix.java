@@ -1,6 +1,7 @@
 package labo5;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 
 /**
@@ -125,6 +126,15 @@ public class ArrayListMatrix implements AdjacencyMatrix {
 		// Define some edges on newly added element
 		am.set(10, 9, 1);
 		am.set(1, 10, 1);
+      // tests
+      am.set(10, 1, 2);
+      
+      System.out.println("Modified Matrix");
+      System.out.println(am);
+      
+      System.out.println("Matrice Transposee");
+      // Effectue les tests de la classe LinkAnalysis
+      am = Matrix.transpose(am);
 		
 		// Output
 		System.out.println("Modified matrix :");
@@ -134,7 +144,37 @@ public class ArrayListMatrix implements AdjacencyMatrix {
 		AdjacencyMatrix def = new ArrayListMatrix ();
 		def.addLast();
 		def.addLast();
+      
+      // Create a vector and a matrix and multiply them
+      AdjacencyMatrix test = new ArrayListMatrix (3);
+      test.set(0, 0, 4);
+      test.set(0, 1, 2);
+      test.set(0, 2, 0);
+      test.set(1, 0, 3);
+      test.set(1, 1, 0);
+      test.set(1, 2, 2);
+      test.set(2, 0, 1);
+      test.set(2, 1, 1);
+      test.set(2, 2, 0);
+      
+      Vector<Double> v = new Vector<Double>();
+      v.add(3.0);
+      v.add(-1.0);
+      v.add(-2.0);
+     
+      System.out.println("Multiply Matrix and Vector :");
+      System.out.println(test);
+      
+      System.out.println("Vector :");
+      System.out.println(v);
+      
+      System.out.println("Result :");
+      System.out.println(Matrix.multiply(test, v));
 		
+      // 
+      System.out.println("Multiply 2 Matrix :");
+      System.out.println(Matrix.multiply(test,test));
+      
 		// Output
 		System.out.println("Default matrix :");
 		System.out.println(def);

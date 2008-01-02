@@ -22,6 +22,7 @@ import javax.swing.text.html.parser.ParserDelegator;
  * @author Florian Poulin <i>(florian.poulin at heig-vd.ch)</i>
  * @version December 2007
  */
+
 public class WebParser {
 	
 	/**
