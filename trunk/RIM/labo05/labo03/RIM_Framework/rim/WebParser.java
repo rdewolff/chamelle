@@ -101,29 +101,36 @@ public class WebParser {
 	public static ParsedData parseURL (URL url) 
 	throws UnsupportedEncodingException, IOException {
 		
+		System.out.print("-");
 		// define parsing utilities
-		ParserDelegator parser = new ParserDelegator();
-		Callback callback = new Callback();
+		ParserDelegator parser = new ParserDelegator();System.out.print("-");
+		Callback callback = new Callback();System.out.print("-");
 
 		// open connection
-		URLConnection connection = url.openConnection();
+		URLConnection connection = url.openConnection();System.out.print("-");
+		// connection.setConnectTimeout(100); // TODO : adjust timeout
+		try {
 		connection.connect();
+		} catch (Exception e) {
+			return null;
+		}
+		System.out.print("-");
 		
 		// get some request headers
 		ParsedData pd = new ParsedData(getStatusCode(connection),
-				  					   getContentType(connection));
+				  					   getContentType(connection));System.out.print("-");
 		
 		// do not continue if not an html page
 		if (!pd.getContentType().equals("text/html"))
 			return pd;
-		
+		System.out.print("-");
 		// parse content if a page was returned
 		if (getStatusCode(connection) == 200) {
 			Reader reader = new InputStreamReader(connection.getInputStream(),
-												  getCharset(connection));
-			parser.parse(reader, callback, true);
-			pd.setpageContent(callback.getContent());
-			pd.setpageHrefs(callback.getHrefs());
+												  getCharset(connection));System.out.print("-");
+			parser.parse(reader, callback, true);System.out.print("-");
+			pd.setpageContent(callback.getContent());System.out.print("-");
+			pd.setpageHrefs(callback.getHrefs());System.out.print("-\n");
 		}
 		return pd;
 	}
@@ -171,8 +178,8 @@ public class WebParser {
 
 		// define some urls
 		String[] urls = new String[] {
-				"http://www.heig-vd.ch/test",
-				"http://news.heig-vd.ch/news/2007/10/19/VOIPDevelopmentsAndIssues.npx",
+				"http://www.heig-vd.ch/LinkClick.aspx?link=http%3a%2f%2fwww.24heures.ch&tabid=766&mid=1951",
+				"http://tigr.heig-vd.ch/ri/tabid/306/Default.aspx",
 				"http://www.heig-vd.ch/Default.aspx?tabid=90",
 				"http://www.heig-vd.ch/Portals/0/HEIG-VD/pdf/brochures/brochure2006.pdf",
 				"http://www.heig-vd.ch/Default.aspx?tabid=100" };
@@ -183,10 +190,14 @@ public class WebParser {
 			System.out.println("---------------");
 			try {
 				WebParser.ParsedData pd = WebParser.parseURL(new URL(urls[i]));
+				if (pd != null) {
 				System.out.println("Status code  : " + pd.getStatusCode());
 				System.out.println("Content type : " + pd.getContentType());
 				System.out.println("Page content : " + pd.getPageContent());
-				System.out.println("Page hrefs   : " + pd.getPageHrefs());
+				System.out.println("Page hrefs   : " + pd.getPageHrefs()); 
+				} else {
+					System.out.println("Page inacessible!");
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
