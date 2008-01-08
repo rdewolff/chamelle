@@ -112,7 +112,7 @@ public class WebParser {
 		// open connection
 		URLConnection connection = url.openConnection();
 		System.out.print(".");
-		// connection.setConnectTimeout(5000); // timeout in ms
+		connection.setConnectTimeout(5000); // timeout in ms
 		try {
 		connection.connect();
 		} catch (Exception e) {
