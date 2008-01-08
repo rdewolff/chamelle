@@ -140,16 +140,17 @@ public class WebSpider {
 				// we use it as a queue (cf. RIM course algorithm)
 				visitedUrl = linkToVisit.getFirst();
 
-				// make an URL from the url's String
-				Url = new URL(visitedUrl);
+				System.out.println("Trying *** " + visitedUrl + " ***");
+				
+				// check if the link is valid to avoid error
+				if (visitedUrl != null && visitedUrl.length() > 0 && visitedUrl.indexOf("http://") != -1) {
 
-				// check if the link is valid
-				if (visitedUrl != null && visitedUrl.length() > 0) {
+					// make an URL from the url's String
+					Url = new URL(visitedUrl);
 
-
-					// open the page with the web parser
+					// open the page with the web parser (this might take time)
 					pd = WebParser.parseURL(Url);
-
+					
 					// store a counter for the domain of this page
 					saveDomaine(subDomainCounter, Url.getHost());
 
@@ -158,7 +159,7 @@ public class WebSpider {
 
 						// check if it's an HTML page
 						if (pd.getContentType().equals("text/html")) {
-
+							
 							// page valide ---
 							System.out.println( "*** Page " + visitedUrl + " is accessible (" + validLinks++ + ")");
 
