@@ -9,12 +9,16 @@ import java.util.Set;
 
 public class WebSpider {
 
+	// members
 	String startPage;
 	LinkedList<String> linkToVisit = new LinkedList<String>();
 	LinkedList<String> visitedUrls = new LinkedList<String>();
 
-
-	private void addLinkWebParser( String textArray ) {
+	/** 
+	 * Add the links from a String list to the local queue of link to visit 
+	 * @param textArray
+	 */
+	private void getLinks( String textArray ) {
 
 		// remove first and last braket ( [ and ] )
 		textArray = textArray.substring(1, textArray.length()-1);
@@ -32,14 +36,14 @@ public class WebSpider {
 		// count
 		int i=1;
 
-		// loop through the URL
+		// loop through all the links
 		for (String u : url) {
 
 			// remove extra spaces
 			u = u.trim();
 
 			if (u.length() > 0) {
-				// reconstruct the URL
+				// reconstruct the URL if it's a relative link
 				if (u.charAt(0) == '/' || u.charAt(0) == '#') {
 					urlFound = startPage + u;
 				} else if ( u.indexOf("http://") != -1) {
@@ -48,7 +52,7 @@ public class WebSpider {
 			}
 
 			// debug, display found url
-			System.out.print("["+(i++)+"] " + urlFound );
+			// System.out.print("["+(i++)+"] " + urlFound );
 
 			// store just the host name
 			if (urlFound != null && urlFound.length() > 3) {
@@ -59,19 +63,14 @@ public class WebSpider {
 				}
 			}
 
-			// check link : if we don't add an already visited page or
+			// check the link : we don't add an already visited page or
 			// already in the collection or out of the domain
-			if (!linkToVisit.contains(urlFound) && !visitedUrls.contains(urlFound) && host != null) {
-				// and that the link is in the same domain as the main page
-				if (host.indexOf(removeHttpWww(startPage)) != -1 ) {
-					// add the found url in the collection
-					linkToVisit.addLast(urlFound);
-					System.out.println(" (Kept in list)");
-				} else {
-					System.out.println(" (Out of domain!)");
-				}
-			} else {
-				System.out.println(" (Already in list!)");
+			if (!linkToVisit.contains(urlFound) && 
+					!visitedUrls.contains(urlFound) && 
+					host != null && 
+					host.indexOf(removeHttpWww(startPage)) != -1 ) {
+				// add the found url in the queue of link to visit
+				linkToVisit.addLast(urlFound);
 			}
 
 		}
@@ -90,28 +89,39 @@ public class WebSpider {
 		}
 	}
 
-	private boolean isInDomain( String url, String domain ) {
-
-		return true;
-	}
-
+	/**
+	 * Save the hash of the page in a list
+	 * @param ls
+	 * @param pageContent
+	 */
 	private void saveHashPage( LinkedList<Integer> ls, String pageContent) {
 		ls.add(pageContent.hashCode());
 	}
 
-	private void saveDomaine( HashMap<String, Integer> ls, String domain ) {
-		Set<String> tmpSet = null;
+	/**
+	 * Check that the hash of a give page doesn't already exist in the given list
+	 * @param ls
+	 * @param pageContent
+	 * @return
+	 */
+	private boolean isHashPageKnown( LinkedList<Integer> ls, String pageContent ) {
+		return ls.contains(pageContent.hashCode());
+	}
+
+	/**
+	 * Increment the counter of the given domain in the given HashMap. If the 
+	 * domain is not yet in the list, will be initialized at 1.
+	 * @param ls
+	 * @param domain
+	 */
+	private void saveDomain( HashMap<String, Integer> ls, String domain ) {
 		if (ls.containsKey(domain)) {
 			// add one element in this domain
 			ls.put(domain, ls.get(domain)+1);
-
 		} else {
-			ls.put(domain, 1); // add one element of this domain
+			// init the counter for this domain at 1 as it's the first
+			ls.put(domain, 1); 
 		}
-	}
-
-	private boolean isPageAlreadyVisited( LinkedList<Integer> ls, String pageContent ) {
-		return ls.contains(pageContent.hashCode());
 	}
 
 	public WebSpider( String startPage ) {
@@ -122,12 +132,16 @@ public class WebSpider {
 
 		try {
 
-			// needed variables
-			LinkedList<Integer> hashVisitedPages = new LinkedList<Integer>(); // store the hash of the visited pages
-			HashMap<String, Integer> subDomainCounter = new HashMap<String, Integer>(); // store the sub domains and number of pages visited
+			// variables
+
+			// store the hash of the visited pages
+			LinkedList<Integer> hashVisitedPages = new LinkedList<Integer>(); 
+			// store the sub domains and number of pages visited
+			HashMap<String, Integer> subDomainCounter = new HashMap<String, Integer>();
 			int validLinks = 0;
 			int invalidLinks = 0;
-			Integer errors = 0;
+			int fatalError = 0;
+			Integer error404 = 0;
 			WebParser.ParsedData pd;
 
 			// iterate through all the links (in the domain) 
@@ -141,55 +155,74 @@ public class WebSpider {
 				visitedUrl = linkToVisit.getFirst();
 
 				System.out.println("Trying *** " + visitedUrl + " ***");
-				
+
 				// check if the link is valid to avoid error
-				if (visitedUrl != null && visitedUrl.length() > 0 && visitedUrl.indexOf("http://") != -1) {
+				if (visitedUrl != null && visitedUrl.length() > 0 && visitedUrl.indexOf("http://") == 0) {
 
 					// make an URL from the url's String
 					Url = new URL(visitedUrl);
 
 					// open the page with the web parser (this might take time)
 					pd = WebParser.parseURL(Url);
-					
-					// store a counter for the domain of this page
-					saveDomaine(subDomainCounter, Url.getHost());
 
-					// test if link is valid
-					if (pd.getStatusCode() == 200) {
+					if (pd != null) {
 
-						// check if it's an HTML page
-						if (pd.getContentType().equals("text/html")) {
-							
-							// page valide ---
-							System.out.println( "*** Page " + visitedUrl + " is accessible (" + validLinks++ + ")");
+						// store a counter for the domain of this page
+						saveDomain(subDomainCounter, Url.getHost());
 
-							// add the links of the visited page (if any)
-							if (pd.getPageHrefs() != null && pd.getPageHrefs().toString().trim().length() > 3) {
-								addLinkWebParser(pd.getPageHrefs().toString());
+						// test if link is valid
+						if (pd.getStatusCode() == 200) {
+
+							// check if it's an HTML page
+							if (pd.getContentType().equals("text/html")) {
+
+								// page valide ---
+								System.out.println( "*** Page " + visitedUrl + " is accessible (" + validLinks++ + ")");
+
+								// if the page has not yet been visited
+								if (!isHashPageKnown(hashVisitedPages, pd.getPageContent())) {
+
+									// add the links of the visited page (if any)
+									if (pd.getPageHrefs() != null && pd.getPageHrefs().toString().trim().length() > 0) {
+										getLinks(pd.getPageHrefs().toString());
+									}
+
+									// store the hash of the current page beeing visited (if possible)
+									if (pd.getPageContent() != null) {
+										saveHashPage(hashVisitedPages, pd.getPageContent());
+									}
+
+									// index it's content
+									// TODO with the other tools (CACM...)
+
+								} else {
+									System.out.println("****************************** PAGE ALREADY VISITED!");
+								}
+								// if not an HTML document, we just count it
+							} else {
+								// TODO
 							}
 
-							// store the hash of the current page beeing visited (if possible)
-							if (pd.getPageContent() != null) {
-								saveHashPage(hashVisitedPages, pd.getPageContent());
-							}
+						} else if ( pd.getStatusCode() == 404) {
 
-							// index it's content
-							// TODO with the other tools (CACM...)
+							error404++;
 
-							// if not an HTML document, we just count it
 						} else {
-							// TODO
+
+							// error on page
+							System.out.println( visitedUrl + " is NOT accessible (" + invalidLinks++ + ") (1)");
+
 						}
 
 					} else {
-
-						// error on page
-						System.out.println( visitedUrl + " is NOT accessible (" + invalidLinks++ + ")");
-
+						fatalError++;
+						System.out.println("Server does not exist!!");
 					}
 					// store the page as beeing visited
 					visitedUrls.add(visitedUrl);
 
+				} else {
+					System.out.println( visitedUrl + " is NOT accessible (" + invalidLinks++ + ") (2)");
 				}
 
 				// affichages --------------------------------------------------
@@ -207,6 +240,8 @@ public class WebSpider {
 				// display the counter
 				System.out.println("Nombre de liens valide(s) : " + validLinks);
 				System.out.println("Nombre de liens invalide(s) : " + invalidLinks);
+				System.out.println("Page not found (404 error) : " + error404);
+				System.out.println("Site dead : " + fatalError);
 
 			}
 
@@ -221,9 +256,12 @@ public class WebSpider {
 	 */
 	public static void main(String[] args) {
 
+		// start crawling
 		WebSpider ws = new WebSpider("http://www.heig-vd.ch");
 
+		// finished
 		System.out.println("----------");
+		System.out.println("EOF");
 	}
 
 }

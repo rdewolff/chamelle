@@ -89,10 +89,24 @@ Afin d'essayer de structurer notre code au mieux, nous avons commencer par étab
 	\item stocker l'URL de la page comme page déjà visitée
 	\item 
 \end{itemize}
+
 %==============================================================================
-\section{} 
+\section{Amélioration possibles} 
 %==============================================================================
 
+En ayant testé le programme sur d'autre site internet, on remarque que la classe \texttt{WebParser} ne fonctionne pas avec les fichiers HTML comportant des cadres (\texttt{frames}). Il est donc possible que sur le domaine de la HEIG-VD des liens HTML n'ait pas été détecté.
+
+
+
+%==============================================================================
+\section{Remarques} 
+%==============================================================================
+
+L'utilisation du \texttt{parser} est, au niveau du temps de traitement, très changent. En effet, nous avons remarqué de grosse différence de temps de traitement en fonction de l'endroit depuis lequel on travail. Ce qui est logique, car le traitement dépends de la qualité de la ligne internet utilisée.
+
+Ainsi, depuis la maison, avec des connexion ADSL ou Cable “classiques”, on arrive a des temps d'indexation très long (1 heure ou plus). Par contre, en utilisant la connexion de l'université de Lausanne (UNIL), on peut effectuer la même indexation en 2 à 3 fois moins de temps! Différence considérable.
+
+Effectuer ceci depuis le domaine de la HEIG-VD est légèrement moins performant que depuis le site de l'UNIL. 
 
 %==============================================================================
 \section{Analyse des résultats obtenus} 
@@ -103,6 +117,26 @@ Afin d'essayer de structurer notre code au mieux, nous avons commencer par étab
 \section{Conclusion personnelle} 
 %==============================================================================
 
+
+%==============================================================================
+\section{Annexes} 
+%==============================================================================
+
+Fichiers X et Y.
+
+%==============================================================================
+% Annexes 
+%==============================================================================
+
+\appendix
+
+\newpage
+\section{WebSpider.java}
+\lstinputlisting{../RIM_Framework/rim/WebSpider.java}
+
+% \newpage
+% \section{CACMRetriever.java}
+% \lstinputlisting{../src/rim/cacm/CACMRetriever.java}
 
 
 %==============================================================================
