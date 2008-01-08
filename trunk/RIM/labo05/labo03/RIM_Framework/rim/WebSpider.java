@@ -10,31 +10,35 @@ import java.util.Set;
 public class WebSpider {
 
 	// members
-	String startPage;
-	LinkedList<String> linkToVisit = new LinkedList<String>();
-	LinkedList<String> visitedUrls = new LinkedList<String>();
+	private String startPage;
+	private LinkedList<String> linkToVisit = new LinkedList<String>();
+	private LinkedList<String> visitedUrls = new LinkedList<String>();
 
 	/** 
 	 * Add the links from a String list to the local queue of link to visit 
 	 * @param textArray
 	 */
-	private void getLinks( String textArray ) {
+	private void saveLinks( String currentLocation, String textArray ) {
 
-		// remove first and last braket ( [ and ] )
+		System.out.println("CURRENT LOCATION MOTHERFUCKER : " + currentLocation);
+		
+		// current location : remove extra information, keep last folder
+		// if contains more than just "http://"
+		if (currentLocation.lastIndexOf("/") > "http://".length())
+			currentLocation = currentLocation.substring(0, currentLocation.lastIndexOf("/"));
+		
+		// remove first and last braket ( [ and ] ) returned by the webparser
 		textArray = textArray.substring(1, textArray.length()-1);
-
+		
 		// put the url in an array
 		String url[] = textArray.split(",");
 
-		// debug
-		System.out.println("Number of links (array): " + url.length);
-
 		// to store the temp url
-		String urlFound = null;
-		String host = null;
+		String urlFound = null; // full URL
+		String host = null; // name of the host only
 
 		// count
-		int i=1;
+		int badLinks=0;
 
 		// loop through all the links
 		for (String u : url) {
@@ -42,39 +46,79 @@ public class WebSpider {
 			// remove extra spaces
 			u = u.trim();
 
-			if (u.length() > 0) {
+			// if the link contains more than a caracater and does
+			// not contain the string "null"
+			if (u.length() > 0 && u.indexOf("null") != 0) {
+				
 				// reconstruct the URL if it's a relative link
 				if (u.charAt(0) == '/' || u.charAt(0) == '#') {
-					urlFound = startPage + u;
+					urlFound = currentLocation + u;
 				} else if ( u.indexOf("http://") != -1) {
 					urlFound = u;
-				} 
-			}
-
-			// debug, display found url
-			// System.out.print("["+(i++)+"] " + urlFound );
-
-			// store just the host name
-			if (urlFound != null && urlFound.length() > 3) {
-				try {
-					host = (new URL(urlFound).toString());
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
+				} else if ( u.indexOf("javascript:") == 0 || u.indexOf("mailto:") == 0){
+					// ignore javascript
+					urlFound = startPage;
+				} else { // normal link, just add the host name
+					urlFound = currentLocation + "/" + u;
 				}
-			}
+				
+				// debug, display found url
+				//System.out.print(" - " + urlFound);
 
-			// check the link : we don't add an already visited page or
-			// already in the collection or out of the domain
-			if (!linkToVisit.contains(urlFound) && 
-					!visitedUrls.contains(urlFound) && 
-					host != null && 
-					host.indexOf(removeHttpWww(startPage)) != -1 ) {
-				// add the found url in the queue of link to visit
-				linkToVisit.addLast(urlFound);
+				// store just the host name
+				if (urlFound != null && urlFound.length() > 0) {
+					try {
+						host = (new URL(urlFound).getHost().toString());
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					}
+				}
+
+				// check the link : we don't add an already visited page or
+				// already in the collection or out of the domain
+				if (!linkToVisit.contains(urlFound)) {
+					if (!visitedUrls.contains(urlFound)) {
+						if (host != null && host.contains(".")) {
+							if (getDomain(host).equals((String)getDomain(startPage))) {
+								// add the found url in the queue of link to visit
+								linkToVisit.addLast(urlFound);
+							} //else { System.out.println("Error1"); badLinks++;}
+						} //else { System.out.println("Error2"); badLinks++;}
+					} //else { System.out.println("Error3");badLinks++;}
+				} //else { System.out.println("Error4"); badLinks++;}
+
+				//System.out.println(urlFound + " : " + getDomain(host) + " # " + getDomain(startPage));
 			}
+		}
+
+		// debug
+		System.out.println("\nNumber of links (array): " + url.length + " (not considered: " + badLinks + ")");
+	}
+
+	/**
+	 * Returns the domain name from a host name
+	 * Ex: http://age.heig-vd.ch will return heig-vd.ch
+	 * 
+	 * Note: only a host name will work. It must NOT contains pages or folder
+	 * after it's name.
+	 * 
+	 * @param  The url you want to get the domain
+	 * @return The domain name of the given url
+	 */
+	private String getDomain(String url) {
+		String domain = null;
+		String dotCom = null;
+		if (url != null && url.length() > 0) {
+			domain = url.substring(0, url.lastIndexOf("."));
+			domain = domain.substring(domain.lastIndexOf(".")+1, domain.length());
+			dotCom = url.substring(url.lastIndexOf("."), url.length());
 
 		}
+		// debug
+		//System.out.println("URL: " + url + " -- Domain: " + domain + dotCom);
+		return domain + dotCom;
 	}
+
 
 	/**
 	 * Returns the domain name of the URL givent in parameter
@@ -124,6 +168,10 @@ public class WebSpider {
 		}
 	}
 
+	/**
+	 * Crawl the startpage given (we can call that "spidering")
+	 * @param startPage
+	 */
 	public WebSpider( String startPage ) {
 
 		this.startPage = startPage;
@@ -138,23 +186,27 @@ public class WebSpider {
 			LinkedList<Integer> hashVisitedPages = new LinkedList<Integer>(); 
 			// store the sub domains and number of pages visited
 			HashMap<String, Integer> subDomainCounter = new HashMap<String, Integer>();
-			int validLinks = 0;
+
+			int visitedLinks = 0;
 			int invalidLinks = 0;
 			int fatalError = 0;
+			int otherThanHTML = 0;
 			Integer error404 = 0;
 			WebParser.ParsedData pd;
 
-			// iterate through all the links (in the domain) 
 			String visitedUrl;
 			URL Url;
 			Set<String> set = null;
 
+			// links iteration
+
+			// iterate through all the links in the queue
 			while (linkToVisit.size() > 0) {
 
 				// we use it as a queue (cf. RIM course algorithm)
 				visitedUrl = linkToVisit.getFirst();
 
-				System.out.println("Trying *** " + visitedUrl + " ***");
+				System.out.print("*** Trying " + visitedUrl);
 
 				// check if the link is valid to avoid error
 				if (visitedUrl != null && visitedUrl.length() > 0 && visitedUrl.indexOf("http://") == 0) {
@@ -170,23 +222,24 @@ public class WebSpider {
 						// store a counter for the domain of this page
 						saveDomain(subDomainCounter, Url.getHost());
 
-						// test if link is valid
+						// valid page, we count it
+						visitedLinks++;
+						System.out.println( " OK");
+ 
+						// test if opened link is valid
 						if (pd.getStatusCode() == 200) {
 
 							// check if it's an HTML page
 							if (pd.getContentType().equals("text/html")) {
-
-								// page valide ---
-								System.out.println( "*** Page " + visitedUrl + " is accessible (" + validLinks++ + ")");
 
 								// if the page has not yet been visited
 								if (!isHashPageKnown(hashVisitedPages, pd.getPageContent())) {
 
 									// add the links of the visited page (if any)
 									if (pd.getPageHrefs() != null && pd.getPageHrefs().toString().trim().length() > 0) {
-										getLinks(pd.getPageHrefs().toString());
+										saveLinks(visitedUrl, pd.getPageHrefs().toString());
 									}
-
+									
 									// store the hash of the current page beeing visited (if possible)
 									if (pd.getPageContent() != null) {
 										saveHashPage(hashVisitedPages, pd.getPageContent());
@@ -196,11 +249,12 @@ public class WebSpider {
 									// TODO with the other tools (CACM...)
 
 								} else {
-									System.out.println("****************************** PAGE ALREADY VISITED!");
+									System.out.println("*** Page already visited!! ***");
 								}
-								// if not an HTML document, we just count it
+
 							} else {
-								// TODO
+								// it's not an HTML page, we just count it
+								otherThanHTML++;
 							}
 
 						} else if ( pd.getStatusCode() == 404) {
@@ -211,13 +265,13 @@ public class WebSpider {
 
 							// error on page
 							System.out.println( visitedUrl + " is NOT accessible (" + invalidLinks++ + ") (1)");
-
 						}
 
 					} else {
 						fatalError++;
 						System.out.println("Server does not exist!!");
 					}
+					
 					// store the page as beeing visited
 					visitedUrls.add(visitedUrl);
 
@@ -225,23 +279,25 @@ public class WebSpider {
 					System.out.println( visitedUrl + " is NOT accessible (" + invalidLinks++ + ") (2)");
 				}
 
-				// affichages --------------------------------------------------
-				System.out.println("Page en cours : " + visitedUrl );
-
+				// remove the page we just visited from the queue
 				linkToVisit.removeFirst();
+
+				// display
+				System.out.println("*** Global stats ***");
 				System.out.println("Nombre de liens restant a visiter : " + linkToVisit.size());
 
 				set = subDomainCounter.keySet();
 				System.out.println("Domaines ("+set.size()+") : ");
 				for (String s : set) {
-					System.out.println("dom : " + s + " (" + subDomainCounter.get(s) + ")");
+					System.out.println("- " + s + " (" + subDomainCounter.get(s) + ")");
 				}
 
-				// display the counter
-				System.out.println("Nombre de liens valide(s) : " + validLinks);
-				System.out.println("Nombre de liens invalide(s) : " + invalidLinks);
-				System.out.println("Page not found (404 error) : " + error404);
-				System.out.println("Site dead : " + fatalError);
+				System.out.println("TOTAL Visited links: " + visitedLinks);
+				System.out.println("Not HTML page: " + otherThanHTML);
+				System.out.println("Invalid links: " + invalidLinks);
+				System.out.println("Not found (404): " + error404);
+				System.out.println("Site down: " + fatalError);
+
 
 			}
 
@@ -257,11 +313,10 @@ public class WebSpider {
 	public static void main(String[] args) {
 
 		// start crawling
-		WebSpider ws = new WebSpider("http://www.heig-vd.ch");
+		new WebSpider("http://www.heig-vd.ch");
 
 		// finished
 		System.out.println("----------");
-		System.out.println("EOF");
 	}
 
 }

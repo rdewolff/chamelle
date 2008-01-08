@@ -101,37 +101,45 @@ public class WebParser {
 	public static ParsedData parseURL (URL url) 
 	throws UnsupportedEncodingException, IOException {
 		
-		System.out.print("-");
+		// added "dots" to better follow the progress
+		System.out.print(" [.");
 		// define parsing utilities
-		ParserDelegator parser = new ParserDelegator();System.out.print("-");
-		Callback callback = new Callback();System.out.print("-");
+		ParserDelegator parser = new ParserDelegator();
+		System.out.print(".");
+		Callback callback = new Callback();
+		System.out.print(".");
 
 		// open connection
-		URLConnection connection = url.openConnection();System.out.print("-");
-		// connection.setConnectTimeout(100); // TODO : adjust timeout
+		URLConnection connection = url.openConnection();
+		System.out.print(".");
+		// connection.setConnectTimeout(5000); // timeout in ms
 		try {
 		connection.connect();
 		} catch (Exception e) {
 			return null;
 		}
-		System.out.print("-");
+		System.out.print(".");
 		
 		// get some request headers
 		ParsedData pd = new ParsedData(getStatusCode(connection),
-				  					   getContentType(connection));System.out.print("-");
+				  					   getContentType(connection));
+		System.out.print(".");
 		
 		// do not continue if not an html page
 		if (!pd.getContentType().equals("text/html"))
 			return pd;
-		System.out.print("-");
+		
+		System.out.print(".");
+		
 		// parse content if a page was returned
 		if (getStatusCode(connection) == 200) {
 			Reader reader = new InputStreamReader(connection.getInputStream(),
-												  getCharset(connection));System.out.print("-");
-			parser.parse(reader, callback, true);System.out.print("-");
-			pd.setpageContent(callback.getContent());System.out.print("-");
-			pd.setpageHrefs(callback.getHrefs());System.out.print("-\n");
+												  getCharset(connection));
+			parser.parse(reader, callback, true);
+			pd.setpageContent(callback.getContent());
+			pd.setpageHrefs(callback.getHrefs());
 		}
+		System.out.print(".]");
 		return pd;
 	}
 	
