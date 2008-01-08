@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
 
+import rim.cacm.CACMIndexer;
+
 public class WebSpider {
 
 	// members
@@ -197,7 +199,9 @@ public class WebSpider {
 			String visitedUrl;
 			URL Url;
 			Set<String> set = null;
-
+			
+			CACMIndexer index = new CACMIndexer();
+			
 			// links iteration
 
 			// iterate through all the links in the queue
@@ -246,7 +250,7 @@ public class WebSpider {
 									}
 
 									// index it's content
-									// TODO with the other tools (CACM...)
+									index.index(visitedUrl, pd.getPageContent());
 
 								} else {
 									System.out.println("*** Page already visited!! ***");
@@ -268,6 +272,8 @@ public class WebSpider {
 						}
 
 					} else {
+						fatalError++;
+						System.out.println("Server does not exist!!");
 						fatalError++;
 						System.out.println("Server does not exist!!");
 					}
@@ -300,6 +306,9 @@ public class WebSpider {
 
 
 			}
+			
+			// finish the indexation
+			index.finalizeIndexation();
 
 		} catch (IOException e) {
 
@@ -313,7 +322,7 @@ public class WebSpider {
 	public static void main(String[] args) {
 
 		// start crawling
-		new WebSpider("http://www.heig-vd.ch");
+		new WebSpider("http://www.habanasalsa.ch");
 
 		// finished
 		System.out.println("----------");

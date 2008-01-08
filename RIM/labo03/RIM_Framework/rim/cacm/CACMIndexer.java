@@ -14,20 +14,20 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 	static HashSet<String> commonwords = new HashSet<String>();
 	
 	//Les deux Maps triees servant de memoire d'indexage frequence normalisee
-	static TreeMap<Integer, HashMap<String, Integer>> frequences = 
-		new TreeMap<Integer, HashMap<String, Integer>>();
+	static TreeMap<String, HashMap<String, Integer>> frequences = 
+		new TreeMap<String, HashMap<String, Integer>>();
 	
 	//Les deux Maps triees servant de memoire d'indexage frequence normalisee
-	static TreeMap<Integer, HashMap<String, Double>> index = 
-		new TreeMap<Integer, HashMap<String, Double>>();
-	static TreeMap<String, HashMap<Integer, Double>> indexInverse = 
-		new TreeMap<String, HashMap<Integer, Double>>();
+	static TreeMap<String, HashMap<String, Double>> index = 
+		new TreeMap<String, HashMap<String, Double>>();
+	static TreeMap<String, HashMap<String, Double>> indexInverse = 
+		new TreeMap<String, HashMap<String, Double>>();
 	
 	//Les deux Maps triees servant de memoire d'indexage tf-idf normalise
-	static TreeMap<Integer, HashMap<String, Double>> index2 = 
-		new TreeMap<Integer, HashMap<String, Double>>();
-	static TreeMap<String, HashMap<Integer, Double>> indexInverse2 = 
-		new TreeMap<String, HashMap<Integer, Double>>();
+	static TreeMap<String, HashMap<String, Double>> index2 = 
+		new TreeMap<String, HashMap<String, Double>>();
+	static TreeMap<String, HashMap<String, Double>> indexInverse2 = 
+		new TreeMap<String, HashMap<String, Double>>();
 	
 	//Nombre de documents indexés
 	static double n = 0;
@@ -75,7 +75,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 	/* (non-Javadoc)
 	 * @see rim.Indexer#index(java.lang.Integer, java.lang.String)
 	 */
-	public void index(Integer id, String content){
+	public void index(String url, String content){
 	
 		Set keys = null;
 		double freqMax = 0.0;
@@ -124,9 +124,9 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 		}
 		
 		//Stockage des frequences normalisees
-		index.put(id, h);
+		index.put(url, h);
 		//Stockage des frequences
-		frequences.put(id, h2);
+		frequences.put(url, h2);
 		
 		//La liste des documents avec leur frequence normalisee que 
 		//l'on va creer pour les termes
@@ -136,14 +136,14 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 			//terme courant et sa frequence normalisee
 			if(indexInverse.containsKey(s))
 			{
-				indexInverse.get(s).put(id, 
+				indexInverse.get(s).put(url, 
 						(double)elements.get((String)s)/freqMax);
 			}
 			//Sinon, on cree une map avec les valeurs courantes
 			else
 			{
-				HashMap<Integer, Double> h3 = new HashMap<Integer, Double>();
-				h3.put(id, (double)elements.get((String)s)/freqMax);
+				HashMap<String, Double> h3 = new HashMap<String, Double>();
+				h3.put(url, (double)elements.get((String)s)/freqMax);
 				indexInverse.put((String)s,h3);
 			}
 		}
@@ -209,7 +209,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 				//Liste des document/frequence
 				for(Object o2: _keys)
 				{
-					ligne = ligne + "<" + (Integer)o2 + "," + indexInverse.get(o).get(o2) + ">";
+					ligne = ligne + "<" + (String)o2 + "," + indexInverse.get(o).get(o2) + ">";
 				}
 
 				ligne = ligne + "}\r\n";
@@ -261,7 +261,7 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 					h.put((String)o2, h.get(o2)/maxTfIdf);
 				}
 				//Stockage dans l'objet d'index
-				index2.put((Integer)o, h);
+				index2.put((String)o, h);
 				
 				//Recuperation de la liste des termes du document courant
 				_keys = index2.get(o).keySet();
@@ -299,12 +299,12 @@ public class CACMIndexer implements Indexer//, Comparator<String>
 					//Si l'index inverse contient deja un terme, il faut rajouter le 
 					//terme courant et sa frequence normalisee
 					if(indexInverse2.containsKey(s)) {
-						indexInverse2.get(s).put((Integer)o, index2.get(o).get(s));
+						indexInverse2.get(s).put((String)o, index2.get(o).get(s));
 					}
 					//Sinon, on cree une map avec les valeurs courantes
 					else {
-						HashMap<Integer, Double> h = new HashMap<Integer, Double>();
-						h.put((Integer)o, index2.get(o).get(s));
+						HashMap<String, Double> h = new HashMap<String, Double>();
+						h.put((String)o, index2.get(o).get(s));
 						indexInverse2.put((String)s,h);
 					}
 				}

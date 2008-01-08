@@ -11,11 +11,11 @@ public interface Indexer {
 	 * Indexes a document. The content is given as a raw content and should first be 
 	 * cleaned before indexation. Operations such as splitting into words, stop-words
 	 * removal or stemming should be applied in this method.
-	 * @param id id of the document to be indexed.
+	 * @param url id of the document to be indexed.
 	 * @param content raw content of the document.
 	 * @see Feeder#parseCollection(java.net.URI, Indexer)
 	 */
-	public void index (Integer id, String content);
+	public void index (String url, String content);
 	
 	/**
 	 * Finalizes the indexation. This method is usually called by the {@link Feeder}, 
