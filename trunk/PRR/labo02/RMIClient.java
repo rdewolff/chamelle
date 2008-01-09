@@ -110,7 +110,7 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 		System.out.println("\n");
 	}
 
-	public void retournerResultats() {
+	public void retournerResultats() throws RemoteException{
 
 		System.out.println("Connexion au serveur/coordinateur");
 		String serveurCoordinateur = "rmi://" + adrCoord.getHost() + "/" + 
@@ -189,8 +189,12 @@ public class RMIClient extends UnicastRemoteObject implements RMIClientInterface
 		/*
 		 * Retourne les resultats au serveur
 		 */
-
-		srv.retournerResultats();
+		
+		try {
+			srv.retournerResultats();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 
 		// fin
 		System.out.println("Fin du client");
