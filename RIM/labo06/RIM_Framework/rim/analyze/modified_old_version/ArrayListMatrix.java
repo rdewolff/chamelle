@@ -1,4 +1,4 @@
-package rim.analyze;
+package rim.analyze.modified_old_version;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -51,7 +51,7 @@ public class ArrayListMatrix implements AdjacencyMatrix {
 	/* (non-Javadoc)
 	 * @see AdjacencyMatrix#get(int, int)
 	 */
-	public int get(int i, int j) {
+	public double get(int i, int j) {
 		return content.get(i).get(j);
 	}
 
@@ -178,5 +178,14 @@ public class ArrayListMatrix implements AdjacencyMatrix {
 		// Output
 		System.out.println("Default matrix :");
 		System.out.println(def);
+	}
+
+	public AdjacencyMatrix getTransitionMatrix() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void set(int i, int j, double edge) {
+		
 	}
 }

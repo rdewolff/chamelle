@@ -25,5 +25,4 @@ public class Labo5 {
       System.out.println(gr.getAdjacencyMatrix());
       
    }
-   
 }

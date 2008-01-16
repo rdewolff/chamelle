@@ -1,10 +1,12 @@
-package rim.analyze;
+package rim.analyze.modified_old_version;
 
 import java.util.Vector;
 
 /**
  * This class provides static methods to make link analysis.
  * @author Florian Poulin <i>(florian.poulin at heig-vd.ch)</i>
+ * @author Romain de Wolff 
+ * @author Simon Hintermann
  */
 public class LinkAnalysis {
 	
@@ -62,6 +64,10 @@ public class LinkAnalysis {
 	 */
 	public static Vector<Double> calculatePRc (AdjacencyMatrix m, Vector<Double> pr) {
 		
+		Vector<Double> result = new Vector<Double>(m.size());
+		
+		// the calcul is : PR(c) = normalize * ( 0.85 * (Mt * PR(c-1) )  ) 
+		// (cf course) 
 		return Matrix.multiply(m, pr);
       
 	}
