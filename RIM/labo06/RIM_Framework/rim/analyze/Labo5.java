@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package labo5;
+package rim.analyze;
 
 /**
  *
@@ -17,7 +17,7 @@ public class Labo5 {
       
       GraphFileReader gr = null;
       
-      String fileGraph = "/Users/rdewolff/Documents/HEIG-VD/netbeans/RIM/labo05/files/labo5/graphe-full.txt";
+      String fileGraph = "/Users/rdewolff/Documents/HEIG-VD/eclipse/svnChamelle/RIM/labo06/RIM_Framework/rim/analyze/graphe-full.txt";
       
       gr = new GraphFileReader(fileGraph);
       
