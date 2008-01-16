@@ -1,4 +1,4 @@
-package labo5;
+package rim.analyze;
 /**
  * An interface for defining an adjacency matrix of a directed graph. The content of 
  * a cell (i,j) specifies if there is an edge going from i to j. If there is an edge

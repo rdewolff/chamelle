@@ -1,4 +1,4 @@
-package labo5;
+package rim.analyze;
 
 import java.util.Vector;
 
