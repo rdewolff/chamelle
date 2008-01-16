@@ -22,6 +22,7 @@ public class Labo5 {
       gr = new GraphFileReader(fileGraph);
       
       System.out.println("Scanned graph from the file : ");
+      
       System.out.println(gr.getAdjacencyMatrix());
       
    }
