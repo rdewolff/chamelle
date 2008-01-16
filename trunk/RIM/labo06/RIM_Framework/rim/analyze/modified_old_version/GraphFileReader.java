@@ -1,4 +1,4 @@
-package rim.analyze;
+package rim.analyze.modified_old_version;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
