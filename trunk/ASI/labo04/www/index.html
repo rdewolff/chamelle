@@ -1,0 +1,469 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head><title>Bienvenue à l&#8217;IICT</title>
+
+	
+
+	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+	<meta name="TITLE" content="IICT - Institute for Information and Communication Technologies">
+	<meta name="DESCRIPTION" content="--">
+	<meta name="ABSTRACT" content="--">
+	<meta name="KEYWORDS" content="--">
+	<meta name="AUTHOR" content="IICT - HEIG-VD">
+	<meta name="OWNER" content="--">
+	<meta name="RATING" content="GENERAL">
+	<meta name="CLASSIFICATION" content="">
+	<meta http-equiv="CONTENT-LANGUAGE" content="fr">
+	<meta name="ROBOTS" content="index,follow">
+	<meta name="REVISIT-AFTER" content="30 DAYS">
+	<meta name="LANGUAGE" content="fr">
+	<meta name="COPYRIGHT" content="IICT 2006">
+	
+
+<script type="text/javascript" src="iict_files/behaviour.js"></script>
+<script type="text/javascript">
+
+function handleArticleAction(action, popup, panelId, articleId)  {
+var url = 'http://keo.heig-vd.ch/keo/app/nav/cms/actions/editContent/' + action + '?panelId=' + panelId;
+if(articleId || articleId == 0) {
+url = url + '&articleId=' + articleId;
+}
+window.closingWindow = false;
+if (popup) {
+PopupHandler.open("KeoArticlesPopup", url, "cms-article");
+} else {
+window.location.replace(url);
+}
+}
+
+function clearFormElements(formName) {
+document.forms[formName].reset();
+document.forms[formName].from.value="";
+for(i = 0; i < document.forms[formName].elements.length; i++) {
+if ((document.forms[formName].elements[i].type != "submit") && (document.forms[formName].elements[i].type != "button")) {
+document.forms[formName].elements[i].value="";
+}
+}
+}
+
+var map_pageId_url = {'fpn':'pagesperso/fpn','organisation':'home/organisation','srt':'pagesperso/srt','brh':'pagesperso/brh','akb':'pagesperso/akb','home2':'home2','fbm':'pagesperso/fbm','hdu':'pagesperso/hdu','iict_sysin':'unity/iict_sysin','heig_vd':'formation/heig_vd','kbr':'pagesperso/kbr','srr':'pagesperso/srr','actu':'actu','add':'pagesperso/add','accueil':'accueil','iict_ina':'unity/iict_ina','id8':'home/id8','sln':'pagesperso/sln','ard':'pagesperso/ard','template':'pagesperso/template','bcj':'pagesperso/bcj','jer':'pagesperso/jer','sva':'pagesperso/sva','lft':'pagesperso/lft','mvt':'pagesperso/mvt','rki':'pagesperso/rki','scn':'pagesperso/scn','cby':'pagesperso/cby','lkn':'pagesperso/lkn','abr':'pagesperso/abr','iict_cap3d':'unity/iict_cap3d','hlprc':'home/hlprc','jhd':'pagesperso/jhd','lli':'pagesperso/lli','jvz':'pagesperso/jvz','contact':'contact','hrr':'pagesperso/hrr','nfi':'pagesperso/nfi','rli':'pagesperso/rli','mjn':'pagesperso/mjn','pagesperso':'pagesperso','archives':'actu/archives','rvl':'pagesperso/rvl','ccc':'pagesperso/ccc','epe':'pagesperso/epe','ast':'pagesperso/ast','ars':'pagesperso/ars','lbr':'pagesperso/lbr','gkl':'pagesperso/gkl','pmt':'pagesperso/pmt','business':'home/business','xhn':'pagesperso/xhn','djt':'pagesperso/djt','mmc':'pagesperso/mmc','partenaires':'partenaires','home':'home','pfe':'pagesperso/pfe','ple':'pagesperso/ple','formation':'formation','rmu':'pagesperso/rmu','unity':'unity','mgd':'pagesperso/mgd','ifs':'pagesperso/ifs','lru':'pagesperso/lru','jms':'pagesperso/jms','rmo':'pagesperso/rmo','asl':'pagesperso/asl','gny':'pagesperso/gny','dcx':'pagesperso/dcx','cbs':'pagesperso/cbs','publications':'actu/publications','ebx':'pagesperso/ebx','dro':'pagesperso/dro','ydo':'pagesperso/ydo','iict_com':'unity/iict_com','ssm':'home/ssm','web':'home/web','crt':'pagesperso/crt','cgn':'pagesperso/cgn','oez':'pagesperso/oez','adz':'pagesperso/adz','oli':'pagesperso/oli','pgn':'pagesperso/pgn','postformation':'formation/postformation','jwg':'pagesperso/jwg','diplomes':'formation/diplomes','dge':'pagesperso/dge','grt':'pagesperso/grt','useraware':'home/useraware','gvt':'pagesperso/gvt','master_tic':'formation/master_tic','els':'pagesperso/els','apt':'pagesperso/apt','presentation':'home/presentation','mri':'pagesperso/mri'};
+
+
+var cmsPagepattern = new RegExp("javascript:gotoCmsPage\\(\\'(.+?)\\'\\)");
+var downloadDocpattern = new RegExp("javascript:downloadDoc\\(\\'(.+?)\\'\\)");
+var linkRule = {
+   'a' : function(element) {
+      if (element.href) {
+         var cmsPageMatches = cmsPagepattern.exec(element.href);
+         if (cmsPageMatches) {
+            element.href = buildPageUrl(cmsPageMatches[1]);
+         }
+         var downloadDocMatches = downloadDocpattern.exec(element.href);
+         if (downloadDocMatches) {
+            element.href = buildDownloadDocUrl(downloadDocMatches[1]);
+            if (element.target) {
+               element.target = '_self';
+            }
+         }
+      }
+      var onclick = element.getAttribute('onclick');
+      if (onclick) {
+         var cmsPageMatches = cmsPagepattern.exec(onclick);
+         if (cmsPageMatches) {
+            onclick = onclick.replace(cmsPagepattern, buildPageUrl(cmsPageMatches[1]));
+            element.setAttribute('onclick', onclick);
+         }
+         var downloadDocMatches = downloadDocpattern.exec(onclick);
+         if (downloadDocMatches) {
+            element.setAttribute('onclick', '');
+            element.href = buildDownloadDocUrl(downloadDocMatches[1]);
+         }
+      }
+   }
+}
+
+function buildPageUrl(pageId) {
+   if (pageId in map_pageId_url) {
+      return 'http://www.iict.ch/' + map_pageId_url[pageId];
+   } else {
+      return '#';
+   }
+}
+
+function buildDownloadDocUrl(docId) {
+   return 'http://www.iict.ch/downloadDoc?kobid=' + docId;
+}
+
+Behaviour.register(linkRule);
+
+</script>	<link href="iict_files/iict.css" rel="stylesheet" type="text/css">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body leftmargin="0" topmargin="5" bgcolor="#ffffff" marginheight="5" marginwidth="0">
+	<table align="center" border="0" cellpadding="0" cellspacing="0" width="754">
+		<tbody><tr>
+			<td style="padding-bottom: 2px;">
+				<table cellpadding="0" cellspacing="0" width="100%">
+					<tbody><tr>
+						<td style="padding-left: 7px;"><img src="iict_files/iict.gif"></td>
+						<td style="padding-right: 7px;" align="right">
+							<table border="0" cellpadding="0" cellspacing="0">
+								<tbody><tr>
+									<td class="titlePage">Bienvenue à l&#8217;IICT</td>
+								</tr>
+								<tr>
+									<td class="annotation">Institute for Information and Communication Technologies</td>
+								</tr>
+							</tbody></table>
+						</td>
+					</tr>
+				</tbody></table>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table background="iict_files/menu_iict.gif" border="0" cellpadding="0" cellspacing="0" height="51" width="754">
+					<tbody><tr>
+						<td style="padding-left: 10px; padding-top: 3px;" width="674"><table border="0" cellpadding="0" cellspacing="0">
+	<tbody><tr height="23">
+		<td height="23">
+			<table border="0" cellpadding="0" cellspacing="0">
+				<tbody><tr>
+																																								<td style="padding-right: 7px;"><a href="http://www.iict.ch/home" class="menu01Over">Home</a></td>
+														<td bgcolor="#f2c9af"><img src="iict_files/spacer.gif" alt="" title="" height="23" width="1"></td>
+							<td bgcolor="#f6a36e"><img src="iict_files/spacer.gif" alt="" title="" height="23" width="1"></td>
+							<td style="padding-right: 7px;"><img src="iict_files/spacer.gif" alt="" title="" height="23" width="1"></td>
+																																														<td style="padding-right: 7px;"><a href="http://www.iict.ch/actu" class="menu01">Actualités </a></td>
+														<td bgcolor="#f2c9af"><img src="iict_files/spacer.gif" alt="" title="" height="23" width="1"></td>
+							<td bgcolor="#f6a36e"><img src="iict_files/spacer.gif" alt="" title="" height="23" width="1"></td>
+							<td style="padding-right: 7px;"><img src="iict_files/spacer.gif" alt="" title="" height="23" width="1"></td>
+																																														<td style="padding-right: 7px;"><a href="http://www.iict.ch/unity" class="menu01">Unités de recherches</a></td>
+														<td bgcolor="#f2c9af"><img src="iict_files/spacer.gif" alt="" title="" height="23" width="1"></td>
+							<td bgcolor="#f6a36e"><img src="iict_files/spacer.gif" alt="" title="" height="23" width="1"></td>
+							<td style="padding-right: 7px;"><img src="iict_files/spacer.gif" alt="" title="" height="23" width="1"></td>
+																																														<td style="padding-right: 7px;"><a href="http://www.iict.ch/partenaires" class="menu01">Partenaires</a></td>
+														<td bgcolor="#f2c9af"><img src="iict_files/spacer.gif" alt="" title="" height="23" width="1"></td>
+							<td bgcolor="#f6a36e"><img src="iict_files/spacer.gif" alt="" title="" height="23" width="1"></td>
+							<td style="padding-right: 7px;"><img src="iict_files/spacer.gif" alt="" title="" height="23" width="1"></td>
+																																														<td style="padding-right: 7px;"><a href="http://www.iict.ch/formation" class="menu01">Formation</a></td>
+														<td bgcolor="#f2c9af"><img src="iict_files/spacer.gif" alt="" title="" height="23" width="1"></td>
+							<td bgcolor="#f6a36e"><img src="iict_files/spacer.gif" alt="" title="" height="23" width="1"></td>
+							<td style="padding-right: 7px;"><img src="iict_files/spacer.gif" alt="" title="" height="23" width="1"></td>
+																																														<td style="padding-right: 7px;"><a href="http://www.iict.ch/contact" class="menu01">Contact</a></td>
+														<td bgcolor="#f2c9af"><img src="iict_files/spacer.gif" alt="" title="" height="23" width="1"></td>
+							<td bgcolor="#f6a36e"><img src="iict_files/spacer.gif" alt="" title="" height="23" width="1"></td>
+							<td style="padding-right: 7px;"><img src="iict_files/spacer.gif" alt="" title="" height="23" width="1"></td>
+																																																</tr>
+			</tbody></table>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<table border="0" cellpadding="0" cellspacing="0">
+				<tbody><tr height="25">
+					<td class="menu02" height="25">
+																																																																								 																											<a href="http://www.iict.ch/home/presentation" class="menu02">Présentation </a>
+																														 | 																											<a href="http://www.iict.ch/home/organisation" class="menu02">Organisation et Ressources humaines</a>
+																																															</td>
+				</tr>
+			</tbody></table>
+		</td>
+	</tr>
+</tbody></table></td>
+						<td style="padding-right: 10px; padding-top: 3px;" width="80">
+							<table align="right" border="0" cellpadding="0" cellspacing="0">
+								<tbody><tr height="23">
+									<td align="right" height="23">
+		                                <!--table border="0" cellspacing="0" cellpadding="0">
+		                                    <tr>
+		                                        <form method="get" action="">
+		                                            <td bgcolor="#d0d0d0"><img src="/keo/resources/sites/iict/images/others/spacer.gif" width="1" height="23" /></td>
+		                                            <td bgcolor="#a1adb4"><img src="/keo/resources/sites/iict/images/others/spacer.gif" width="1" height="23" /></td>
+		                                            <td style="padding-left:7px; padding-right:5px">input search</td>
+		                                            <td>button search</td>
+		                                        </form>
+		                                    </tr>
+		                                </table//-->
+		                            </td>
+								</tr>
+								<tr height="25">
+									<td align="right" height="25">								</td></tr>
+							</tbody></table>
+						</td>
+					</tr>
+				</tbody></table>
+			</td>
+		</tr>
+		<tr>
+			<td align="center">
+				<table class="body" border="0" cellpadding="0" cellspacing="0">
+					<tbody><tr>
+						<td valign="top">
+							<table class="tableCenterLeft" border="0" cellpadding="0" cellspacing="0">
+								<tbody><tr>
+									<td>
+                               			<table border="0" cellpadding="0" cellspacing="0" width="100%">
+     <tbody><tr>
+         <td>
+						    		    		    <span class="text">
+
+
+
+	
+	
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<tbody>
+		<tr>
+			<td>
+			<table border="0" cellpadding="0" cellspacing="0" width="100%">
+				<tbody>
+					<tr>
+						<td style="width: 142px;" align="right" valign="middle">
+						<p align="right">
+						<a href="http://useraware.iict.ch/" target="_blank"><img alt=" " src="iict_files/SE.gif" border="0" height="78" width="78"></a> 
+						</p>
+						</td>
+						<td class="text" style="width: 176px;" align="left" valign="middle"><a href="http://useraware.iict.ch/" style="color: rgb(0, 0, 0); text-decoration: none;" target="_blank"><strong>Environnements adaptatifs</strong></a></td>
+						<td style="width: 78px;" align="center" valign="middle">
+						<p align="right">
+						<a href="http://netsec.iict.ch/" target="_blank"><img alt=" " src="iict_files/SSM.gif" border="0" height="78" width="78"></a> 
+						</p>
+						</td>
+						<td class="text" style="width: 177px;" align="left" valign="middle"><a href="http://netsec.iict.ch/" style="color: rgb(0, 0, 0); text-decoration: none;" target="_blank"><strong>Technologies de réseaux et sécurité de l'information</strong></a></td>
+					</tr>
+				</tbody>
+			</table>
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>
+			<table border="0" cellpadding="0" cellspacing="0" width="100%">
+				<tbody>
+					<tr>
+						<td style="width: 142px;" align="right" valign="middle">
+						<p align="right">
+						<img alt=" " src="iict_files/HLPRC.gif" border="0" height="78" width="78"> 
+						</p>
+						</td>
+						<td class="text" style="width: 176px;" align="left" valign="middle"><strong>Réseaux d'accès à haut-débit (PLC, UWB, DSL) et Wireless low power communications</strong></td>
+						<td style="width: 78px;" align="center" valign="middle">
+						<p align="right">
+						<img alt=" " src="iict_files/WEB.gif" border="0" height="78" width="78"> 
+						</p>
+						</td>
+						<td class="text" style="width: 177px;" align="left" valign="middle"><strong>E-Content</strong></td>
+					</tr>
+				</tbody>
+			</table>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<p>
+&nbsp;
+</p>
+<!--
+<p align="justify">
+<strong>Environments adaptatifs&nbsp;:</strong> Cet axe&nbsp;strat&eacute;gique regroupe toutes les activit&eacute;s li&eacute;es au domaine biom&eacute;dical. Les points forts :&nbsp;t&eacute;l&eacute;m&eacute;trie m&eacute;dicale, t&eacute;l&eacute;surveillance et t&eacute;l&eacute;assistance, gestion de donn&eacute;es patients (Interfaces multimodales, bases de donn&eacute;es, authentification, data mining), gestion de donn&eacute;es multim&eacute;dia, gestion de donn&eacute;es patients. 
+</p>
+<p align="justify">
+<strong>Technologies de r&eacute;seaux et s&eacute;curit&eacute; de l&#39;information :</strong> Cet axe&nbsp;strat&eacute;gique regroupe toutes les activit&eacute;s li&eacute;es aux&nbsp;services et &agrave; la s&eacute;curit&eacute; informatique.&nbsp;Les points forts :&nbsp;mesures et analyses des performances, qualit&eacute; de service sur les r&eacute;seaux IP (QoS), security management (FW, IDS, IPS, IDMEF, Logfiles, data maninig), gestion des r&eacute;seaux IP, IPv6 : migration, s&eacute;curit&eacute;, mobilit&eacute;. 
+</p>
+<p align="justify">
+<strong>R&eacute;seaux d&#39;acc&egrave;s &agrave; haut-d&eacute;bit (PLC, UWB, DSL) et Wireless low power communications :</strong>&nbsp;Cet axe&nbsp;strat&eacute;gique regroupe toutes les activit&eacute;s li&eacute;es technologies suivantes (SOHO, PLC, DSL, UWB, WIFI, WiMAX, RF Low Power, RFID,EMC). Les points forts sont : communications RF &agrave; basse consommation, communications radio, frequency identification (RFID), r&eacute;seaux haut-d&eacute;bit SOHO, les communications sur courant porteur&nbsp;(PLC), WIFI, Ultra-Wide-Band (UWB) , res r&eacute;seaux AD-HOC, qualit&eacute; de service MAC et WIFI. 
+</p>
+<p align="justify">
+<strong>E-Content&nbsp;:</strong> Cet axe&nbsp;strat&eacute;gique regroupe toutes les activit&eacute;s de document engineering, de polypublishing crossmedia, de visualisation interactive d&#39;espaces tridimensionnels sur ordinateur ainsi que les&nbsp;interactions homme-machine. Les points forts sont : crossmedia, polypublishing, content management, e-learning, knowledge management, geoinformatics, webmapping, webservices. 
+</p>
+<p>
+&nbsp;
+</p>
+-->
+</span>
+		    		</td>
+     </tr>      
+</tbody></table>
+                            			</td>
+								</tr>
+							</tbody></table>
+						</td>
+						<td valign="top">
+							<table class="tableRight" border="0" cellpadding="0" cellspacing="0">
+								<tbody><tr>
+									<td>
+                               			<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<tbody><tr>
+		<td>
+													<table border="0" cellpadding="0" cellspacing="0">
+	<tbody><tr>
+		<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="1" width="1"></td>
+		<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="1" width="158"></td>
+		<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="1" width="1"></td>
+	</tr>
+	<tr>
+		<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="25" width="1"></td>
+		<td>
+			<table border="0" cellpadding="0" cellspacing="0">
+				<tbody><tr>
+					<td background="iict_files/bg_heading.GIF">
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tbody><tr>
+								<td><img src="iict_files/spacer.gif" height="19" width="5"></td>
+								<td class="annotationWhiteBold">Unités de Recherche</td>
+							</tr>
+						</tbody></table>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="1" width="158"></td>
+				</tr>
+				<tr>
+					<td>
+						<table class="tableMarginBlock" border="0" cellpadding="0" cellspacing="0">
+							<tbody><tr>
+								<td class="annotation">
+
+
+
+	
+	
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<tbody>
+		<tr>
+			<td style="width: 5%;" align="center" valign="middle"><img alt=" " src="iict_files/arrow.gif" border="0" height="9" width="7"></td>
+			<td align="left" valign="middle"><a class="text" href="http://cap3d.iict.ch/" title="IICT-CAP 3D" target="_blank">IICT-CAP 3D</a></td>
+		</tr>
+		<tr>
+			<td align="center" valign="middle"><img alt=" " src="iict_files/arrow.gif" border="0" height="9" width="7"></td>
+			<td align="left" valign="middle"><a class="text" href="http://sysin.iict.ch/" target="_blank">IICT-SYSIN</a></td>
+		</tr>
+		<tr>
+			<td align="center" valign="middle"><img alt=" " src="iict_files/arrow.gif" border="0" height="9" width="7"></td>
+			<td align="left" valign="middle"><a class="text" href="http://ina.iict.ch/" target="_blank">IICT-INA</a></td>
+		</tr>
+		<tr>
+			<td align="center" valign="middle"><img alt=" " src="iict_files/arrow.gif" border="0" height="9" width="7"></td>
+			<td align="left" valign="middle"><a class="text" href="http://com.iict.ch/" title="IICT-COM" target="_blank">IICT-COM</a></td>
+		</tr>
+	</tbody>
+</table>
+</td>
+							</tr>
+						</tbody></table>
+					</td>
+				</tr>
+			</tbody></table>
+		</td>
+		<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="25" width="1"></td>
+	</tr>
+	<tr>
+		<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="1" width="1"></td>
+		<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="1" width="158"></td>
+		<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="1" width="1"></td>
+	</tr>
+</tbody></table>
+
+							 </td>
+	</tr>
+	<tr height="15">
+		<td height="15"></td>
+	</tr>
+	<tr>
+		<td>
+						<table border="0" cellpadding="0" cellspacing="0">
+	<tbody><tr>
+		<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="1" width="1"></td>
+		<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="1" width="158"></td>
+		<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="1" width="1"></td>
+	</tr>
+	<tr>
+		<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="25" width="1"></td>
+		<td>
+			<table border="0" cellpadding="0" cellspacing="0">
+				<tbody><tr>
+					<td background="iict_files/bg_heading.GIF">
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tbody><tr>
+								<td><img src="iict_files/spacer.gif" height="19" width="5"></td>
+								<td class="annotationWhiteBold">Raccourcis</td>
+							</tr>
+						</tbody></table>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="1" width="158"></td>
+				</tr>
+				<tr>
+					<td>
+						<table class="tableMarginBlock" border="0" cellpadding="0" cellspacing="0">
+							<tbody><tr>
+								<td class="annotation">
+
+
+
+	
+	
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<tbody>
+		<tr>
+			<td style="width: 5%;" align="center" valign="middle"><img alt=" " src="iict_files/arrow.gif" border="0" height="9" width="7"></td>
+			<td align="left" valign="middle"><a class="text" href="http://mediatools.iict.ch/" title="MEDIATOOLS" target="_blank">MEDIATOOLS</a></td>
+		</tr>
+		<tr>
+			<td align="center" valign="middle"><img alt=" " src="iict_files/arrow.gif" border="0" height="9" width="7"></td>
+			<td align="left" valign="middle"><a class="text" href="http://www.cett.ch/" target="_blank">Ce<em>TT</em></a></td>
+		</tr>
+		<tr>
+			<td align="center" valign="middle"><img alt=" " src="iict_files/arrow.gif" border="0" height="9" width="7"></td>
+			<td align="left" valign="middle"><a class="text" href="http://www.heig-vd.ch/" target="_blank">HEIG-VD</a></td>
+		</tr>
+		<tr>
+			<td align="center" valign="middle"><img alt=" " src="iict_files/arrow.gif" border="0" height="9" width="7"></td>
+			<td align="left" valign="middle"><a class="text" href="http://www.hes-so.ch/CMS/default.asp?ID=1010" title="RCSO" target="_blank">RCSO</a></td>
+		</tr>
+	</tbody>
+</table>
+</td>
+							</tr>
+						</tbody></table>
+					</td>
+				</tr>
+			</tbody></table>
+		</td>
+		<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="25" width="1"></td>
+	</tr>
+	<tr>
+		<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="1" width="1"></td>
+		<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="1" width="158"></td>
+		<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="1" width="1"></td>
+	</tr>
+</tbody></table>
+
+				</td>
+	 </tr>
+</tbody></table>
+                            			</td>
+								</tr>
+							</tbody></table>
+						</td>
+					</tr>
+				</tbody></table>
+			</td>
+		</tr>
+		<tr>
+			<td bgcolor="#f58a45"><img src="iict_files/spacer.gif" height="1" width="754"></td>
+		</tr>
+		<tr>
+			<td style="padding: 5px;" align="center">
+                <table align="center" border="0" cellpadding="0" cellspacing="0">
+                    <tbody><tr>
+                        <td><span style="padding-right: 5px;" class="annotationGray">Copyright © 2006 IICT</span><span class="annotationGray">|</span><span style="padding-left: 5px;"><a href="http://www.keo.ch/" target="_blank" class="annotationGray">Powered by KEO</a></span></td>
+                    </tr>
+                </tbody></table>
+            </td>
+		</tr>
+	</tbody></table>
+</body></html>
