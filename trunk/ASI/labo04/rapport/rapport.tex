@@ -1,3 +1,4 @@
+
 % -----------------------------------------------------------------------------
 % Auteurs : Romain de Wolff, Bruno da Silva, Gilles Meier
 % -----------------------------------------------------------------------------
@@ -13,6 +14,7 @@
 
 \usepackage[dvips]{graphicx}
 \usepackage{epstopdf}
+\usepackage[parfill]{parskip}             % Activate to begin paragraphs with an empty line rather than an indent
 
 
 % -----------------------------------------------------------------------------
@@ -107,7 +109,7 @@
 \begin{titlepage}
 	\begin{center}
 
-	\includegraphics[width=6cm]{img/HEIG-VD.jpg}\\
+	\includegraphics[width=6cm]{img/HEIG-VD.jpg}
 	
 		\vspace{3cm}
 		\LARGE \branche %Laboratoire No %\labonummer \\
@@ -134,10 +136,32 @@
 \newpage
 \pagestyle{fancy}
 \pagenumbering{arabic}
-
+ 
 % -----------------------------------------------------------------------------
 \section{Introduction}
 % -----------------------------------------------------------------------------
+
+% -----------------------------------------------------------------------------
+\section{Clé publique générée}
+% -----------------------------------------------------------------------------
+
+Voici la clé publique qui nous a été generée par Keytool :
+
+\scriptsize{
+\begin{verbatim}
+-----BEGIN NEW CERTIFICATE REQUEST-----
+MIIBujCCASMCAQAwejELMAkGA1UEBhMCQ0gxCzAJBgNVBAgTAlZEMREwDwYDVQQHEwhMYXVzYW5u
+ZTEZMBcGA1UEChMQd3d3LlRBR0FEQVJULmNvbTEcMBoGA1UECxMTUGVyc29uYWwgV2ViIFNlcnZl
+cjESMBAGA1UEAxMJMTI3LjAuMC4xMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCjcLrCVl/h
+50CuSHjNevhTrRS0bCQ1oCN27c3hTLdDbLVjDNqUJqziTXpowFTUXmM/hrbKwVzM5+I4krwx/6dW
+oVVhaGywxkQwN4mQ2rgFvkdm8xIpPKfyVMTLYRQLfd89qLYC8C0SUR3MqzuNRpT7lnla1RB9A6Mg
+IIx53mf8UQIDAQABoAAwDQYJKoZIhvcNAQEEBQADgYEAAht/hvwHdT1Qb5ZPe6EmBbMJe6VozqQT
+yzaA2q6+4Y+FzuQ0PT7oePyg22e6HTiEtxRIhNGiCXVlceeNxKYFBGoBGVSGOHvauWFGRntErntQ
+X7vYKW5XCjHfEpsMwKsj42b4zMFn743IT/LmiC/NsghW3q+UD7AUslld4+XaX68=
+-----END NEW CERTIFICATE REQUEST-----
+\end{verbatim}
+}
+
 % -----------------------------------------------------------------------------
 \section{Réponses aux questions}
 % -----------------------------------------------------------------------------
@@ -172,6 +196,7 @@ En cliquant sur le cadenas on peut afficher les informations relatives à la sé
 	\label{fig:infosecu}
 \end{figure}
 
+La figure \ref{fig:infosecu} nous montre les informations sur le certificat et nous dit que nous faisons confiance au CA mentionné. En cliquant sur le bouton “View” on obtient les informations sur le certificat, exactement les information que nous avons introduites lors de la création à l'aide de \emph{Keytool}. La figure \ref{fig:certif} nous montre cette fenêtre.
 
 \begin{figure}[htbp]
    \begin{center}
@@ -183,26 +208,13 @@ En cliquant sur le cadenas on peut afficher les informations relatives à la sé
 
 \subsection{En examinant le certificat du serveur, comment pouvez-vous en déduire que celui-ci est auto-signé?}
 
+On le voit bien sur la figure \ref{fig:certif}: les champs “Issued To” et “Issued By” sont identiques. On sait dès lors que le certificat est auto-signé. 
+
 \subsection{Pourquoi serait-il intéressant de faire signer le certificat par une entité comme Verisign?}
 
-% -----------------------------------------------------------------------------
-\section{Clé publique}
-% -----------------------------------------------------------------------------
+Verisign est une entreprise de type CA: elle émet des certificats qu'elle vends. Ces certificats sont réputés fiable. L'avantage d'avoir un certificat d'un CA reconnue est que les utilisateurs qui se connecte sur le site peuvent, grâce à la renomée de Verisign, savoir que le site utilise une encryption de qualité. C'est donc pour des questions de sécurité et de véracité que nous avons avantage à utiliser les services offert par une société comme Verisign.
 
-\scriptsize{
-\begin{verbatim}
------BEGIN NEW CERTIFICATE REQUEST-----
-MIIBujCCASMCAQAwejELMAkGA1UEBhMCQ0gxCzAJBgNVBAgTAlZEMREwDwYDVQQHEwhMYXVzYW5u
-ZTEZMBcGA1UEChMQd3d3LlRBR0FEQVJULmNvbTEcMBoGA1UECxMTUGVyc29uYWwgV2ViIFNlcnZl
-cjESMBAGA1UEAxMJMTI3LjAuMC4xMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCjcLrCVl/h
-50CuSHjNevhTrRS0bCQ1oCN27c3hTLdDbLVjDNqUJqziTXpowFTUXmM/hrbKwVzM5+I4krwx/6dW
-oVVhaGywxkQwN4mQ2rgFvkdm8xIpPKfyVMTLYRQLfd89qLYC8C0SUR3MqzuNRpT7lnla1RB9A6Mg
-IIx53mf8UQIDAQABoAAwDQYJKoZIhvcNAQEEBQADgYEAAht/hvwHdT1Qb5ZPe6EmBbMJe6VozqQT
-yzaA2q6+4Y+FzuQ0PT7oePyg22e6HTiEtxRIhNGiCXVlceeNxKYFBGoBGVSGOHvauWFGRntErntQ
-X7vYKW5XCjHfEpsMwKsj42b4zMFn743IT/LmiC/NsghW3q+UD7AUslld4+XaX68=
------END NEW CERTIFICATE REQUEST-----
-\end{verbatim}
-}
+L'utilisateur sera donc mis en confiance et n'aura plus d'avertissement du navigateur comme quoi le certificat est douteux. 
 
 % -----------------------------------------------------------------------------
 \section{Conclusion}
@@ -217,12 +229,5 @@ X7vYKW5XCjHfEpsMwKsj42b4zMFn743IT/LmiC/NsghW3q+UD7AUslld4+XaX68=
 \small
 \begin{description}
 	\item[\url{http://jquery.com/}] {Site officiel de jQuery.}
-	\item[\url{http://www.jquery.info/}] {Site francophone sur jQuery.}
-	\item[\url{http://docs.jquery.com/Tutorials}] {Tutoriels officiels.}
-	\item[\url{http://www.gotapi.com/html}] {Description de l'API jQuery ainsi que HTML. Très utile comme référence rapide et disponibles pour une grande variété de langages courants.}
-	\item[\url{http://developer.mozilla.org/fr/docs/Le_DOM_et_JavaScript}] {Explication du DOM et JavaScript.}
-	\item[\url{http://www.yoyodesign.org/doc/w3c/dom2-core/introduction.html}] {Documentation DOM.}
-	\item[\url{http://fr.wikipedia.org/wiki/Document_Object_Model}] {Documentation DOM.}
-	\item[\url{http://fr.wikipedia.org/wiki/Javascript}] {Documentation JavaScript.}
 \end{description}
 \end{document}
