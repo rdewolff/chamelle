@@ -31,9 +31,11 @@ public final class WebServer {
 	 */
 	public static void main (String argv[]) {
 		// Verification du parametre (numero de port)
-		if (argv.length == 1) {
+		if (argv.length == 2) {
 			// Obtenir le numero de port depuis la ligne de commande
 			int port = Integer.valueOf(argv[0]);
+			boolean requiertAuthentificationClient = 
+				( Integer.valueOf(argv[1]) == 0 ? false : true );
 			
 			try {
 				/* implémentation de la gestion du SSL */
@@ -80,7 +82,7 @@ public final class WebServer {
 		
 		// Erreur de syntaxe lors du lancement
 		else {
-			System.out.println("Syntax error: WebServer <port>");
+			System.out.println("Syntax error: WebServer <requiert authentification du client? (0=non, autre entier=oui)> <port (default SSL=443>");
 		}
 	}
 }
