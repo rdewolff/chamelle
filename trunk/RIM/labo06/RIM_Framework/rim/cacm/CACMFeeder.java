@@ -45,16 +45,16 @@ public class CACMFeeder implements Feeder {
 		// Queue des URI en cours de parcours
 		Queue<LeafPage> uriCollection = new LinkedList<LeafPage>();
 		
-		// Pages visitées (hash des pages)
+		// Pages visitï¿½es (hash des pages)
 		TreeSet<String> pagesVisited = new TreeSet<String>();
 		
-		// Liste des URI visitées (hash des URI)
+		// Liste des URI visitï¿½es (hash des URI)
 		TreeSet<String> urisVerified = new TreeSet<String>();
 		
-		// Masque pour éviter de parcourir tout le web
+		// Masque pour ï¿½viter de parcourir tout le web
 		Matcher uriMatcher = DEFAULT_MASK.matcher(uri);
 		
-		// Comptage des URI indexées
+		// Comptage des URI indexï¿½es
 		int count = 0;
 		
 		// L'URI initiale ne respecte pas le masque
@@ -68,7 +68,7 @@ public class CACMFeeder implements Feeder {
 		
 		// Parcours du web
 		while (!uriCollection.isEmpty()) {
-			// Récupération d'une URI
+			// Rï¿½cupï¿½ration d'une URI
 			LeafPage currentURI = uriCollection.poll();
 			
 			System.out.println("Current : " + currentURI.uri() + " / Nb rest : " 
@@ -78,50 +78,50 @@ public class CACMFeeder implements Feeder {
 			ParsedData page;
 			
 			try {
-				// Récupération de la page
+				// Rï¿½cupï¿½ration de la page
 				page = WebParser.parseURL(new URL(currentURI.uri()));
 				
 				// Comptabilise au besoin la page pour le sous domaine
 				subDomain(currentURI);
 				
-				// Mémorise le statut
+				// Mï¿½morise le statut
 				currentURI.status(page.getStatusCode());
 
-				// Vérification statut et contenu
+				// Vï¿½rification statut et contenu
 				if (page.getStatusCode() == 200 &&
 					page.getPageContent() != null) {
 					
 					// Hachage du contenu de la page
 					String hash = hashContent(page.getPageContent()); 
 					
-					// Vérifie si la page à deja été visitée
+					// Vï¿½rifie si la page ï¿½ deja ï¿½tï¿½ visitï¿½e
 					if (!pagesVisited.contains(hash)) {
 						// Indexation de la page
 						indexer.index(currentURI.uri(), page.getPageContent());
 					
-						// Un fichier de plus d'indexé
+						// Un fichier de plus d'indexï¿½
 						count++;
 						
-						// Ajout du hash à la liste des visités
+						// Ajout du hash ï¿½ la liste des visitï¿½s
 						pagesVisited.add(hash);
 						
-						// Récupération des URIs de la page courante
+						// Rï¿½cupï¿½ration des URIs de la page courante
 						Set<String> uris = page.getPageHrefs();
 						
 						// Parcours des URIs
 						for (String nextURI : uris) {
-							// URI invalide ou à écarter
+							// URI invalide ou ï¿½ ï¿½carter
 							if (nextURI == null || 
 								Constants.STOP_URIS.matcher(nextURI).find())
 								continue;
 
-							// Préparation de l'URI à visiter
+							// Prï¿½paration de l'URI ï¿½ visiter
 							nextURI = urlToPrepare(currentURI.uri(), nextURI);
 							
 							if (nextURI == null)
 								continue;
 							
-							// Vérification de la validité de l'URI par
+							// Vï¿½rification de la validitï¿½ de l'URI par
 							// rapport au masque de contrainte
 							uriMatcher = DEFAULT_MASK.matcher(nextURI);
 							if (!uriMatcher.find())
@@ -130,7 +130,7 @@ public class CACMFeeder implements Feeder {
 							// Hachage de l'URI courante du doc courant
 							String uriHash = hashContent(nextURI); 
 							
-							// Evite de reparcourir une même URI plusieurs fois
+							// Evite de reparcourir une mï¿½me URI plusieurs fois
 							if(!urisVerified.contains(uriHash)) {
 								urisVerified.add(uriHash);
 								uriCollection.add(
@@ -141,7 +141,7 @@ public class CACMFeeder implements Feeder {
 				}
 			}
 			
-			// Impossible d'accéder à la page
+			// Impossible d'accï¿½der ï¿½ la page
 			catch (IOException ioe) {
 				page = null;
 			}
@@ -162,7 +162,7 @@ public class CACMFeeder implements Feeder {
 	 * Gestion des statistiques des sous
 	 * domaines et du nombre de documents
 	 * par sous domaines
-	 * @param lp URI à analyser
+	 * @param lp URI ï¿½ analyser
 	 */
 	private void subDomain(LeafPage lp) {
 		String sub = lp.uri().replace("http://", "");
@@ -177,15 +177,15 @@ public class CACMFeeder implements Feeder {
 	}
 	
 	/**
-	 * Récupère les sous-domaines visités
-	 * @return Sous domaines visités
+	 * Rï¿½cupï¿½re les sous-domaines visitï¿½s
+	 * @return Sous domaines visitï¿½s
 	 */
 	public HashMap<String, Integer> subDomains() {
 		return subDomains;
 	}
 	
 	/**
-	 * Récupère la racine de l'arbre de navigation
+	 * Rï¿½cupï¿½re la racine de l'arbre de navigation
 	 * qui permet de connaitre les pages inatteignables
 	 * @return Racine de l'arbre de navigation
 	 */
@@ -195,7 +195,7 @@ public class CACMFeeder implements Feeder {
 	
 	/**
 	 * Effectue le hachage d'un contenu
-	 * @param content Contenu à hacher
+	 * @param content Contenu ï¿½ hacher
 	 * @return Hash obtenu
 	 */
 	private String hashContent(String content) {
@@ -215,7 +215,7 @@ public class CACMFeeder implements Feeder {
 	
 	/**
 	 * Gestion d'un arbre de navigation
-	 * @author J. Schmid & L. Prévost
+	 * @author J. Schmid & L. Prï¿½vost
 	 */
 	public class LeafPage implements Comparable<LeafPage> {
 		// Uri du noeud
@@ -258,7 +258,7 @@ public class CACMFeeder implements Feeder {
 		}
 		
 		/**
-		 * Détermine le statut du noeud courant
+		 * Dï¿½termine le statut du noeud courant
 		 * @param status Statut
 		 */
 		public void status(int status) {
@@ -276,7 +276,7 @@ public class CACMFeeder implements Feeder {
 		/**
 		 * Affiche le noeud parent et toutes ses pages
 		 * enfants qui correspondent au code voulu
-		 * d'une racine précise et toute sa sous arborescence
+		 * d'une racine prï¿½cise et toute sa sous arborescence
 		 * @return Nombre de liens morts
 		 */
 		public int showInvalids(int status) {
@@ -291,7 +291,7 @@ public class CACMFeeder implements Feeder {
 					rValue++;
 				}
 
-				// Récursions, stop sur liste vide
+				// Rï¿½cursions, stop sur liste vide
 				rValue += lp.showInvalids(status); 
 			}
 			
