@@ -23,8 +23,8 @@
 \newcommand{\branchetag}{ASI}
 \newcommand{\branche}{Applications et Services Internet}
 % \newcommand{\labonummer}{}
-\newcommand{\laboname}{SSL - JSSE (Java Secure Socket Extension)}
-\newcommand{\auteurOne}{Romain de Wolff}
+\newcommand{\laboname}{Laboratoire SSL avec JSSE}
+\newcommand{\auteurOne}{Romain de Wolff \\ Simon Hintermann}
 % \newcommand{\auteurTwo}{Bruno da Silva}
 \newcommand{\promo}{IL2008}
 \newcommand{\titreDocument}{Rapport de laboratoire}
@@ -49,8 +49,8 @@
   %keywords={break,case,catch,continue,else,elseif,end,for,function,
   %   global,if,otherwise,persistent,return,switch,try,while},
   keywords={script, document, function},
-  basicstyle=\ttfamily\small,
-  % basicstyle=\scriptsize,
+  %basicstyle=\ttfamily\small,
+  basicstyle=\scriptsize,
   keywordstyle=\color{blue},
   commentstyle=\color{dkgreen},
   stringstyle=\color{red},
@@ -140,22 +140,23 @@
 Le but de ce laboratoire est de modifier le serveur web créé en Java durant un laboratoire précédant et d'y implémenter le protocole SSL/TLS. Notre serveur web doit se lancer dans deux mode différent: un mode avec authentification du client nécessaire et un autre sans. 
 
 % -----------------------------------------------------------------------------
-\section{Utilisation du logiciel}
+\section{Utilisation du serveur web}
 % -----------------------------------------------------------------------------
 
 Le lancement du serveur s'effectue à l'aide de la ligne de commande. Pour lancer le serveur avec authentification du client sur le port 443 (port par défaut de SSL) il faut utiliser la commande suivante:
 
-\begin{verbatim}
+\lstset{frameround=fttt}
+\begin{lstlisting}[frame=trBL]
 	java WebServer 1 443
-\end{verbatim}
+\end{lstlisting}
 
-Le “1” permet de dire que l'on activer l'authentification du client. Pour le rendre facultatif, on utilisera la commande suivante:
+Le “1” permet de dire que l'on active l'authentification du client. Pour le rendre facultatif, on utilisera un “0” à la place, comme le montre la commande suivante:
 
-\begin{verbatim}
+\begin{lstlisting}[frame=trBL]
 	java WebServer 0 443
-\end{verbatim}
+\end{lstlisting}
 
-Notons que pour lancer le serveur sur le port 443 comme montré ci dessus il faut exécuter la commande en administrateur. 
+Notons que pour lancer le serveur sur le port 443 comme montré ci dessus il faut exécuter la commande en tant qu'administrateur. 
 
 
 
@@ -229,29 +230,151 @@ La figure \ref{fig:infosecu} nous montre les informations sur le certificat et n
 
 \subsection{En examinant le certificat du serveur, comment pouvez-vous en déduire que celui-ci est auto-signé?}
 
-On le voit bien sur la figure \ref{fig:certif}: les champs “Issued To” et “Issued By” sont identiques. On sait dès lors que le certificat est auto-signé. 
+On le voit bien sur la figure \ref{fig:certif}: les champs “Issued To” (distribué à)  et “Issued By” (distribué par) sont identiques. On sait dès lors que le certificat est auto-signé. Certain navigateur affiche même directement l'information “Certificat Auto-Signé”. C'est le cas notamment de Safari.
 
 \subsection{Pourquoi serait-il intéressant de faire signer le certificat par une entité comme Verisign?}
 
-Verisign est une entreprise de type CA: elle émet des certificats qu'elle vends. Ces certificats sont réputés fiable. L'avantage d'avoir un certificat d'un CA reconnue est que les utilisateurs qui se connecte sur le site peuvent, grâce à la renomée de Verisign, savoir que le site utilise une encryption de qualité. C'est donc pour des questions de sécurité et de véracité que nous avons avantage à utiliser les services offert par une société comme Verisign.
+Verisign est une autorité de certification (CA): elle émet des certificats qu'elle vends. Ces certificats sont réputés fiable. L'avantage d'avoir un certificat d'un CA reconnue est que les utilisateurs qui se connecte sur le site peuvent, grâce à la renomée de Verisign, savoir que le site utilise une encryption de qualité. C'est donc pour des questions de sécurité et de véracité que nous avons avantage à utiliser les services offert par une société comme Verisign.
 
 L'utilisateur sera donc mis en confiance et n'aura plus d'avertissement du navigateur comme quoi le certificat est douteux. 
+
+% -----------------------------------------------------------------------------
+\section{Observations}
+% -----------------------------------------------------------------------------
+
+Nous allons établir deux connexions avec le serveur web différentes et les comparer. La première sans authentification du client et la seconde avec. L'annexe 1, “Communication SSL” illustre les échanges entre le client et le serveur. Des numéros y figurent auxquelles nous ferons référence lors de nos explications.
+
+Nous allons suivre le déroulement partiel des deux type de connexions. Les captures du logiciel Wireshark sont incluses afin de bien voir ce qu'il se passe lors de la connexion. 
+
+Les premiers message échangé (1) font partie du \emph{3 way handshake}. C'est à ce moment que le navigateur web (dans notre exemple Firefox) établit une connexion avec le serveur. Ces messages ne sont pas propres à SSL mais il est intéressant de les mentionner ici.
+
+Le client envoie un message \texttt{Client Hello} (2) qui contient la liste des algorithmes et la dernière version de SSL qu'il supporte.
+
+Le serveur effectue les choix de \emph{cipher} ainsi que la version de SSL, la plus récente possible, qu'ils utiliseront pour communiquer.
+
+Le dernier message identique échangé est \texttt{Certificate} que le serveur envoie au client. Il est optionnel lorsque l'authentification du client n'est pas nécessaire mais indispensable si l'on désire authentifier le client.
+
+La étapes suivantes changent en fonction du système d'authentification choisit.
+
+\subsection{Connexion sans l'authentification client}
+
+\begin{figure}[htbp]
+   \begin{center}
+      \includegraphics[width=345px]{img/wireshark-nouser-auth.png}
+   \end{center}
+   \caption{Logiciel de capture de paquet Wireshark, communication client-serveur \underline{sans} authentification du client.}
+	\label{fig:wireshark-nouserauth}
+\end{figure}
+
+Si l'authentification du client n'est pas nécessaire, le message suivant est \texttt{Server Hello Done} (5), envoyé par le serveur. Il permet d'indiquer au client que les négociations initiales sont terminées de son côté. 
+
+Dans les étapes suivantes, le client va échanger des informations pour permettre de créer les clés symétriques (6, \texttt{Client Key Exchange}). Une fois la clé symétrique partagée, le client demande de passer mode sécurisé (7 et 8, \texttt{Change Cipher Spec}). Le serveur envoie aussi (8) un message \texttt{Change Cipher Spec} qui va permettre finalement de communiquer de manière chiffrée. C'est les message de type \texttt{Application Data} qui contiennent les données chiffrées transmises entre le client et le serveur.
+
+\subsection{Connexion avec l'authentification client activée}
+
+Si l'authentification du client est demandée par le serveur, ce dernier va envoyer au client un message \texttt{Certificate Request} (4). Le serveur demande au client de lui envoyer son certificat afin de pouvoir décider si il pourra se connecter ou non.
+
+Le client envoie alors son certificat (9) que le serveur peut vérifier. 
+
+Les autres message échangé sont identiques que la version qui ne demande pas d'authentification à l'utilisateur. La négociation et le changement pour passer en mode chiffré se font de la même manière.
+
+Dans le cas ou la connexion s'établit correctement, les échanges de messages se déroulent comme illustrés sur la figure \ref{fig:wireshark-userauthOk}. Si au contraire, le client est rejeté, la communication sera brutalement interrompue comme illustré sur la figure \ref{fig:wireshark-userauthError}.
+
+\begin{figure}[htbp]
+   \begin{center}
+      \includegraphics[width=345px]{img/wireshark-with-auth-OK.png}
+   \end{center}
+   \caption{Logiciel de capture de paquet Wireshark, communication client-serveur \underline{avec} authentification du client (connexion OK).}
+	\label{fig:wireshark-userauthOk}
+\end{figure}
+
+\begin{figure}[htbp]
+   \begin{center}
+      \includegraphics[width=345px]{img/wireshark-with-auth-ERROR.png}
+   \end{center}
+   \caption{Logiciel de capture de paquet Wireshark, communication client-serveur avec authentification du client et erreur (le client ne possède pas le certificat).}
+	\label{fig:wireshark-userauthError}
+\end{figure}
+
+\subsection{Cipher utilisé}
+
+La figure \ref{fig:wireshark-cipher} nous montre clairement que le cipher utilisé pour la communication entre le client et le serveur est \texttt{TLS\_RSA\_WITH\_RC4\_128\_MD5}. Le crypthosystème utilisé correspond à celui le plus élevé compatible par le client et le serveur. Le système utilisé variera donc en fonction de ce que supporte le client et le serveur.
+
+\begin{figure}[htbp]
+   \begin{center}
+      \includegraphics[width=345px]{img/selected-cipher.png}
+   \end{center}
+   \caption{Selection du cipher utilisé lors de la communication SSL entre le client et le serveur}
+	\label{fig:wireshark-cipher}
+\end{figure}
+
+Dans la classe \texttt{WebServer.java}, nous pouvons changer la liste des \emph{ciphers} utilisé par notre serveur grâce à la constante \texttt{CIPHERSUITES}.
+
+\begin{lstlisting}[frame=trBL]
+	final static String[] CIPHERSUITES = {
+		"SSL_RSA_WITH_3DES_EDE_CBC_SHA",  
+		"SSL_RSA_WITH_RC4_128_SHA",
+		"SSL_RSA_WITH_RC4_128_MD5"
+	};
+\end{lstlisting}
+
+\subsection{Principales différences entre SSL v3 et TLS v1}
+
+Pour force l'utilisation de l'une ou l'autre des spécifications, on peut modifier l'objet \texttt{SSLContext} comme cela :
+
+\begin{lstlisting}[frame=trBL]
+SSLContext sslContext = SSLContext.getInstance("TLS");
+\end{lstlisting}
+
+Ici on a choisit \texttt{TLS}, mais on peut aussi choisir \texttt{SSLv3}. On a récupéré ces informations grâce aux méthodes \texttt{getEnabledProtocls()} et \texttt{getEnabledCipherSuites()}. Nous les affichons dans la console dont voici un extrait : 
+
+\begin{verbatim}
+	********************************************
+	Enabled Session Creation ? false
+	Protocols actifs:
+	 - SSLv2Hello
+	 - SSLv3
+	 - TLSv1
+	Ciphers actifs:
+	 - SSL_RSA_WITH_3DES_EDE_CBC_SHA
+	 - SSL_RSA_WITH_RC4_128_SHA
+	 - SSL_RSA_WITH_RC4_128_MD5
+	********************************************
+\end{verbatim}
+
+\subsection{Le message \emph{Certificate Verifiy}}
+
+Le message \texttt{Certificate Verify} est utile lorsque l'on desire authentifier le client. Pour se faire, le client signe numériquement à l'aide de sa clé privée ceci afin que le serveur puisse vérifier son identité. Le serveur pourra vérifier en utilisant la clé publique du client.
+
+\subsection{Configuration du serveur web avec système d'authentification mais sans chiffrement de données}
+
+Pour que notre serveur web effectue uniquement de l'authentification, il faut le lancer avec authentification du client et modifier l'objet \texttt{serveur} appartenant à la classe \texttt{SSLServerSocket}. La méthode \texttt{setEnableSessionCreation()} permet d'effectuer cette action.
+
+En effet, si la session n'est pas créer, on aura uniquement l'authentification qui sera effectuée. Le reste des communication ne sera pas chiffrés.
 
 % -----------------------------------------------------------------------------
 \section{Conclusion}
 % -----------------------------------------------------------------------------
 
+La découverte et l'implémentation du protocole SSL/TLS est passionnant. Nous n'avions jamais effectué de serveur sécurisé de cette manière. Le langage Java qui met à disposition JSSE nous facilite grandement la vie et rend la création d'un serveur web sécurisé relativement facile. 
+
+Après avoir lus la documentation et fait quelques tests, il nous fallut simplement du temps pour faire tout ce qui est demandé dans ce laboratoire.
 
 
 % -----------------------------------------------------------------------------
 \section{Références}
 % -----------------------------------------------------------------------------
 
-\small
+{\scriptsize
 \begin{description}
 	\item[\url{http://java.sun.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html}]	Java Secure Socket Extension (JSSE) - Reference Guide, Sun.com
 	\item[\url{http://java.sun.com/javase/technologies/security/}] Java SE Security, Sun.com
 	\item[\url{http://fr.wikipedia.org/wiki/Transport_Layer_Security}] {TLS et SSL, Wikipedia.org}
 	\item[\url{http://www.javaworld.com/javatips/jw-javatip115.html}] Secure JavaMail with SSL, JavaWorld.com
+	\item[\url{http://publib.boulder.ibm.com/infocenter/tivihelp/v2r1/index.jsp?topic=/com.ibm.itame2.doc_5.1/ss7aumst18.htm}] The SSL Handshake, IBM.com
+	\item[\url{http://www.commentcamarche.net/crypto/ssl.php3}] Cryptographie SSL, CommentCaMarche.net
+	\item[\url{http://www.computing.net/webdevel/wwwboard/forum/439.html}] SSL vs TLS, Forum Computing.Net
 \end{description}
+}
+
 \end{document}

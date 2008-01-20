@@ -24,23 +24,34 @@ import HTTP.HTTPProcessing;
  */
 public final class WebServer {
 
+	// -------------------------------------------------------------------------
+	// Parametres (constantes)
+
 	// fichiers contenant les certificats et mot de passe associés
 	// dans le cas d'un serveur SSL sans authentification du client
 	final static String MYPRIVATEKEY = 
-		"/Users/rdewolff/Documents/HEIG-VD/eclipse/svnChamelle/ASI/labo04/key/myPrivateKeystore";
+		"/Users/rdewolff/Documents/HEIG-VD/eclipse/svnChamelle/ASI/labo04/key/" +
+		"myPrivateKeystore";
 	final static String MYPRIVATEKEYPASS = "keystorePass";
-	
+
 	// dans le cas d'un serveur SSL avec authentification du client
 	final static String MYPRIVATEKEYWITHCLIENTAUTH = 
-		"/Users/rdewolff/Documents/HEIG-VD/eclipse/svnChamelle/ASI/labo04/key/myPrivateKeystoreConfiance";
+		"/Users/rdewolff/Documents/HEIG-VD/eclipse/svnChamelle/ASI/labo04/key/" +
+		"myPrivateKeystoreConfiance";
 	final static String MYPRIVATEKEYWITHCLIENTAUTHPASS = "keystorePass";
 
 	// liste des cipher utilise par le serveur
 	final static String[] CIPHERSUITES = {
+		"SSL_RSA_WITH_3DES_EDE_CBC_SHA",  
 		"SSL_RSA_WITH_RC4_128_SHA",
-		"SSL_RSA_WITH_RC4_128_MD5",
-		"SSL_RSA_WITH_3DES_EDE_CBC_SHA"
+		"TLS_RSA_WITH_RC4_128_MD5"
 	};
+
+	// est-ce que l'on veut utiliser le serveur comme systeme d'authentification
+	// uniquement ? (defaut : false)
+	final static boolean SERVICEAUTHENTIFICATIONUNIQUEMENT = false;
+
+	// -------------------------------------------------------------------------
 
 	/**
 	 * Traitement de toutes les nouvelles connexions TCP.
@@ -106,8 +117,11 @@ public final class WebServer {
 
 				}	
 
-				// Creation du contexte voulus, ici SSL version 3
+				// Creation du contexte voulus, c'est ici que l'on defini la 
+				// version de SSL ou TLS que l'on desire utiliser
+				// Par exemple "SSLv3" ou encore "TLS".
 				SSLContext sslContext = SSLContext.getInstance("SSLv3");
+
 
 				// initialise le context SSL avec le TrustManager si l'on
 				// desire authentifier les clients, sinon sans rien (dans le 2eme
@@ -125,6 +139,9 @@ public final class WebServer {
 				// creation du socket en mode SSL
 				SSLServerSocket server = (SSLServerSocket) ssf.createServerSocket(port);
 
+				// Uniquemen un service d'authentification ?
+				server.setEnableSessionCreation(SERVICEAUTHENTIFICATIONUNIQUEMENT);
+
 				// Defini les ciphers autorise par le serveur
 				server.setEnabledCipherSuites(CIPHERSUITES);
 
@@ -133,8 +150,20 @@ public final class WebServer {
 				if (requiertAuthentificationClient) {
 					server.setNeedClientAuth(true);
 				}
-				
+
+				// affichage des protocols et des ciphers supportes par le serveur
+				System.out.println("********************************************");
+				System.out.println("Enabled Session Creation ? " + server.getEnableSessionCreation());
+				System.out.println("Protocols actifs:");
+				for (short i=0; i<server.getEnabledProtocols().length; i++) 
+					System.out.println(" - " + server.getEnabledProtocols()[i].toString());
+				System.out.println("Ciphers actifs:");
+				for (short i=0; i<server.getEnabledCipherSuites().length; i++) 
+					System.out.println(" - " + server.getEnabledCipherSuites()[i].toString());
+				System.out.println("********************************************\n");
+
 				System.out.println("Serveur Web Demarre sur le port " + port);
+
 				// Traiter les connexions TCP dans une boucle infinie
 				while (true) {
 					// Ecouter en attente d'une demande de connexion TCP,
@@ -152,7 +181,9 @@ public final class WebServer {
 
 		// Erreur de syntaxe lors du lancement
 		else {
-			System.out.println("Syntax error: WebServer <requiert authentification du client? (0=non, autre entier=oui)> <port (default SSL=443>");
+			System.out.println("Syntax error: WebServer " +
+					"<requiert authentification du client? " +
+			"(0=non, autre entier=oui)> <port (default SSL=443>");
 		}
 	}
 }
