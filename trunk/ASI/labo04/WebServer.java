@@ -44,12 +44,11 @@ public final class WebServer {
 	final static String[] CIPHERSUITES = {
 		"SSL_RSA_WITH_3DES_EDE_CBC_SHA",  
 		"SSL_RSA_WITH_RC4_128_SHA",
-		"TLS_RSA_WITH_RC4_128_MD5"
+		"SSL_RSA_WITH_RC4_128_MD5"
 	};
 
-	// est-ce que l'on veut utiliser le serveur comme systeme d'authentification
-	// uniquement ? (defaut : false)
-	final static boolean SERVICEAUTHENTIFICATIONUNIQUEMENT = false;
+	// est-ce que l'on veut utiliser crypter les communications
+	final static boolean COMMUNICATIONSECURISEE = true;
 
 	// -------------------------------------------------------------------------
 
@@ -144,7 +143,7 @@ public final class WebServer {
 				SSLServerSocket server = (SSLServerSocket) ssf.createServerSocket(port);
 
 				// Uniquemen un service d'authentification ?
-				server.setEnableSessionCreation(SERVICEAUTHENTIFICATIONUNIQUEMENT);
+				server.setEnableSessionCreation(COMMUNICATIONSECURISEE);
 
 				// Defini les ciphers autorise par le serveur
 				server.setEnabledCipherSuites(CIPHERSUITES);
