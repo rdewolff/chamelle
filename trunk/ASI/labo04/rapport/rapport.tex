@@ -28,14 +28,12 @@
 % \newcommand{\auteurTwo}{Bruno da Silva}
 \newcommand{\promo}{IL2008}
 \newcommand{\titreDocument}{Rapport de laboratoire}
-
 % -----------------------------------------------------------------------------
 
 
 % -----------------------------------------------------------------------------
 % Pour l'utilisation de code
 % -----------------------------------------------------------------------------
-
 \usepackage{listings} 
 %\lstset{language=Java, breaklines, fontadjust, inputencoding=utf8, basicstyle=\small, numbers=left, numberstyle=\tiny, tabsize=2}
 
@@ -74,7 +72,6 @@
   xleftmargin=10pt, % espace avant le debut du cadre
   aboveskip=20pt
 }
-
 % -----------------------------------------------------------------------------
 % En tete et pied de page
 
@@ -101,7 +98,6 @@
 \date{\today}
 
 \begin{document}
-
 % -----------------------------------------------------------------------------
 % Page de titre
 \pagenumbering{Roman}
@@ -109,8 +105,8 @@
 \begin{titlepage}
 	\begin{center}
 
-	\includegraphics[width=6cm]{img/HEIG-VD.jpg}
-	
+		\includegraphics[width=6cm]{img/HEIG-VD.jpg}
+
 		\vspace{3cm}
 		\LARGE \branche %Laboratoire No %\labonummer \\
 		\vspace{3cm}\\
@@ -141,13 +137,37 @@
 \section{Introduction}
 % -----------------------------------------------------------------------------
 
+Le but de ce laboratoire est de modifier le serveur web créé en Java durant un laboratoire précédant et d'y implémenter le protocole SSL/TLS. Notre serveur web doit se lancer dans deux mode différent: un mode avec authentification du client nécessaire et un autre sans. 
+
+% -----------------------------------------------------------------------------
+\section{Utilisation du logiciel}
+% -----------------------------------------------------------------------------
+
+Le lancement du serveur s'effectue à l'aide de la ligne de commande. Pour lancer le serveur avec authentification du client sur le port 443 (port par défaut de SSL) il faut utiliser la commande suivante:
+
+\begin{verbatim}
+	java WebServer 1 443
+\end{verbatim}
+
+Le “1” permet de dire que l'on activer l'authentification du client. Pour le rendre facultatif, on utilisera la commande suivante:
+
+\begin{verbatim}
+	java WebServer 0 443
+\end{verbatim}
+
+Notons que pour lancer le serveur sur le port 443 comme montré ci dessus il faut exécuter la commande en administrateur. 
+
+
+
+
+
 % -----------------------------------------------------------------------------
 \section{Clé publique générée}
 % -----------------------------------------------------------------------------
 
 Voici la clé publique qui nous a été generée par Keytool :
 
-\scriptsize{
+{\scriptsize
 \begin{verbatim}
 -----BEGIN NEW CERTIFICATE REQUEST-----
 MIIBujCCASMCAQAwejELMAkGA1UEBhMCQ0gxCzAJBgNVBAgTAlZEMREwDwYDVQQHEwhMYXVzYW5u
@@ -161,6 +181,7 @@ X7vYKW5XCjHfEpsMwKsj42b4zMFn743IT/LmiC/NsghW3q+UD7AUslld4+XaX68=
 -----END NEW CERTIFICATE REQUEST-----
 \end{verbatim}
 }
+
 
 % -----------------------------------------------------------------------------
 \section{Réponses aux questions}
@@ -228,6 +249,9 @@ L'utilisateur sera donc mis en confiance et n'aura plus d'avertissement du navig
 
 \small
 \begin{description}
-	\item[\url{http://jquery.com/}] {Site officiel de jQuery.}
+	\item[\url{http://java.sun.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html}]	Java Secure Socket Extension (JSSE) - Reference Guide, Sun.com
+	\item[\url{http://java.sun.com/javase/technologies/security/}] Java SE Security, Sun.com
+	\item[\url{http://fr.wikipedia.org/wiki/Transport_Layer_Security}] {TLS et SSL, Wikipedia.org}
+	\item[\url{http://www.javaworld.com/javatips/jw-javatip115.html}] Secure JavaMail with SSL, JavaWorld.com
 \end{description}
 \end{document}
