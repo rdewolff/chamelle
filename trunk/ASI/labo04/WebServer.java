@@ -105,13 +105,15 @@ public final class WebServer {
 					// et on l'initialise a l'aide du keystore
 					tmf.init(ks);
 
-					// Intitialisation de celui-ci à l'aide du keystore à utiliser et de la phrase
+					// Intitialisation de celui-ci à l'aide du keystore à 
+					// utiliser et de la phrase
 					// de passe de la cle privee a utiliser
 					kmf.init(ks, "keyPass".toCharArray());
 
 				} else {
 
-					// Intitialisation de celui-ci à l'aide du keystore à utiliser et de la phrase
+					// Intitialisation de celui-ci à l'aide du keystore à 
+					// utiliser et de la phrase
 					// de passe de la cle privee a utiliser
 					kmf.init(ks, "keyPwd".toCharArray());
 
@@ -128,9 +130,11 @@ public final class WebServer {
 				// cas, le serveur s'occupe de gerer cela lui-meme.
 				if (requiertAuthentificationClient) {
 					// initialisation de celui ci a l'aide d'un keymanager
-					sslContext.init(kmf.getKeyManagers(), /* trust manager */ tmf.getTrustManagers(), null);	
+					sslContext.init(kmf.getKeyManagers(), 
+							/* trust manager */ tmf.getTrustManagers(), null);	
 				} else {
-					sslContext.init(kmf.getKeyManagers(), /* trust manager */ null, null);
+					sslContext.init(kmf.getKeyManagers(), 
+							/* trust manager */ null, null);
 				}
 
 				// initialisation du magasin de serversocket
@@ -153,13 +157,16 @@ public final class WebServer {
 
 				// affichage des protocols et des ciphers supportes par le serveur
 				System.out.println("********************************************");
-				System.out.println("Enabled Session Creation ? " + server.getEnableSessionCreation());
+				System.out.println("Enabled Session Creation ? " + 
+						server.getEnableSessionCreation());
 				System.out.println("Protocols actifs:");
 				for (short i=0; i<server.getEnabledProtocols().length; i++) 
-					System.out.println(" - " + server.getEnabledProtocols()[i].toString());
+					System.out.println(" - " + 
+							server.getEnabledProtocols()[i].toString());
 				System.out.println("Ciphers actifs:");
 				for (short i=0; i<server.getEnabledCipherSuites().length; i++) 
-					System.out.println(" - " + server.getEnabledCipherSuites()[i].toString());
+					System.out.println(" - " + 
+							server.getEnabledCipherSuites()[i].toString());
 				System.out.println("********************************************\n");
 
 				System.out.println("Serveur Web Demarre sur le port " + port);
