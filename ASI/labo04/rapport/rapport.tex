@@ -15,6 +15,7 @@
 \usepackage[dvips]{graphicx}
 \usepackage{epstopdf}
 \usepackage[parfill]{parskip}             % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{pdfpages} % pour inclure des fichiers PDF : commande \includepdf[pages=-]{votre_fichier} 
 
 
 % -----------------------------------------------------------------------------
@@ -342,15 +343,17 @@ Ici on a choisit \texttt{TLS}, mais on peut aussi choisir \texttt{SSLv3}. On a r
 	********************************************
 \end{verbatim}
 
+Selon la documentation que nous avons trouvé sur internet, il semble que les différences entre SSLv3 et TLS ne soient pas grandes. On note quand même que ces deux protocole ne sont pas compatible dans les deux sens, mais que TLS soit compatible avec SSL v3.
+
 \subsection{Le message \emph{Certificate Verifiy}}
 
-Le message \texttt{Certificate Verify} est utile lorsque l'on desire authentifier le client. Pour se faire, le client signe numériquement à l'aide de sa clé privée ceci afin que le serveur puisse vérifier son identité. Le serveur pourra vérifier en utilisant la clé publique du client.
+Le message \texttt{Certificate Verify} est utile lorsque l'on désire authentifier le client. Pour se faire, le client signe numériquement à l'aide de sa clé privée ceci afin que le serveur puisse vérifier son identité. Le serveur pourra la vérifier en utilisant la clé publique du client.
 
 \subsection{Configuration du serveur web avec système d'authentification mais sans chiffrement de données}
 
 Pour que notre serveur web effectue uniquement de l'authentification, il faut le lancer avec authentification du client et modifier l'objet \texttt{serveur} appartenant à la classe \texttt{SSLServerSocket}. La méthode \texttt{setEnableSessionCreation()} permet d'effectuer cette action.
 
-En effet, si la session n'est pas créer, on aura uniquement l'authentification qui sera effectuée. Le reste des communication ne sera pas chiffrés.
+En effet, si la session n'est pas créée, on aura uniquement l'authentification qui sera effectuée. Le reste des communication ne sera pas chiffrés.
 
 % -----------------------------------------------------------------------------
 \section{Conclusion}
@@ -367,6 +370,8 @@ Après avoir lus la documentation et fait quelques tests, il nous fallut simplem
 
 {\scriptsize
 \begin{description}
+	\item[\url{http://www.ietf.org/rfc/rfc2246.txt}] TLS Specifications, IETF
+	\item[\url{http://wp.netscape.com/eng/ssl3/draft302.txt}] SSL v3 Specifications, Netscape
 	\item[\url{http://java.sun.com/javase/6/docs/technotes/guides/security/jsse/JSSERefGuide.html}]	Java Secure Socket Extension (JSSE) - Reference Guide, Sun.com
 	\item[\url{http://java.sun.com/javase/technologies/security/}] Java SE Security, Sun.com
 	\item[\url{http://fr.wikipedia.org/wiki/Transport_Layer_Security}] {TLS et SSL, Wikipedia.org}
@@ -376,5 +381,12 @@ Après avoir lus la documentation et fait quelques tests, il nous fallut simplem
 	\item[\url{http://www.computing.net/webdevel/wwwboard/forum/439.html}] SSL vs TLS, Forum Computing.Net
 \end{description}
 }
+
+% -----------------------------------------------------------------------------
+\section{Annexe}
+% -----------------------------------------------------------------------------
+
+\includegraphics[width=12cm]{CommunicationSSL.pdf} 
+
 
 \end{document}
