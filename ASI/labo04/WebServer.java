@@ -5,7 +5,6 @@ import java.security.KeyStore;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.TrustManagerFactory;
 
@@ -25,14 +24,15 @@ import HTTP.HTTPProcessing;
  */
 public final class WebServer {
 
-	// constantes
-	
+	// fichiers contenant les certificats et mot de passe associés
 	// dans le cas d'un serveur SSL sans authentification du client
-	final static String MYPRIVATEKEY = "ASI/labo04/key/myPrivateKeystore";
+	final static String MYPRIVATEKEY = 
+		"/Users/rdewolff/Documents/HEIG-VD/eclipse/svnChamelle/ASI/labo04/key/myPrivateKeystore";
 	final static String MYPRIVATEKEYPASS = "keystorePass";
 	
 	// dans le cas d'un serveur SSL avec authentification du client
-	final static String MYPRIVATEKEYWITHCLIENTAUTH = "ASI/labo04/key/myPrivateKeystoreConfiance";
+	final static String MYPRIVATEKEYWITHCLIENTAUTH = 
+		"/Users/rdewolff/Documents/HEIG-VD/eclipse/svnChamelle/ASI/labo04/key/myPrivateKeystoreConfiance";
 	final static String MYPRIVATEKEYWITHCLIENTAUTHPASS = "keystorePass";
 
 	// liste des cipher utilise par le serveur
@@ -134,14 +134,14 @@ public final class WebServer {
 					server.setNeedClientAuth(true);
 				}
 				
+				System.out.println("Serveur Web Demarre sur le port " + port);
 				// Traiter les connexions TCP dans une boucle infinie
 				while (true) {
-					System.out.println("*** Client connecte ***");
 					// Ecouter en attente d'une demande de connexion TCP,
 					// construire un objet pour traiter la requete HTTP
 					// et lancer le traitement
 					new HTTPProcessing(server.accept()).start();
-
+					System.out.println("*** Client connecte ***");
 				}
 
 			}
