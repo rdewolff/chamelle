@@ -5,7 +5,9 @@ import java.security.KeyStore;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.TrustManagerFactory;
 
 import HTTP.HTTPProcessing;
 
@@ -18,10 +20,28 @@ import HTTP.HTTPProcessing;
  * Implémentation des instructions requise pour permettre a ce serveur 
  * d'offrir un service HTTPS (avec SSL).
  * 
- * @author Cyril Maulini
- * @author Romain de Wolff
+ * @author Cyril Maulini (version initiale)
+ * @author Romain de Wolff (modification et implémentation SSL)
  */
 public final class WebServer {
+
+	// constantes
+	
+	// dans le cas d'un serveur SSL sans authentification du client
+	final static String MYPRIVATEKEY = "ASI/labo04/key/myPrivateKeystore";
+	final static String MYPRIVATEKEYPASS = "keystorePass";
+	
+	// dans le cas d'un serveur SSL avec authentification du client
+	final static String MYPRIVATEKEYWITHCLIENTAUTH = "ASI/labo04/key/myPrivateKeystoreConfiance";
+	final static String MYPRIVATEKEYWITHCLIENTAUTHPASS = "keystorePass";
+
+	// liste des cipher utilise par le serveur
+	final static String[] CIPHERSUITES = {
+		"SSL_RSA_WITH_RC4_128_SHA",
+		"SSL_RSA_WITH_RC4_128_MD5",
+		"SSL_RSA_WITH_3DES_EDE_CBC_SHA"
+	};
+
 	/**
 	 * Traitement de toutes les nouvelles connexions TCP.
 	 * Des threads separees seront chargees de traiter les requetes,
@@ -30,56 +50,106 @@ public final class WebServer {
 	 * @throws Exception
 	 */
 	public static void main (String argv[]) {
-		// Verification du parametre (numero de port)
+
+		// Verification du parametre (authentification du client et numero de port)
 		if (argv.length == 2) {
+
 			// Obtenir le numero de port depuis la ligne de commande
-			int port = Integer.valueOf(argv[0]);
+			int port = Integer.valueOf(argv[1]);
+
+			// Obtenir le booleen qui defini si l'on desire authetifier les clients
+			// ou non
 			boolean requiertAuthentificationClient = 
-				( Integer.valueOf(argv[1]) == 0 ? false : true );
-			
+				( Integer.valueOf(argv[0]) == 0 ? false : true );
+
 			try {
-				/* implémentation de la gestion du SSL */
-				
-				// chemin du keystore
-				String myPrivateKey = "/Users/rdewolff/Documents/HEIG-VD/eclipse/svnChamelle/ASI/labo04/key/myPrivateKeystore";
-				
+
+				/**
+				 *  implémentation de la gestion du SSL   
+				 */
+
 				// recuperation d'une instance d'un keystore JKS
 				KeyStore ks = KeyStore.getInstance("JKS");
-				
+
 				// chargement d'un keystore a l'aide de son mot de passe et du chemin
 				// vers celui-ci
-				ks.load(new FileInputStream(myPrivateKey), "keystorePass".toCharArray());
-				
+				if (requiertAuthentificationClient) {
+					ks.load(new FileInputStream(MYPRIVATEKEYWITHCLIENTAUTH), 
+							MYPRIVATEKEYWITHCLIENTAUTHPASS.toCharArray());
+				} else {
+					ks.load(new FileInputStream(MYPRIVATEKEY), 
+							MYPRIVATEKEYPASS.toCharArray());
+				}
+
 				// creation d'un magasin de keymanager du type SunX509
-				KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509"); // 2 import possible ?
-				// Intitialisation de celui-ci à l'aide du keystore à utiliser et de la phrase
-				// de passe de la cle privee a utiliser
-				kmf.init(ks, "keyPwd".toCharArray());
-				// Creation du contexte voulus
+				KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509"); 
+
+				// Le TrustManager dans le cas ou le client doit s'authentifier
+				TrustManagerFactory tmf = null;
+				if (requiertAuthentificationClient) {
+
+					// on le defini
+					tmf = TrustManagerFactory.getInstance("SunX509");
+
+					// et on l'initialise a l'aide du keystore
+					tmf.init(ks);
+
+					// Intitialisation de celui-ci à l'aide du keystore à utiliser et de la phrase
+					// de passe de la cle privee a utiliser
+					kmf.init(ks, "keyPass".toCharArray());
+
+				} else {
+
+					// Intitialisation de celui-ci à l'aide du keystore à utiliser et de la phrase
+					// de passe de la cle privee a utiliser
+					kmf.init(ks, "keyPwd".toCharArray());
+
+				}	
+
+				// Creation du contexte voulus, ici SSL version 3
 				SSLContext sslContext = SSLContext.getInstance("SSLv3");
-				
-				// initialisation de celui ci a l'aide d'un keymanager
-				sslContext.init(kmf.getKeyManagers(), /* trust manager */ null, null);
-				
+
+				// initialise le context SSL avec le TrustManager si l'on
+				// desire authentifier les clients, sinon sans rien (dans le 2eme
+				// cas, le serveur s'occupe de gerer cela lui-meme.
+				if (requiertAuthentificationClient) {
+					// initialisation de celui ci a l'aide d'un keymanager
+					sslContext.init(kmf.getKeyManagers(), /* trust manager */ tmf.getTrustManagers(), null);	
+				} else {
+					sslContext.init(kmf.getKeyManagers(), /* trust manager */ null, null);
+				}
+
 				// initialisation du magasin de serversocket
 				ServerSocketFactory ssf = sslContext.getServerSocketFactory();
-				
+
 				// creation du socket en mode SSL
 				SSLServerSocket server = (SSLServerSocket) ssf.createServerSocket(port);
-						
+
+				// Defini les ciphers autorise par le serveur
+				server.setEnabledCipherSuites(CIPHERSUITES);
+
+				// Si l'on desire que les clients soient authentifie, il faut 
+				// activer cette option sur le socket SSL du serveur
+				if (requiertAuthentificationClient) {
+					server.setNeedClientAuth(true);
+				}
+				
 				// Traiter les connexions TCP dans une boucle infinie
 				while (true) {
-						// Ecouter en attente d'une demande de connexion TCP,
-						// construire un objet pour traiter la requete HTTP
-						// et lancer le traitement
-						new HTTPProcessing(server.accept()).start();
+					System.out.println("*** Client connecte ***");
+					// Ecouter en attente d'une demande de connexion TCP,
+					// construire un objet pour traiter la requete HTTP
+					// et lancer le traitement
+					new HTTPProcessing(server.accept()).start();
+
 				}
+
 			}
 			catch (Exception e) {
 				System.out.println(e);
 			}
 		}
-		
+
 		// Erreur de syntaxe lors du lancement
 		else {
 			System.out.println("Syntax error: WebServer <requiert authentification du client? (0=non, autre entier=oui)> <port (default SSL=443>");
