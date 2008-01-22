@@ -12,12 +12,12 @@ public class CACMIndexer implements Indexer {
 	// Index des documents
 	Index index;
 	
-	// Mots communs pour élimination
+	// Mots communs pour elimination
 	HashSet<String> commonWords;
 	
 	/**
 	 * Constructeur
-	 * @param idx Index à compléter
+	 * @param idx Index a completer
 	 * @param commonWords Liste des mots communs
 	 */
 	public CACMIndexer(Index idx, HashSet<String>commonWords) {
@@ -29,11 +29,11 @@ public class CACMIndexer implements Indexer {
 	 * @see rim.Indexer#index(java.lang.Integer, java.lang.String)
 	 */
 	public void index(String uri, String content) {
-		// Préparation du contenu
+		// Preparation du contenu
 		String[] contentWords = 
 			CACMUtil.contentPreparer(content, commonWords);
 		
-		// Calcul de fréquence
+		// Calcul de frequence
 		double freq = 1.0;
 	
 		// Comptage des termes par document et suppression des mots communs
@@ -44,7 +44,7 @@ public class CACMIndexer implements Indexer {
 				freq += 1.0;
 			}
 			else {
-				// Ajout du terme / document à l'index
+				// Ajout du terme / document a l'index
 				index.add(uri, contentWords[i], freq);
 				freq = 1.0;
 			}

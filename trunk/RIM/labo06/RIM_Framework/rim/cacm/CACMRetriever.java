@@ -50,13 +50,13 @@ public class CACMRetriever implements Retriever {
 	 * @see rim.Retriever#executeQuery(java.lang.String)
 	 */
 	public Map<Double, String> executeQuery(String query) {
-		// "Vecteur" requête
+		// "Vecteur" requete
 		HashMap<String, Double> pQuery = new HashMap<String, Double>();
 		
-		// Préparation du contenu
+		// Preparation du contenu
 		String[] contentQuery = CACMUtil.contentPreparer(query, commonWords);
 		
-		// Calcul de fréquence
+		// Calcul de frequence
 		double freq = 1.0;
 	
 		// Comptage des termes par document et suppression des mots communs
@@ -67,7 +67,7 @@ public class CACMRetriever implements Retriever {
 				freq += 1.0;
 			}
 			else {
-				// Ajout du terme / document à l'index
+				// Ajout du terme / document a l'index
 				pQuery.put(contentQuery[i], freq);
 				freq = 1.0;
 			}
@@ -77,20 +77,20 @@ public class CACMRetriever implements Retriever {
 	}
 	
 	/**
-	 * Détermine les documents similaires à la requête
-	 * fournie en paramètres
-	 * @param pQuery Requête demandée
-	 * @return Documents classés par similarité
+	 * Determine les documents similaires a la requete
+	 * fournie en parametres
+	 * @param pQuery Requete demandee
+	 * @return Documents classes par similarite
 	 */
 	private Map<Double, String> 
 		querySimilarities(HashMap<String, Double> pQuery) {
 		
 		// Tous les documents qui contiennent 
-		// au moins un terme de la requête
+		// au moins un terme de la requete
 		Map<String, Double> docs = new TreeMap<String, Double>();
 		
-		// Documents avec degré de similarité par 
-		// rapport à la requête
+		// Documents avec degre de similarite par 
+		// rapport a la requete
 		Map<Double, String> sims = new TreeMap<Double, String>(
 			// Classe anonyme pour le tri de l'arbre
 			new Comparator<Double>() {
@@ -100,12 +100,12 @@ public class CACMRetriever implements Retriever {
 			}
 		);
 		
-		// Somme des carrés des fréquences 
-		// des termes de la requête
+		// Somme des carres des frequences 
+		// des termes de la requete
 		double ssq = 0.0;
 
 		// Recherche des documents qui contiennent au moins 
-		// un des termes présent dans la requête
+		// un des termes present dans la requete
 		// et calcul du ssq
 		for (Entry<String, Double> qItem : pQuery.entrySet()) {
 			Map<String, Double> tempResult = searchTerm(qItem.getKey());
@@ -120,10 +120,10 @@ public class CACMRetriever implements Retriever {
 		// on calcul spdq et ssd
 		for (String uri : docs.keySet()) {
 			// Somme des produit des termes des 
-			// vecteurs de document et requête
+			// vecteurs de document et requete
 			double spdq = 0.0;
 			
-			// Somme des carrés des fréquences des termes
+			// Somme des carres des frequences des termes
 			// du document
 			double ssd = 0.0;
 			
@@ -131,19 +131,19 @@ public class CACMRetriever implements Retriever {
 			for (Entry<String, Double> termFreq : 
 				searchDocument(uri).entrySet()) {
 				
-				// Terme présent dans la requête, ajoute le produit
-				// du terme document et du terme requête
-				// (fréquence pondérée * fréquence)
+				// Terme present dans la requete, ajoute le produit
+				// du terme document et du terme requete
+				// (frequence ponderee * frequence)
 				if (pQuery.containsKey(termFreq.getKey()))
 					spdq += termFreq.getValue() * 
 						pQuery.get(termFreq.getKey());
 			
-				// Ajoute le carré de la fréquence 
-				// pondérée du document
+				// Ajoute le carre de la frequence 
+				// ponderee du document
 				ssd += pow(termFreq.getValue(), 2.0);
 			}
 
-			// Ajoute la similarité relative au 
+			// Ajoute la similarite relative au 
 			// document courrant
 			sims.put(spdq / sqrt(ssd * ssq), uri);
 		}

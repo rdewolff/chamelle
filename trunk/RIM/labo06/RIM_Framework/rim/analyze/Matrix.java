@@ -41,6 +41,7 @@ public class Matrix {
    }
    
    public static Vector<Double> multiply(AdjacencyMatrix m, Vector<Double> ac) {
+	   
       // temp vector
       Vector<Double> result = new Vector<Double>(m.size());
       
@@ -89,5 +90,29 @@ public class Matrix {
       // return the resulted matrix
       return result; 
       
+   }
+   
+   public static Vector<Double> multiply(Vector<Double> v1, Vector<Double> v2) {
+	   
+	   Vector<Double> result = new Vector<Double>();
+	   
+	   for (short i=0;i<v1.size();i++) {
+		   result.add(v1.get(i) * v2.get(i));
+	   }
+	   
+	   return result;
+	   
+   }
+   
+   public static Vector<Double> add(Vector<Double> v1, Vector<Double> v2) {
+	   
+	   Vector<Double> result = new Vector<Double>();
+	   
+	   for (short i=0;i<v1.size();i++) {
+		   result.add(v1.get(i) + v2.get(i));
+	   }
+	   
+	   return result;
+	   
    }
 }

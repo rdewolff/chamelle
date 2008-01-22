@@ -7,37 +7,37 @@ import java.util.regex.Pattern;
  * Permet de parser une URI pour la rendre navigable
  * correctement.
  *  - /qqch => http://racine/qqch
- *  - #qqch => supprimé
+ *  - #qqch => supprime
  *  - /qqch/page.ext => http://racine/qqch/page.ext
  *  - page.ext => http://racine/page.ext
  *  - ...
  *  
- * @author J. Schmid & L. Prévost
+ * @author J. Schmid & L. Prevost
  */
 public class URIPreparer {
 	/**
-	 * Méthode qui permet de préparer les URI dans un format
+	 * Methode qui permet de preparer les URI dans un format
 	 * navigable
 	 * @param reference URI de base (page courante par exemple)
-	 * @param uriToPrepare URI à parser
-	 * @return URI transformée, null si invalide
+	 * @param uriToPrepare URI a parser
+	 * @return URI transformee, null si invalide
 	 */
 	public static String urlToPrepare(String reference, String uriToPrepare) {
-		// URI préparée
+		// URI preparee
 		String preparedURI = reference;
 		
-		// Détection des ancres
+		// Detection des ancres
 		String[] temp = uriToPrepare.split("#"); 
 		
 		// URI ne contient pas de chemin exploitable
 		if (temp == null || temp.length == 0)
 			return preparedURI;
 		
-		// Récupération partie navigable
+		// Recuperation partie navigable
 		uriToPrepare = temp[0];
 		
-		// Préparation d'un pattern pour détecter si un fichier 
-		// est présent dans l'URI ou si c'est un répertoire
+		// Preparation d'un pattern pour detecter si un fichier 
+		// est present dans l'URI ou si c'est un repertoire
 		Pattern file = Pattern.compile("//.*/.*\\..*$");
 		Matcher fileMatcher = file.matcher(reference);
 		
@@ -45,14 +45,14 @@ public class URIPreparer {
 		if (uriToPrepare.length() == 0)
 			preparedURI = null;
 		
-		// URI débute par HTTP, pas de transformation supplémentaire
+		// URI debute par HTTP, pas de transformation supplementaire
 		else if (uriToPrepare.startsWith("http://"))
 			preparedURI = uriToPrepare;
 		
-		// URI à préparer débute par un /
+		// URI a preparer debute par un /
 		else if (uriToPrepare.startsWith("/")) {
-			// Vérifie si l'URI de référence contient un page ou un répertoire
-			// Suppression de la page le cas échéant
+			// Verifie si l'URI de reference contient un page ou un repertoire
+			// Suppression de la page le cas echeant
 			if (fileMatcher.find())
 				reference = 
 					reference.substring(0, reference.lastIndexOf("/") + 1);
@@ -60,28 +60,28 @@ public class URIPreparer {
 			// Suppression du http://
 			reference = reference.replace("http://", "");
 			
-			// Vérifie si l'URI de réf contient /
-			// Le cas échéant, suppression du /
+			// Verifie si l'URI de ref contient /
+			// Le cas echeant, suppression du /
 			if (reference.contains("/"))
 				reference = reference.substring(0, reference.indexOf("/"));
 			
-			// URI recomposée du HTTP:// + référence sans / final + 
-			// URI à préparer avec / au début
+			// URI recomposee du HTTP:// + reference sans / final + 
+			// URI a preparer avec / au debut
 			preparedURI = "http://" + reference + uriToPrepare;
 		}
 		
-		// Référence contient une page
+		// Reference contient une page
 		else if (fileMatcher.find())
-			// Suppresison de la page et ajout de la page de l'URI à préparer
+			// Suppresison de la page et ajout de la page de l'URI a preparer
 			preparedURI = reference.substring(0, reference.lastIndexOf("/") + 1) 
 				+ uriToPrepare;
 		
-		// Référence est terminée comme l'URI à préparer dans son intégralité
+		// Reference est terminee comme l'URI a preparer dans son integralite
 		else if (reference.endsWith(uriToPrepare))
 			preparedURI = reference;
 		
-		// Autrement, retourner la concaténation de la reference avec l'URI
-		// à préparer en évitant un double / dans l'URI en dehors du http://
+		// Autrement, retourner la concatenation de la reference avec l'URI
+		// a preparer en evitant un double / dans l'URI en dehors du http://
 		else 
 			preparedURI = reference + 
 				(reference.endsWith("/") ? "" : "/") +
@@ -92,16 +92,16 @@ public class URIPreparer {
 		if (preparedURI.contains("..")) {
 			preparedURI = preparedURI.replace(reference, "");
 			
-			// Transformation de l'URI de référence
+			// Transformation de l'URI de reference
 			String tempReference = reference.replace("http://", "");
 	
 			do {
-				// Traitement de la remontée dans les répertoires
+				// Traitement de la remontee dans les repertoires
 				if (tempReference.endsWith("/"))
 					tempReference = 
 						tempReference.substring(0, tempReference.length() - 1);
 				
-				// Supression sous répertoire
+				// Supression sous repertoire
 				if (tempReference.contains("/"))
 					tempReference = tempReference.substring(0, 
 						tempReference.lastIndexOf("/") + 1);
