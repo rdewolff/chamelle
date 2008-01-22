@@ -11,7 +11,7 @@ public interface Retriever {
 	/**
 	 * Retrieves the terms contained in the given document. Each term is mapped to
 	 * its ponderation in the document.
-	 * @param uri du document identifié.
+	 * @param uri du document identifie.
 	 * @return the terms mapped to their frequency in the document.
 	 */
 	public Map<String, Double> searchDocument(String uri);

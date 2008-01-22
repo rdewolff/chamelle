@@ -258,7 +258,7 @@ public class CACMFeeder implements Feeder {
 		}
 		
 		/**
-		 * D�termine le statut du noeud courant
+		 * Determine le statut du noeud courant
 		 * @param status Statut
 		 */
 		public void status(int status) {
@@ -276,7 +276,7 @@ public class CACMFeeder implements Feeder {
 		/**
 		 * Affiche le noeud parent et toutes ses pages
 		 * enfants qui correspondent au code voulu
-		 * d'une racine pr�cise et toute sa sous arborescence
+		 * d'une racine precise et toute sa sous arborescence
 		 * @return Nombre de liens morts
 		 */
 		public int showInvalids(int status) {
@@ -291,7 +291,7 @@ public class CACMFeeder implements Feeder {
 					rValue++;
 				}
 
-				// R�cursions, stop sur liste vide
+				// Recursions, stop sur liste vide
 				rValue += lp.showInvalids(status); 
 			}
 			
@@ -303,7 +303,7 @@ public class CACMFeeder implements Feeder {
 			return rValue;
 		}
 		
-		@Override
+		// @Override
 		public int compareTo(LeafPage arg0) {
 			return uri.compareTo(arg0.uri);
 		}

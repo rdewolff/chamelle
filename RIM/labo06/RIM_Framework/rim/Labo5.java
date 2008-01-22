@@ -36,11 +36,11 @@ import rim.util.Constants;
  */
 public class Labo5 {
 	/**
-	 * Affichage du résultat d'une requête
+	 * Affichage du resultat d'une requete
 	 * en "langage naturel"
-	 * @param result Résultat obtenu
-	 * @param query Requête demandée
-	 * @param max Nombre maximum de résultats à afficher, -1 = infini
+	 * @param result Resultat obtenu
+	 * @param query Requete demandee
+	 * @param max Nombre maximum de resultats a afficher, -1 = infini
 	 */
 	public static void showQueryResult(
 		Map<Double, String> result, String query, int max) {
@@ -66,7 +66,7 @@ public class Labo5 {
 	
 	
 	/**
-	 * Permet de lire le contenu écrit par l'utilisateur
+	 * Permet de lire le contenu ecrit par l'utilisateur
 	 * 
 	 * @return chaine lue
 	 */
@@ -86,8 +86,8 @@ public class Labo5 {
     }
 	
 	/**
-	 * Lit un entier rentré par l'utilisateur 
-	 * Ressaie tant que l'entrée n'est pas un entier valide.
+	 * Lit un entier rentre par l'utilisateur 
+	 * Ressaie tant que l'entree n'est pas un entier valide.
 	 * 
 	 * @return entier lu
 	 */
@@ -95,8 +95,8 @@ public class Labo5 {
 		String s = readString();
 		int r;
 		
-		// Essaie de lire l'entrée de l'utilisateur
-		// Appell récursif en cas d'erreur
+		// Essaie de lire l'entree de l'utilisateur
+		// Appell recursif en cas d'erreur
 		try{
 		    r = Integer.parseInt(s);
 		} catch(NumberFormatException e){
@@ -109,7 +109,7 @@ public class Labo5 {
 	
 	/**
 	 * Invite l'utilisateur a entrer un mot et en affiche les
-	 * résulats de la recherche
+	 * resulats de la recherche
 	 * 
 	 * @param cr Retriever
 	 */
@@ -120,7 +120,7 @@ public class Labo5 {
 	
 	/**
 	 * Invite l'utilisateur a entrer une uri de document
-	 * et affiche les mots-clé correspondants
+	 * et affiche les mots-cle correspondants
 	 * @param cr Retriever
 	 */
 	private static void searchDoc(CACMRetriever cr) {
@@ -129,17 +129,17 @@ public class Labo5 {
 	}
 	
 	/**
-	 * Invite l'utilisateur a entrer une requête et
-	 * affiche les résultats obtenus
+	 * Invite l'utilisateur a entrer une requete et
+	 * affiche les resultats obtenus
 	 * @param cr Retriever
 	 */
 	private static void searchQuery(CACMRetriever cr) {
 		System.out.print("Entrez votre requete (lang. nat.) : ");
 		
-		// Requête
+		// Requete
 		String query = readString();
 		
-		// Résultat
+		// Resultat
 		Map<Double, String> result = cr.executeQuery(query);
 		
 		// Affichage
@@ -148,7 +148,7 @@ public class Labo5 {
 	
 	/**
 	 * Lecture du fichier des mots communs
-	 * @param file Fichier à lire
+	 * @param file Fichier a lire
 	 * @return Collection des mots communs
 	 */
 	private static HashSet<String> readCommonWords(String file) {
@@ -157,10 +157,10 @@ public class Labo5 {
 			BufferedReader br = 
 				new BufferedReader(new FileReader(file));
 			
-			// Création de l'arbre contenant les mots à filtrer
+			// Creation de l'arbre contenant les mots a filtrer
 			String readLine;
 			
-			// Création de la liste
+			// Creation de la liste
 			HashSet<String> cw = new HashSet<String>();
 			
 			// Construction de l'arbre
@@ -170,7 +170,7 @@ public class Labo5 {
 			return cw;
 		}
 		catch (FileNotFoundException fnfe) {
-			System.out.println("Fichier des mots communs non trouvé !");
+			System.out.println("Fichier des mots communs non trouve !");
 		}
 		catch (IOException ioe) {
 			System.out.println("Erreur lors de la lecture " +
@@ -192,8 +192,8 @@ public class Labo5 {
 	
 	/**
 	 * Affichage du menu
-	 * @param retrievers Retrievers utilisés pour la recherche
-	 * @param indexes Index utilisés également pour la recherche
+	 * @param retrievers Retrievers utilises pour la recherche
+	 * @param indexes Index utilises egalement pour la recherche
 	 */
 	private static void menu(CACMRetriever retriever) {
 		
@@ -241,20 +241,20 @@ public class Labo5 {
 	 * @param args console arguments.
 	 */
 	public static void main (String[] args) {
-		// Chemin du dossier vers les fichiers utilisés
+		// Chemin du dossier vers les fichiers utilises
 		String folder = null;
 		
 		// Variables de test
 		String[] queries = new String[] {
 			"Offres d'Emploi",
-			"Inscriptions et ingénierie",
+			"Inscriptions et ingenierie",
 			"Horaire TIC trimestre",
-			"Travail de diplôme à l'étranger",
-			"Raclette de noël"
+			"Travail de diplome a l'etranger",
+			"Raclette de noel"
 		};
 		
-		// Vérification que le dossier où écrire les
-		// résultats soit accessible en écriture
+		// Verification que le dossier ou ecrire les
+		// resultats soit accessible en ecriture
 		try {
 			folder = new File (".").getCanonicalPath() + "\\";
 		} catch (IOException e) {
@@ -263,7 +263,7 @@ public class Labo5 {
 		}
 		
 		System.out.println("Bienvenue dans ce labo 5 !");
-		System.out.println("Le programme se déroule en 3 parties");
+		System.out.println("Le programme se deroule en 3 parties");
 		System.out.println();
 		System.out.println("1. Construction de l'index (tf-idf)");
 		System.out.println("2. Demonstration automatique");
@@ -277,22 +277,22 @@ public class Labo5 {
 
 		HashSet<String> cw = readCommonWords(Constants.COMMON_WORDS_FILE);
 
-		// Création de l'index
+		// Creation de l'index
 		Index index = new Index(WeightingType.tfidf);
 		
-		// Création de l'Indexer
+		// Creation de l'Indexer
 		Indexer cacmIndex = new CACMIndexer(index, cw);
 		
-		// Création du Feeder
+		// Creation du Feeder
 		CACMFeeder cacmFeeder = new CACMFeeder();
 		
 		// Affichage
 		System.out.println("Creation de l'index [" + index.type() + "]...");
 			
-		// Création même de l'index
+		// Creation meme de l'index
 		cacmFeeder.parseCollection(Constants.INITIAL_URI, cacmIndex);
 			
-		// Sauvegarde l'index dans le répertoire courant
+		// Sauvegarde l'index dans le repertoire courant
 		System.out.println("Sauvegarde index [" + index.type() + "]...");
 		index.save(folder);
 
@@ -363,7 +363,7 @@ public class Labo5 {
 		
 		readString();
 
-		// Début de la console permettant de faire d'autre recherches
+		// Debut de la console permettant de faire d'autre recherches
 		System.out.println();
 		System.out.println("Ready my Lord !");
 		System.out.println();

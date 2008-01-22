@@ -13,7 +13,7 @@ import java.util.TreeMap;
 
 /**
  * Gestion de l'index et index inverse
- * @author J. Schmid & L. Prévost
+ * @author J. Schmid & L. Prevost
  */
 public class Index {
 	// Log naturel de 2
@@ -38,7 +38,7 @@ public class Index {
 	}
 
 	/**
-	 * Récupère le type d'index
+	 * Recupere le type d'index
 	 * @return Type de l'index
 	 */
 	public WeightingType type() {
@@ -46,29 +46,29 @@ public class Index {
 	}
 	
 	/**
-	 * Récupère le nombre d'élément dans
+	 * Recupere le nombre d'element dans
 	 * l'index
-	 * @return Nombre d'éléments
+	 * @return Nombre d'elements
 	 */
 	public int idxSize() {
 		return idx.size();
 	}
 	
 	/**
-	 * Récupère le nombre d'élément dans
+	 * Recupere le nombre d'element dans
 	 * l'index inverse
-	 * @return Nombre d'éléments
+	 * @return Nombre d'elements
 	 */
 	public int ridxSize() {
 		return ridx.size();
 	}
 
 	/**
-	 * Ajoute un élément avec sa fréquence aux
+	 * Ajoute un element avec sa frequence aux
 	 * index normal et inverse
 	 * @param uri Chemin du document
-	 * @param term Terme détecter
-	 * @param freq Fréquence du terme
+	 * @param term Terme detecter
+	 * @param freq Frequence du terme
 	 */
 	public void add(String uri, String term, Double freq) {
 		idx.put(uri, term, freq);
@@ -77,8 +77,8 @@ public class Index {
 	
 	/**
 	 * Recherche tous les documents contenant
-	 * le terme donné
-	 * @param termToFind Terme recherché
+	 * le terme donne
+	 * @param termToFind Terme recherche
 	 * @return Null si aucun document ne contient
 	 * ce terme, autrement tous les documents
 	 * le contenant
@@ -89,9 +89,9 @@ public class Index {
 	
 	/**
 	 * Recherche tous les termes contenu dans un
-	 * document donné
-	 * @param uri Document recherché
-	 * @return Null si aucun terme présent pour le document,
+	 * document donne
+	 * @param uri Document recherche
+	 * @return Null si aucun terme present pour le document,
 	 * tous les termes dans le cas contraire.
 	 */
 	public Map<String, Double> findTerms(String uri) {
@@ -99,7 +99,7 @@ public class Index {
 	}
 	
 	/**
-	 * Calcule la pondération de l'index
+	 * Calcule la ponderation de l'index
 	 */
 	public void calculate() {
 		type.finalizeIndexation(this);
@@ -120,22 +120,22 @@ public class Index {
 	}
 
 	/**
-	 * Classe interne gérant la structure de données pour
+	 * Classe interne gerant la structure de donnees pour
 	 * la gestion des index
 	 * 
-	 * @author J. Schmid & L. Prévost
+	 * @author J. Schmid & L. Prevost
 	 *
-	 * @param <ExternalKey> Clé externe 
-	 * @param <InternalKey> Clé interne
+	 * @param <ExternalKey> Cle externe 
+	 * @param <InternalKey> Cle interne
 	 */
 	private class GenericIndex<ExternalKey, InternalKey> {
 		// Arbre pour le stockage de l'indexe. Contient un 
-		// second arbre pour le stockage elément/fréquence
+		// second arbre pour le stockage element/frequence
 		TreeMap<ExternalKey, TreeMap<InternalKey, Double>> index = 
 			new TreeMap<ExternalKey, TreeMap<InternalKey,Double>>();
 
 		/**
-		 * Récupère la taille de l'index
+		 * Recupere la taille de l'index
 		 * @return Taille de l'index
 		 */
 		public int size() {
@@ -143,25 +143,25 @@ public class Index {
 		}
 		
 		/**
-		 * Ajoute un élément dans la structure
-		 * @param ek Clé externe
-		 * @param ik Clé interne
-		 * @param frequence Fréquence d'apparition de la clé interne
+		 * Ajoute un element dans la structure
+		 * @param ek Cle externe
+		 * @param ik Cle interne
+		 * @param frequence Frequence d'apparition de la cle interne
 		 */
 		private void put(ExternalKey ek, InternalKey ik, Double frequence) {
-			// Vérifie l'existence de la clé externe pour ajout si nécessaire
+			// Verifie l'existence de la cle externe pour ajout si necessaire
 			if (!index.containsKey(ek)) {
 				index.put(ek, new TreeMap<InternalKey, Double>());
 			}
 			
-			// Ajoute l'élément au contenu de la clé externe
+			// Ajoute l'element au contenu de la cle externe
 			index.get(ek).put(ik, frequence);
 		}
 		
 		/**
-		 * Effectue une recherche sur la clé externe
-		 * @param key Clé externe recherchée
-		 * @return Null si clé non trouvée, données trouvées 
+		 * Effectue une recherche sur la cle externe
+		 * @param key Cle externe recherchee
+		 * @return Null si cle non trouvee, donnees trouvees 
 		 * dans le cas contraire.
 		 */
 		private Map<InternalKey, Double> find(ExternalKey key) {
@@ -170,9 +170,9 @@ public class Index {
 
 		/**
 		 * Sauvegarde l'index au chemin voulu
-		 * avec un préfixe de son choix
+		 * avec un prefixe de son choix
 		 * @param path Chemin voulu
-		 * @param suffix Préfixe choisi
+		 * @param suffix Prefixe choisi
 		 */
 		private void save(String path, String suffix) {
 			try {
@@ -182,7 +182,7 @@ public class Index {
 						suffix + ".txt"))));
 
 				// Ecriture des fichiers
-				// Création de la sortie formatée
+				// Creation de la sortie formatee
 				for (ExternalKey ek : index.keySet()) {
 					pw.write("[" + ek + "] {");
 					
@@ -204,31 +204,31 @@ public class Index {
 	}
 	
 	/**
-	 * Enumeration pour représenter les différents types de pondération PS : 
-	 * Les méthodes sont décrites que pour leur définition abstraite.
-	 * @author   Laurent Prévost
+	 * Enumeration pour representer les differents types de ponderation PS : 
+	 * Les methodes sont decrites que pour leur definition abstraite.
+	 * @author   Laurent Prevost
 	 */
 	public enum WeightingType {
-		// Pondération TF
+		// Ponderation TF
 		tf {
 			protected void finalizeIndexation(Index index) {
-				// Raccourcis d'écriture
+				// Raccourcis d'ecriture
 				GenericIndex<String, String> idx = index.idx;
 				GenericIndex<String, String> ridx = index.ridx;
 				
 				// Chaque document de l'index
 				for (String eKey : idx.index.keySet()) {
-					// Trouve le terme le plus frèquent dans le document et
-					// récupère la valeur de sa fréquence dans le document
+					// Trouve le terme le plus frequent dans le document et
+					// recupere la valeur de sa frequence dans le document
 					double max = Collections.max(idx.index.get(eKey).values());
 					
-					// Calcul et maj de la fréquence pondérée de chaque terme en 
-					// rapport au plus fréquent trouvé précédement
+					// Calcul et maj de la frequence ponderee de chaque terme en 
+					// rapport au plus frequent trouve precedement
 					for (String iKey : idx.index.get(eKey).keySet()) {
-						// Calcul tf normalisé
+						// Calcul tf normalise
 						double tf = idx.index.get(eKey).get(iKey) / max;
 						
-						// Modification index et index inversé
+						// Modification index et index inverse
 						idx.index.get(eKey).put(iKey, tf); 
 						ridx.index.get(iKey).put(eKey, tf);
 					}
@@ -236,10 +236,10 @@ public class Index {
 			}
 		},
 		
-		// Pondération TF-IDF
+		// Ponderation TF-IDF
 		tfidf {
 			protected void finalizeIndexation(Index index) {
-				// Raccourcis d'écriture
+				// Raccourcis d'ecriture
 				GenericIndex<String, String> idx = index.idx;
 				GenericIndex<String, String> ridx = index.ridx;
 				
@@ -253,7 +253,7 @@ public class Index {
 					
 					// Chaque terme du document
 					for (String iKey : idx.index.get(eKey).keySet()) {					
-						// Calcul tf-idf (non normalisé)
+						// Calcul tf-idf (non normalise)
 						// tf = log2(frequenceDuTermeDsDocCt + 1)
 						// idf = log(nbDocumentsCollection / 
 						//       nbDocumentPourLeTermeChoisi)
@@ -265,18 +265,18 @@ public class Index {
 						// Calcul du tfidf maximal
 						if (tfidf > maxtfidf) maxtfidf = tfidf;
 					
-						// Modification de la fréquence du terme choisi
+						// Modification de la frequence du terme choisi
 						// pour le document courrant
 						idx.index.get(eKey).put(iKey, tfidf);
 					}
 
-					// Normalisation des résultats pour le document courrant
+					// Normalisation des resultats pour le document courrant
 					for (String iKey : idx.index.get(eKey).keySet()) {
 						// Normalisation
 						double tfIdfNorm = 
 							idx.index.get(eKey).get(iKey) / maxtfidf;
 					
-						// Modification index et index inversé
+						// Modification index et index inverse
 						idx.index.get(eKey).put(iKey, tfIdfNorm);
 						ridx.index.get(iKey).put(eKey, tfIdfNorm);
 					}
@@ -284,7 +284,7 @@ public class Index {
 			}
 		},
 		
-		// Sans pondération
+		// Sans ponderation
 		normal {
 			protected void finalizeIndexation(Index index) {
 				return;
@@ -292,8 +292,8 @@ public class Index {
 		};
 
 		/**
-		 * Calcule la pondération de l'index
-		 * @param index Index à mettre à jour
+		 * Calcule la ponderation de l'index
+		 * @param index Index a mettre a jour
 		 */
 		abstract protected void finalizeIndexation(Index index);
 	}
