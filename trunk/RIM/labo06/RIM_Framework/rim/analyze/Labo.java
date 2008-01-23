@@ -8,7 +8,7 @@ import java.util.Map.Entry;
  *
  * @author Romain de Wolff
  */
-public class Labo5 {
+public class Labo {
 
 	final static int NBRITERATIONS = 5;
 	
@@ -78,6 +78,8 @@ public class Labo5 {
 			System.out.printf(" %4d    %1.5f   %1.5f     %1.5f\n",
 					Integer.parseInt(e.getKey()), hc.get(i), ac.get(i), pr.get(i));
 			
-		}	
+		}
+		
+		
 	}
 }
