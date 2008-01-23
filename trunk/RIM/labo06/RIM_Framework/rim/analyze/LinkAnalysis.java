@@ -40,7 +40,44 @@ public class LinkAnalysis {
 	 */
 	public static Vector<Double> calculateHc (AdjacencyMatrix m, Vector<Double> ac) {
 
-		return Matrix.multiply(m, ac);
+		// temp vector
+		Vector<Double> result = new Vector<Double>(m.size());
+
+		// init result to 0
+		for (int i = 0; i < ac.size(); i++) {
+			result.add(0.0);
+		}
+
+		try {
+			
+			// multiply 
+			for (int i = 0; i < m.size(); i++) {
+				for (int j = 0; j < m.size(); j++) {
+					result.set( i, result.get(i)+(m.get(i, j)*ac.get(j)) );
+				}
+			}
+			
+			// normalisation
+			double normalize = 0.0;
+			
+			for (short i=0; i<result.size(); i++) 
+				normalize += Math.pow(result.get(i), 2);
+			
+			normalize = (double)Math.sqrt(normalize);
+			
+			for (short i=0; i<result.size(); i++)
+				result.set(i, result.get(i)/normalize);
+				
+			// result
+			return result; 
+
+		} catch (Exception e) {
+
+			System.out.println("Error while trying to multiply vector and matrix!");
+			System.out.println(e);
+			return result;
+
+		}
 
 	}
 
@@ -52,7 +89,9 @@ public class LinkAnalysis {
 	 */
 	public static Vector<Double> calculateAc (AdjacencyMatrix m, Vector<Double> hc) {
 
-		return Matrix.multiply(Matrix.transpose(m), hc);
+		// we use the calculateHc methode, except we transpose the matrice
+		// given in parameter
+		return calculateHc( Matrix.transpose(m), hc);
 
 	}
 
@@ -64,22 +103,33 @@ public class LinkAnalysis {
 	 */
 	public static Vector<Double> calculatePRc (AdjacencyMatrix m, Vector<Double> pr) {
 
+		// size
+		int vectorSize = pr.size();
+		
 		// store the results
-		Vector<Double> vectValPR = new Vector<Double>(m.size());
-		Vector<Double> E = new Vector<Double>(m.size());
+		Vector<Double> vectValPR = new Vector<Double>(vectorSize);
+		Vector<Double> E = new Vector<Double>(vectorSize);
+		Vector<Double> result = new Vector<Double>(vectorSize);
 		
 		// put the initial constante value (from the course formula)
-		for (short i=0; i<vectValPR.size(); i++) {
+		for (short i=0; i<vectorSize; i++) {
 			vectValPR.add(PAGERANKVALUE);
-			E.add(0.15/(double)m.size());
+			E.add(0.15/(double)vectorSize);
 		}
 		
 		// the calcul is : PR(c) = normalize * ( 0.85 * (Mt * PR(c-1) )  ) 
-		// (cf course)
-		// return Matrix.add(Matrix.multiply(vectValPR, Matrix.multiply(Matrix.transpose(m), pr)), E);
-		return Matrix.multiply(Matrix.transpose(m), pr);
+		// result = Matrix.multiply(vectValPR, Matrix.add(Matrix.multiply(vectValPR, Matrix.multiply(Matrix.transpose(m), pr)), E) );
+		result = Matrix.add(Matrix.multiply(vectValPR, Matrix.multiply(m, pr)), E);
 		
-		// probblem VECTOR * MATRIX
-
+		// normalize
+		Double total = 0.0;
+		for (short i=0; i<vectorSize; i++)
+			total += result.get(i);
+		
+		for (short i=0; i<vectorSize; i++)
+			result.set(i, result.get(i)/total);
+		
+		return result;
+		
 	}
 }

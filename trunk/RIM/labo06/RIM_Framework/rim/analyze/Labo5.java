@@ -1,11 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package rim.analyze;
 
+import java.util.HashMap;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 /**
  *
@@ -16,23 +13,13 @@ public class Labo5 {
 	final static int NBRITERATIONS = 5;
 	
 	public static void main( String args[] ) {
-
-		/*
-		// test des mult *******************************************************
-		Vector<Double> test = new Vector<Double>(3);
-		Vector<Double> test2 = new Vector<Double>(3);
-		test.add(1.0); test.add(3.0); test.add(2.0);
-		test2.add(2.0); test2.add(4.0); test2.add(3.0);
 		
-		System.out.println("Test : " + test );
-		System.out.println("Test2: " + test2);
 		
-		System.out.println("Test + Test2 = " + Matrix.add(test, test2));
-		System.out.println("Test + Test2 = " + Matrix.multiply(test, test2));
-		// *********************************************************************
-		*/
 		
-		System.out.println("** RIM - LABO 5 **");
+		System.out.println("------------------------------------------------");
+		System.out.println("- RIM - Laboratoire 6                          -");
+		System.out.println("- Auteurs : Romain de Wolff & Simon Hintermann -");
+		System.out.println("------------------------------------------------");
 
 		GraphFileReader gr = null;
 
@@ -42,15 +29,13 @@ public class Labo5 {
 
 		gr = new GraphFileReader(fileGraph);
 
-		System.out.println("Scanned graph from the file : ");
-
+		// liste des noeuds
+		HashMap<String, Integer> nodes = gr.getNodeMapping();
+		
 		// matrice initiale
 		AdjacencyMatrix m = gr.getAdjacencyMatrix();
 
-		// affiche de cette matrice representant le graphe
-		System.out.println(m);
-
-
+		
 		AdjacencyMatrix BC, CC = null;
 		BC = LinkAnalysis.calculateBC(gr.getAdjacencyMatrix());
 		CC = LinkAnalysis.calculateCC(gr.getAdjacencyMatrix());
@@ -60,14 +45,13 @@ public class Labo5 {
 		// position 1 et 7 dans le tableau
 		System.out.println("CC 20 <->  2 : " + CC.get(1,7));
 
-
 		// on effectue 5 iterations
 		// les matrices
 		Vector<Double> ac  = new Vector<Double>(m.size()); // authorite
 		Vector<Double> hc  = new Vector<Double>(m.size()); // hub
 		Vector<Double> pr  = new Vector<Double>(m.size()); // page rank
 		Vector<Double> tmp = new Vector<Double>(m.size()); // temp values
-
+		
 		// initialise le contenu du vecteur
 		Double prInitVal = 1/(double)m.size();
 		for (short i=0; i<m.size();i++) {
@@ -78,23 +62,22 @@ public class Labo5 {
 		
 		// effectue les iterations
 		for (short j=0; j<NBRITERATIONS; j++) {
-			// debug
-			System.out.println("j="+j+"\nac="+ac.toString()+"\nhc="+hc.toString()+"\npr="+pr.toString());
-			
 			tmp = LinkAnalysis.calculateHc(m, ac);
-			ac = LinkAnalysis.calculateAc(Matrix.transpose(m), hc);
+			ac = LinkAnalysis.calculateAc(m, hc);
 			hc = tmp;
 			pr = LinkAnalysis.calculatePRc(m, pr);
 		}
 
 		// affiche les resultats
-		System.out.println("Hubs - Authority - PageRank");
-		for (short i=0; i<hc.size();i++) {
-			System.out.println(hc.get(i).toString() + "   " + ac.get(i) + "   " + pr.get(i));
-		}
-		
-		
-		
-
+		System.out.println("------------------------------------------------");
+		System.out.println("- Node - Hubs    - Authority - PageRank        -");
+		System.out.println("------------------------------------------------");
+		int i;
+		for (Entry<String, Integer> e : nodes.entrySet()) {
+			i = e.getValue();
+			System.out.printf(" %4d    %1.5f   %1.5f     %1.5f\n",
+					Integer.parseInt(e.getKey()), hc.get(i), ac.get(i), pr.get(i));
+			
+		}	
 	}
 }
