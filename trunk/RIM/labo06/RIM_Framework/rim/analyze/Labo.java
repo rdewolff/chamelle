@@ -65,10 +65,10 @@ public class Labo {
 		
 		// effectue les iterations
 		for (short j=0; j<NBRITERATIONS; j++) {
-			tmp = LinkAnalysis.calculateHc(m, ac);
-			ac = LinkAnalysis.calculateAc(m, hc);
+			tmp = LinkAnalysis.calculateHc(m, ac); // Hubs
+			ac = LinkAnalysis.calculateAc(m, hc);  // Authority
 			hc = tmp;
-			pr = LinkAnalysis.calculatePRc(m, pr);
+			pr = LinkAnalysis.calculatePRc(m, pr); // PageRank
 		}
 
 		// affiche les resultats
