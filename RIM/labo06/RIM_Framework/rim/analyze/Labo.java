@@ -5,16 +5,28 @@ import java.util.Vector;
 import java.util.Map.Entry;
 
 /**
- *
+ * Laboratoire de RIM Numero 6 : Analyse des Hyperliens
+ * 
+ * Nous allons lire le fichier contenant un graphe et le mettre sous forme de
+ * matrice a l'aide de la class <i>GraphFileReader</i>. 
+ * 
+ * Puis nous allons utiliser la classe <i>LinkAnalysis</i> afind de calculer
+ * le couplage bibliographique ainsi que la co-citation.
+ * 
+ * Puis nous allons calculer le Hub, l'Autorite et le PageRank de notre matrice
+ * en effectuant 5 iterations.
+ * 
  * @author Romain de Wolff
+ * @author Simon Hintermann
  */
 public class Labo {
 
-	final static int NBRITERATIONS = 5;
+	final static int 	NBRITERATIONS = 5;
+	final static String CHEMIN_GRAPHE  = "/Users/rdewolff/Documents/HEIG-VD/eclipse/" +
+	"svnChamelle/RIM/labo06/" +
+	"RIM_Framework/rim/analyze/graphe-full.txt";
 	
 	public static void main( String args[] ) {
-		
-		
 		
 		System.out.println("------------------------------------------------");
 		System.out.println("- RIM - Laboratoire 6                          -");
@@ -23,27 +35,18 @@ public class Labo {
 
 		GraphFileReader gr = null;
 
-		String fileGraph = "/Users/rdewolff/Documents/HEIG-VD/eclipse/" +
-				"svnChamelle/RIM/labo06/" +
-				"RIM_Framework/rim/analyze/graphe-full.txt";
+		// ouverture du fichier contenant le graphe
+		gr = new GraphFileReader(CHEMIN_GRAPHE);
 
-		gr = new GraphFileReader(fileGraph);
-
-		// liste des noeuds
+		// liste des noeuds (utilis
 		HashMap<String, Integer> nodes = gr.getNodeMapping();
 		
 		// matrice initiale
 		AdjacencyMatrix m = gr.getAdjacencyMatrix();
-
 		
 		AdjacencyMatrix BC, CC = null;
 		BC = LinkAnalysis.calculateBC(gr.getAdjacencyMatrix());
 		CC = LinkAnalysis.calculateCC(gr.getAdjacencyMatrix());
-
-		// position 8 et 9 dans le tableau (en fonction du fichier de graphe)
-		System.out.println("BC 25 <-> 22 : " + BC.get(8,9));
-		// position 1 et 7 dans le tableau
-		System.out.println("CC 20 <->  2 : " + CC.get(1,7));
 
 		// on effectue 5 iterations
 		// les matrices
@@ -69,8 +72,14 @@ public class Labo {
 		}
 
 		// affiche les resultats
+		
+		// Couplage bibliographique, position 8 et 9 dans le tableau (en fonction du fichier de graphe)
+		System.out.println("BC 25 <-> 22 : " + BC.get(8,9));
+		// Co-Citation, position 1 et 7 dans le tableau
+		System.out.println("CC 20 <->  2 : " + CC.get(1,7));
+		
 		System.out.println("------------------------------------------------");
-		System.out.println("- Node - Hubs    - Authority - PageRank        -");
+		System.out.println("- Node -  Hubs   - Authority - PageRank        -");
 		System.out.println("------------------------------------------------");
 		int i;
 		for (Entry<String, Integer> e : nodes.entrySet()) {
@@ -79,7 +88,5 @@ public class Labo {
 					Integer.parseInt(e.getKey()), hc.get(i), ac.get(i), pr.get(i));
 			
 		}
-		
-		
 	}
 }
