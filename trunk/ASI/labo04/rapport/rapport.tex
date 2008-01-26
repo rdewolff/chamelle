@@ -138,14 +138,9 @@
 \section{Introduction}
 % -----------------------------------------------------------------------------
 
-\begin{lstlisting}
-dasdsad
-// test valeur
-if (condif) {
-	instructions( check );
-}
-\end{lstlisting}
 Le but de ce laboratoire est de modifier le serveur web créé en Java durant un laboratoire précédant et d'y implémenter le protocole SSL/TLS. Notre serveur web doit se lancer dans deux mode différent: un mode avec authentification du client nécessaire et un autre sans. 
+
+Durant ce laboratoire, nous nous sommes basé sur le serveur web de M. Maulini. 
 
 % -----------------------------------------------------------------------------
 \section{Utilisation du serveur web}
@@ -164,7 +159,7 @@ Le “1” permet de dire que l'on active l'authentification du client. Pour le 
 	java WebServer 0 443
 \end{lstlisting}
 
-Notons que pour lancer le serveur sur le port 443 comme montré ci dessus il faut exécuter la commande en tant qu'administrateur. 
+Notons que pour lancer le serveur sur le port 443 comme montré ci dessus il faut exécuter la commande en tant qu'administrateur du système. 
 
 
 
@@ -206,7 +201,7 @@ Lors de la connexion sur notre serveur HTTPS à l'aide du navigateur Firefox, le
 	\label{fig:connex}
 \end{figure}
 
-Nous acceptons ce certificat et nous allons voir le site s'afficher. On remarque que le site est sécurisé grâce à l'icone représentant un cadenas (an bas à droite dans Firefox) que l'on peut voire sur la figure \ref{fig:icone}.
+Nous acceptons ce certificat et nous allons voir le site s'afficher. On remarque que le site est sécurisé grâce à l'icône représentant un cadenas (an bas à droite dans Firefox) que l'on peut voire sur la figure \ref{fig:icone}.
 
 \begin{figure}[htbp]
    \begin{center}
@@ -226,7 +221,7 @@ En cliquant sur le cadenas on peut afficher les informations relatives à la sé
 	\label{fig:infosecu}
 \end{figure}
 
-La figure \ref{fig:infosecu} nous montre les informations sur le certificat et nous dit que nous faisons confiance au CA mentionné. En cliquant sur le bouton “View” on obtient les informations sur le certificat, exactement les information que nous avons introduites lors de la création à l'aide de \emph{Keytool}. La figure \ref{fig:certif} nous montre cette fenêtre.
+La figure \ref{fig:infosecu} nous montre les informations sur le certificat et nous avertit que nous faisons confiance au CA mentionné. En cliquant sur le bouton “View” on obtient les informations sur le certificat, exactement les informations que nous avons introduites lors de la création à l'aide de \emph{Keytool}. La figure \ref{fig:certif} nous montre cette fenêtre.
 
 \begin{figure}[htbp]
    \begin{center}
@@ -238,19 +233,19 @@ La figure \ref{fig:infosecu} nous montre les informations sur le certificat et n
 
 \subsection{En examinant le certificat du serveur, comment pouvez-vous en déduire que celui-ci est auto-signé?}
 
-On le voit bien sur la figure \ref{fig:certif}: les champs “Issued To” (distribué à)  et “Issued By” (distribué par) sont identiques. On sait dès lors que le certificat est auto-signé. Certain navigateur affiche même directement l'information “Certificat Auto-Signé”. C'est le cas notamment de Safari.
+On le voit bien sur la figure \ref{fig:certif}: les champs “Issued To” (distribué à)  et “Issued By” (distribué par) sont identiques. On sait dès lors que le certificat est auto-signé. Certain navigateur affiche même directement l'information “Certificat Auto-Signé”. C'est le cas notamment de Safari sous Mac OS X.
 
 \subsection{Pourquoi serait-il intéressant de faire signer le certificat par une entité comme Verisign?}
 
-Verisign est une autorité de certification (CA): elle émet des certificats qu'elle vends. Ces certificats sont réputés fiable. L'avantage d'avoir un certificat d'un CA reconnue est que les utilisateurs qui se connecte sur le site peuvent, grâce à la renomée de Verisign, savoir que le site utilise une encryption de qualité. C'est donc pour des questions de sécurité et de véracité que nous avons avantage à utiliser les services offert par une société comme Verisign.
+Verisign est une autorité de certification (CA): elle émet des certificats qu'elle vends. Ces certificats sont réputés fiable. L'avantage d'avoir un certificat d'un CA reconnue est que les utilisateurs qui se connecte sur le site peuvent, grâce à la renomée de Verisign, savoir que le site a identifié une entité correctement. C'est donc pour des questions de sécurité et de véracité que nous avons avantage à utiliser les services offert par une société comme Verisign.
 
-L'utilisateur sera donc mis en confiance et n'aura plus d'avertissement du navigateur comme quoi le certificat est douteux. 
+L'utilisateur sera donc mis en confiance et, surtout, n'aura pas d'avertissement du navigateur comme quoi le certificat est douteux. 
 
 % -----------------------------------------------------------------------------
 \section{Observations}
 % -----------------------------------------------------------------------------
 
-Nous allons établir deux connexions avec le serveur web différentes et les comparer. La première sans authentification du client et la seconde avec. L'annexe 1, “Communication SSL” illustre les échanges entre le client et le serveur. Des numéros y figurent auxquelles nous ferons référence lors de nos explications.
+Nous allons établir deux connexions avec le serveur web et les comparer. La première sans authentification du client et la seconde avec. L'annexe 1, “Communication SSL” illustre, par un diagramme en flèches, les échanges entre le client et le serveur. Des numéros y figurent auxquelles nous ferons référence lors de nos explications.
 
 Nous allons suivre le déroulement partiel des deux type de connexions. Les captures du logiciel Wireshark sont incluses afin de bien voir ce qu'il se passe lors de la connexion. 
 
@@ -258,7 +253,7 @@ Les premiers message échangé (1) font partie du \emph{3 way handshake}. C'est 
 
 Le client envoie un message \texttt{Client Hello} (2) qui contient la liste des algorithmes et la dernière version de SSL qu'il supporte.
 
-Le serveur effectue les choix de \emph{cipher} ainsi que la version de SSL, la plus récente possible, qu'ils utiliseront pour communiquer.
+Le serveur effectue les choix du \emph{cipher} ainsi que la version de SSL, la plus récente possible, qu'ils utiliseront pour communiquer.
 
 Le dernier message identique échangé est \texttt{Certificate} que le serveur envoie au client. Il est optionnel lorsque l'authentification du client n'est pas nécessaire mais indispensable si l'on désire authentifier le client.
 
@@ -276,7 +271,7 @@ La étapes suivantes changent en fonction du système d'authentification choisit
 
 Si l'authentification du client n'est pas nécessaire, le message suivant est \texttt{Server Hello Done} (5), envoyé par le serveur. Il permet d'indiquer au client que les négociations initiales sont terminées de son côté. 
 
-Dans les étapes suivantes, le client va échanger des informations pour permettre de créer les clés symétriques (6, \texttt{Client Key Exchange}). Une fois la clé symétrique partagée, le client demande de passer mode sécurisé (7 et 8, \texttt{Change Cipher Spec}). Le serveur envoie aussi (8) un message \texttt{Change Cipher Spec} qui va permettre finalement de communiquer de manière chiffrée. C'est les message de type \texttt{Application Data} qui contiennent les données chiffrées transmises entre le client et le serveur.
+Dans les étapes suivantes, le client va échanger des informations pour permettre de créer les clés symétriques (6, \texttt{Client Key Exchange}). Une fois la clé symétrique partagée, le client demande de passer mode sécurisé (7, \texttt{Change Cipher Spec}). Le serveur envoie aussi (8) un message \texttt{Change Cipher Spec} qui va permettre finalement de communiquer de manière chiffrée. C'est les message de type \texttt{Application Data} qui contiennent les données chiffrées transmises entre le client et le serveur.
 
 \subsection{Connexion avec l'authentification client activée}
 
@@ -350,7 +345,7 @@ Ici on a choisit \texttt{TLS}, mais on peut aussi choisir \texttt{SSLv3}. On a r
 	********************************************
 \end{verbatim}
 
-Selon la documentation que nous avons trouvé sur internet, il semble que les différences entre SSLv3 et TLS ne soient pas grandes. On note quand même que ces deux protocole ne sont pas compatible dans les deux sens, mais que TLS soit compatible avec SSL v3.
+Selon la documentation que nous avons trouvé sur internet, il semble que les différences entre SSLv3 et TLS sont minimes. On note quand même que ces deux protocole ne sont pas compatibles dans les deux sens, mais que TLS soit compatible avec SSL v3.
 
 \subsection{Le message \emph{Certificate Verifiy}}
 
@@ -360,7 +355,23 @@ Le message \texttt{Certificate Verify} est utile lorsque l'on désire authentifi
 
 Pour que notre serveur web effectue uniquement de l'authentification, il faut le lancer avec authentification du client et modifier l'objet \texttt{serveur} appartenant à la classe \texttt{SSLServerSocket}. La méthode \texttt{setEnableSessionCreation()} permet d'effectuer cette action.
 
-En effet, si la session n'est pas créée, on aura uniquement l'authentification qui sera effectuée. Le reste des communication ne sera pas chiffrés.
+En effet, si la session n'est pas créée, on aura uniquement l'authentification qui sera effectuée. Le reste des communications ne sera pas chiffrés.
+
+L'autre moyen décrit dans le cours, permet de désactivé le chiffrement des données en changeant le type de cipher utilisé. En effet, la structure des ciphers permet de contrôler le chiffrement utilisé.
+
+Nous pouvons ainsi désactiver le chiffrement de donnée en insérant \texttt{NULL} à la place de l'option de chiffrement de session.
+
+\begin{lstlisting}
+SSL_RSA_WITH_3DES_EDE_CBC_SHA
+\end{lstlisting}
+
+devient
+
+\begin{lstlisting}
+SSL_RSA_WITH_NULL_SHA
+\end{lstlisting}
+
+Nous avons donc deux moyens de ne pas chiffrer les données transmises durant la session. 
 
 % -----------------------------------------------------------------------------
 \section{Conclusion}
@@ -368,8 +379,7 @@ En effet, si la session n'est pas créée, on aura uniquement l'authentification
 
 La découverte et l'implémentation du protocole SSL/TLS est passionnant. Nous n'avions jamais effectué de serveur sécurisé de cette manière. Le langage Java qui met à disposition JSSE nous facilite grandement la vie et rend la création d'un serveur web sécurisé relativement facile. 
 
-Après avoir lus la documentation et fait quelques tests, il nous fallut simplement du temps pour faire tout ce qui est demandé dans ce laboratoire.
-
+Après avoir lus la documentation et fait quelques tests, il nous fallut simplement du temps pour faire tout ce qui est demandé dans ce laboratoire et aucunes difficulté particulière n'est survenue.
 
 % -----------------------------------------------------------------------------
 \section{Références}
