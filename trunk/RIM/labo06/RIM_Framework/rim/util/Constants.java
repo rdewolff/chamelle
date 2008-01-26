@@ -11,7 +11,9 @@ public class Constants {
 	public static final String HASH_ALGO = "SHA1";
 
 	// Dictionnaire des mots communs
-	public static final String COMMON_WORDS_FILE = "ressources/french_common_words";
+	public static final String COMMON_WORDS_FILE = 
+		"/Users/rdewolff/Documents/HEIG-VD/eclipse/svnChamelle/" +
+		"RIM/labo06/RIM_Framework/rim/ressources/common_words-fr";
 	
 	// URI de depart pour le spider
 	public static final String INITIAL_URI = "http://www.heig-vd.ch";

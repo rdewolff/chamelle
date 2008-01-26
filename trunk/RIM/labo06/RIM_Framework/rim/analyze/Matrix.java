@@ -4,15 +4,21 @@ package rim.analyze;
 import java.util.Vector;
 
 /**
- * This class is here to make operation on matrix. It allows to do various 
+ * This class provide various calculs on matrix. It allows to do various 
  * operation such as :
  *    - transpose a matrix
+ *    - multiply a matrix and a vector
  *    - multiply two matrixes
- *    - multiply a matrix and a vector 
+ *    - multiply two vector
+ *    - add two vector 
+ *    
+ * The vector we use containing doubles.
  * 
- * These must be the same dimension of course or it will make an exception.
+ * These must be the same dimension or it will cause an exception.
  * 
- * @author  Romain de Wolff
+ * Last modification : 26 janvier 2008
+ * 
+ * @author  Romain de Wolff & Simon Hintermann
  * @date    15 dec 2007
  */
 
@@ -40,6 +46,12 @@ public class Matrix {
 
 	}
 
+	/**
+	 * Multiply a matrix with a vector
+	 * @param m The matrix
+	 * @param ac The vector (double)
+	 * @return the resulting vector (double)
+	 */
 	public static Vector<Double> multiply(AdjacencyMatrix m, Vector<Double> ac) {
 
 		// temp vector
@@ -68,7 +80,13 @@ public class Matrix {
 
 		}
 	}
-
+	
+	/**
+	 * Multiply two matrixes.
+	 * @param m1 the first matrix
+	 * @param m2 the second matrix
+	 * @return the resulting matrix
+	 */
 	public static AdjacencyMatrix multiply(AdjacencyMatrix m1, AdjacencyMatrix m2) {
 
 		// matrice temporaire
@@ -91,6 +109,12 @@ public class Matrix {
 
 	}
 
+	/**
+	 * Multiply two vectors (containing double)
+	 * @param v1 the first vector
+	 * @param v2 the second vector 
+	 * @return the resulting vector
+	 */
 	public static Vector<Double> multiply(Vector<Double> v1, Vector<Double> v2) {
 
 		Vector<Double> result = new Vector<Double>();
@@ -103,6 +127,12 @@ public class Matrix {
 
 	}
 
+	/**
+	 * Add two vectors
+	 * @param v1 the first vector
+	 * @param v2 the second vector
+	 * @return the resulting vector
+	 */
 	public static Vector<Double> add(Vector<Double> v1, Vector<Double> v2) {
 
 		Vector<Double> result = new Vector<Double>();

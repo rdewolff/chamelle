@@ -118,7 +118,6 @@ public class LinkAnalysis {
 		}
 		
 		// the calcul is : PR(c) = normalize * ( 0.85 * (Mt * PR(c-1) )  ) 
-		// result = Matrix.multiply(vectValPR, Matrix.add(Matrix.multiply(vectValPR, Matrix.multiply(Matrix.transpose(m), pr)), E) );
 		result = Matrix.add(Matrix.multiply(vectValPR, Matrix.multiply(m, pr)), E);
 		
 		// normalize

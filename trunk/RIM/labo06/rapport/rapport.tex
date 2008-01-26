@@ -20,6 +20,41 @@
 \usepackage{geometry}                     % See geometry.pdf to learn the layout options
 \usepackage{moreverb}					  % permet d'encadrer le verbatim a l'aide de la commande \begin{boxedverbatim}
 \usepackage{longtable}
+% afin de créer des jolies listing de code
+\usepackage{courier}
+\usepackage{color}
+
+% color definitions
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{lightblue}{rgb}{0.92,0.92,1}
+
+\lstset{language=Java,
+  %keywords={break,case,catch,continue,else,elseif,end,for,function,
+  %   global,if,otherwise,persistent,return,switch,try,while},
+  % basicstyle=\ttfamily\small,
+  basicstyle=\scriptsize, 
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{red},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  numbersep=10pt,
+  backgroundcolor=\color{lightblue},
+  tabsize=2,
+  linewidth=0pt,
+  showspaces=false,
+  showstringspaces=false,
+  frame=single,
+  framexleftmargin=10pt,
+  framexrightmargin=10pt,
+  framexbottommargin=7pt,
+  framextopmargin=7pt,
+  linewidth=430pt, % largeur de la ligne de code affichée
+  xleftmargin=10pt, % espace avant le debut du cadre
+  aboveskip=20pt
+}
 
 \geometry{a4paper}                        % ... or a4paper or a5paper or ... 
 %\geometry{landscape}                     % Activate for for rotated page geometry
@@ -48,7 +83,7 @@
 \small{RIM - Recherche d'Information Multimedia} \\ \vspace{2cm}
 \huge{Labo 6} \\ \vspace{1cm} 
 Analyse des hyperliens\\
-\small{Couplage bibliographique, Co-Citation, Hub, Autorite et PageRank}} 
+\small{Couplage bibliographique, Co-Citation, Hub, Autorité et PageRank}} 
 \vspace{2cm}
 \author{Romain \bsc{de Wolff} et Simon \bsc{Hintermann}\\ IL2008 \\ \vspace{2cm} \\ Professeurs Mme. Laura Elena Raileanu \\ et Mme Nastaran Fatemi \vspace{2cm} 
 }
@@ -71,23 +106,165 @@ Analyse des hyperliens\\
 \section{Objectifs} 
 %==============================================================================
 
+Le but de ce laboratoire est d'implémenter un système permettant
+d'effectuer les différentes méthodes de calculs des hyperliens. Nous allons
+tout d'abord tester ces calculs sur un graphe donné puis implémenter ces
+calculs dans notre moteur de recherche.
+
+Les méthode de calculs utilisées sont les suivantes: Couplage Bibliographique, 
+Co-Citation, Hub, Autorité et PageRank. 
+
+Ces méthodes de calculs sont décrites dans les support de cours ainsi que dans 
+la donnée du laboratoire.
+
+%==============================================================================
+\section{Demarches adoptées} 
+%==============================================================================
+
+Dans ce chapître, nous décrivons les démarches que nous avons effectués durant
+ce laboratoire.
+
+\subsection{Implémenter les méthodes de calculs}
+
+Après avoir parcourus le code mis à disposition, nous avons determiné
+quel méthodes de calculs nous allions avoir besoin afin de calculer les
+différentes analyses d'hyperliens. 
+
+Nous avons créé une classe \texttt{Matrix} qui met à disposition des méthodes
+static afin d'effectuer ces différents calculs.
+
+Il s'agit des méthodes suivantes : 
+
+\begin{description}
+\item[AdjacencyMatrix transpose(AdjacencyMatrix m)] retourne la transposée
+d'une matrice passée en paramètre
+\item[multiply(AdjacencyMatrix m, Vector<Double> ac)] multiplie
+une matrice et un vecteur (de la même taille), retourne un vecteur
+\item[multiply(AdjacencyMatrix m1, AdjacencyMatrix m2)] multiplie deux matrices
+et renvoie la matrice résultante
+\item[multiply(Vector<Double> v1, Vector<Double> v2)] multiplie deux vecteurs
+(contenant des \texttt{doubles}) et renvoie le vecteur résultant
+\item[add(Vector<Double> v1, Vector<Double> v2)] additionne deux vecteurs
+(contenant des \texttt{double}) et renvoie le vecteur résultant
+\end{description}
+
+Une fois ces méthodes de calculs effectuées et testées, nous pouvons implémenter
+les méthodes d'analyze des hyperliens qui se trouvent dans le fichier
+\texttt{LinkAnalysis.java}.
+
+On note que la méthode \texttt{calculateAc()} utilise la méthode
+\texttt{calculateHc()} en changeant uniquement le paramètre de la matrice
+passée en paramètre. En effet, le calcul est le même, sauf que la matrice
+utilisée doit être transposée auparavant. C'est ce que nous faisons.
+
+Pour pouvoir répondre et analyser le graphe fourni, il nous faut le représenter
+au format texte. Voici cette représentation:
+
+%\begin{lstlisting}
+\begin{verbatim}
+# nodes
+1
+2
+4
+6
+8
+9
+10
+20
+22
+25
+40
+41
+42
+49
+60
+80
+93
+100
+# edges (16)
+1;10
+2;20
+4;2;
+4;40
+4;41
+4;42
+6;60
+8;4
+8;80
+9;1
+9;10
+10;100
+22;20
+25;2
+25;20
+49;4
+\end{verbatim}
+% \end{lstlisting}
 
 
-%==============================================================================
-\section{Demarches adoptees} 
-%==============================================================================
+Nous pouvons tester notre travail. Pour cela nous allons créer notre programme
+principal de test des analyzes d'hyperliens: \texttt{Labo.java} dans le package
+\texttt{rim.analze}. Nous allons utiliser la classe \texttt{GraphFileReader}
+afin de lire le contenu du fichier représentant notre graphe. Une fois la
+matrice d'adjascence récuperée, nous effectuons les calculs et affichons les
+résultats obtenus à l'écran. 
 
-%==============================================================================
-\section{Reponses aux questions} 
-%==============================================================================
+Voici le résultat des calculs effectués sur le graphe complet donné dans la
+donnée:
 
-%==============================================================================
-\section{Analyse des resultats obtenus} 
-%==============================================================================
+\begin{verbatim}
+------------------------------------------------
+- RIM - Laboratoire 6                          -
+- Auteurs : Romain de Wolff & Simon Hintermann -
+------------------------------------------------
+BC 25 <-> 22 : 1.0
+CC 20 <->  2 : 1.0
+------------------------------------------------
+- Node -  Hubs   - Authority - PageRank        -
+------------------------------------------------
+    1    0,08018   0,10073     0,03089
+    2    0,18040   0,57918     0,10928
+    4    0,82181   0,16368     0,04918
+    6    0,01002   0,00000     0,01259
+    8    0,13029   0,00000     0,01259
+    9    0,13029   0,00000     0,01259
+   10    0,01002   0,16368     0,07923
+   20    0,00000   0,54141     0,18757
+   22    0,18040   0,00000     0,01259
+   25    0,46102   0,00000     0,01259
+   40    0,00000   0,31477     0,09098
+   41    0,00000   0,31477     0,09098
+   42    0,00000   0,31477     0,09098
+   49    0,08018   0,00000     0,01259
+   60    0,00000   0,01259     0,03089
+   80    0,00000   0,10073     0,03089
+   93    0,00000   0,00000     0,01259
+  100    0,00000   0,01259     0,12099
+\end{verbatim}
+
+\subsection{Intégration dans le moteur de recherche}
+
+Sachant que notre version du laboratoire précédant comporte encore quelques
+erreurs, nous avons utilisé celle d'une de nos collègues. Laurent Prévost et
+Jonas Schmid ont eut la gentillesse de nous donner leurs sources du laboratoire
+précédant.
+
+Nous avons commencer par prendre connaissance de leur code et effectuer quelques
+adaptations pour que celui-ci fonctionne sur nos système d'exploitation.
+\texttt{*nix}.
+
+Pour cela nous avons tout d'abord modifier le chemin des
+\textit{common words} configuré dans le fichier \texttt{Constants.java}. 
 
 %==============================================================================
 \section{Conclusion personnelle} 
 %==============================================================================
+
+Comme au laboratoire précédant, il est difficile de faire des tests sur un site
+web comportant autant de page que celui de la HEIG-VD. Nous avons donc fait des
+tests sur d'autre site compotant moins de pages, comme le site
+\url{http://www.kdanse.ch}.
+
 
 
 %==============================================================================

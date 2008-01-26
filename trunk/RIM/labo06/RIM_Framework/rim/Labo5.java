@@ -289,7 +289,7 @@ public class Labo5 {
 		// Affichage
 		System.out.println("Creation de l'index [" + index.type() + "]...");
 			
-		// Creation meme de l'index
+		// Creation meme de l'index a partir des pages web
 		cacmFeeder.parseCollection(Constants.INITIAL_URI, cacmIndex);
 			
 		// Sauvegarde l'index dans le repertoire courant
