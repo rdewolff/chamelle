@@ -8,13 +8,19 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import rim.Feeder;
 import rim.Indexer;
+import rim.analyze.AdjacencyMatrix;
+import rim.analyze.ArrayListMatrix;
+import rim.analyze.LinkAnalysis;
 import rim.util.Constants;
 import rim.util.Hash;
 import rim.util.WebParser;
@@ -23,6 +29,7 @@ import rim.util.WebParser.ParsedData;
 /**
  * A feeder for the CACM collection.
  * @author Florian Poulin <i>(florian.poulin at heig-vd.ch)</i>
+ * Modifications : Romain de Wolff & Simon Hintermann
  */
 public class CACMFeeder implements Feeder {
 	// Sous domaines
@@ -42,19 +49,20 @@ public class CACMFeeder implements Feeder {
 	 * @see rim.Feeder#parseCollection(java.net.URI, rim.Indexer)
 	 */
 	public int parseCollection(String uri, Indexer indexer) {
+		
 		// Queue des URI en cours de parcours
 		Queue<LeafPage> uriCollection = new LinkedList<LeafPage>();
 		
-		// Pages visit�es (hash des pages)
+		// Pages visitees (hash des pages)
 		TreeSet<String> pagesVisited = new TreeSet<String>();
 		
-		// Liste des URI visit�es (hash des URI)
+		// Liste des URI visitees (hash des URI)
 		TreeSet<String> urisVerified = new TreeSet<String>();
 		
-		// Masque pour �viter de parcourir tout le web
+		// Masque pour eviter de parcourir tout le web
 		Matcher uriMatcher = DEFAULT_MASK.matcher(uri);
 		
-		// Comptage des URI index�es
+		// Comptage des URI indexees
 		int count = 0;
 		
 		// L'URI initiale ne respecte pas le masque
@@ -66,9 +74,15 @@ public class CACMFeeder implements Feeder {
 		// Initialisation du spider
 		uriCollection.add(root);
 		
+		// TODO en cours
+		// Initialise la structure pour construire la matrice d'adjascence 
+		List<String> nodes = new LinkedList<String>();
+		HashMap<String, LinkedList<String>> edges = 
+			new HashMap<String, LinkedList<String>>();
+		
 		// Parcours du web
 		while (!uriCollection.isEmpty()) {
-			// R�cup�ration d'une URI
+			// Recuperation d'une URI
 			LeafPage currentURI = uriCollection.poll();
 			
 			System.out.println("Current : " + currentURI.uri() + " / Nb rest : " 
@@ -78,50 +92,53 @@ public class CACMFeeder implements Feeder {
 			ParsedData page;
 			
 			try {
-				// R�cup�ration de la page
+				// Recuperation de la page
 				page = WebParser.parseURL(new URL(currentURI.uri()));
 				
 				// Comptabilise au besoin la page pour le sous domaine
 				subDomain(currentURI);
 				
-				// M�morise le statut
+				// Memorise le statut
 				currentURI.status(page.getStatusCode());
 
-				// V�rification statut et contenu
+				// Verification statut et contenu
 				if (page.getStatusCode() == 200 &&
 					page.getPageContent() != null) {
 					
 					// Hachage du contenu de la page
 					String hash = hashContent(page.getPageContent()); 
 					
-					// V�rifie si la page � deja �t� visit�e
+					// Verifie si la page a deja ete visitee
 					if (!pagesVisited.contains(hash)) {
 						// Indexation de la page
 						indexer.index(currentURI.uri(), page.getPageContent());
 					
-						// Un fichier de plus d'index�
+						// Un fichier de plus d'indexe
 						count++;
 						
-						// Ajout du hash � la liste des visit�s
+						// TODO en cours
+						nodes.add(currentURI.uri()); // stock l'url
+						
+						// Ajout du hash a la liste des visites
 						pagesVisited.add(hash);
 						
-						// R�cup�ration des URIs de la page courante
+						// Recuperation des URIs de la page courante
 						Set<String> uris = page.getPageHrefs();
 						
 						// Parcours des URIs
 						for (String nextURI : uris) {
-							// URI invalide ou � �carter
+							// URI invalide ou a ecarter
 							if (nextURI == null || 
 								Constants.STOP_URIS.matcher(nextURI).find())
 								continue;
 
-							// Pr�paration de l'URI � visiter
+							// Preparation de l'URI a visiter
 							nextURI = urlToPrepare(currentURI.uri(), nextURI);
 							
 							if (nextURI == null)
 								continue;
 							
-							// V�rification de la validit� de l'URI par
+							// Verification de la validite de l'URI par
 							// rapport au masque de contrainte
 							uriMatcher = DEFAULT_MASK.matcher(nextURI);
 							if (!uriMatcher.find())
@@ -130,8 +147,18 @@ public class CACMFeeder implements Feeder {
 							// Hachage de l'URI courante du doc courant
 							String uriHash = hashContent(nextURI); 
 							
-							// Evite de reparcourir une m�me URI plusieurs fois
-							if(!urisVerified.contains(uriHash)) {
+							// TODO en cours
+							// se souvient que la page en cours contient ce lien
+							LinkedList<String> list;
+							if ((list = edges.get(currentURI.uri())) == null) {
+								list = new LinkedList<String>();
+								edges.put(currentURI.uri(), list);
+							}
+							list.add(nextURI);
+							// TODO end
+							
+							// Evite de reparcourir une meme URI plusieurs fois
+							if(!urisVerified.contains(uriHash)) {								
 								urisVerified.add(uriHash);
 								uriCollection.add(
 									new LeafPage(nextURI, currentURI));
@@ -141,7 +168,7 @@ public class CACMFeeder implements Feeder {
 				}
 			}
 			
-			// Impossible d'acc�der � la page
+			// Impossible d'acceder a la page
 			catch (IOException ioe) {
 				page = null;
 			}
@@ -152,6 +179,58 @@ public class CACMFeeder implements Feeder {
 			}
 		}
 
+		// TODO en cours
+		// reconstruit la matrice d'adjascence
+		// Init members
+		AdjacencyMatrix am = new ArrayListMatrix(nodes.size());
+		LinkedHashMap<String,Integer> map = new LinkedHashMap<String,Integer>();
+		
+		// Build nodes
+		int i=0;
+		for (String node : nodes) {
+				map.put(node, i++);
+		}
+
+		// Build edges
+		for (String key : edges.keySet()) {
+			for (String value : edges.get(key)) {
+				if (nodes.contains(value)) {
+					am.set( map.get(key), 
+							map.get(value), 
+							am.get(map.get(key), map.get(value))+1 );
+				};
+			}
+		}	
+
+		// affichage de la matrice
+		System.out.println("Calcul du PageRank en cours...");
+		
+		// calcul pagerank sur 5 itérations
+		// les matrices
+		Vector<Double> ac  = new Vector<Double>(am.size()); // authorite
+		Vector<Double> hc  = new Vector<Double>(am.size()); // hub
+		Vector<Double> pr  = new Vector<Double>(am.size()); // page rank
+		Vector<Double> tmp = new Vector<Double>(am.size()); // temp values
+		
+		// initialise le contenu du vecteur
+		Double prInitVal = 1/(double)am.size();
+		for (short j=0; j<am.size();j++) {
+			ac.add(1.0);
+			hc.add(1.0);
+			pr.add(prInitVal); 
+		}
+		
+		for (short j=0; j<5; j++) {
+			tmp = LinkAnalysis.calculateHc(am, ac); // Hubs
+			ac = LinkAnalysis.calculateAc(am, hc);  // Authority
+			hc = tmp;
+			pr = LinkAnalysis.calculatePRc(am, pr); // PageRank
+		}
+		
+		// 
+		System.out.println("Résultat du PageRank de chaque pages: \n" + pr);
+		// TODO end
+		
 		// Finalisation de l'indexation
 		indexer.finalizeIndexation();
 		
