@@ -16,11 +16,11 @@ public class Constants {
 		"RIM/labo06/RIM_Framework/rim/ressources/common_words-fr";
 	
 	// URI de depart pour le spider
-	public static final String INITIAL_URI = "http://www.heig-vd.ch";
+	public static final String INITIAL_URI = "http://www.proyectolatino.ch";
 	
 	// Masque a forcer pour ne pas telecharger le web
 	public static final Pattern DEFAULT_MASK = 
-		Pattern.compile("^http://([a-zA-Z0-9_-]{1,}\\.){1,}heig-vd\\.ch.*");
+		Pattern.compile("^http://([a-zA-Z0-9_-]{1,}\\.){1,}proyectolatino\\.ch.*");
 	
 	// Debut d'URI interidite
 	public static final Pattern STOP_URIS = 
