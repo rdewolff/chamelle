@@ -82,8 +82,7 @@ public class CACMFeeder implements Feeder {
 		// Initialisation du spider
 		uriCollection.add(root);
 		
-		// TODO en cours
-		// Initialise la structure pour construire la matrice d'adjascence 
+		// Initialise la structure pour construire la matrice d'adjacence 
 		List<String> nodes = new LinkedList<String>();
 		HashMap<String, LinkedList<String>> edges = 
 			new HashMap<String, LinkedList<String>>();
@@ -124,7 +123,7 @@ public class CACMFeeder implements Feeder {
 						// Un fichier de plus d'indexe
 						count++;
 						
-						// TODO en cours
+						// ajoute l'URL courrante comme noeud
 						nodes.add(currentURI.uri()); // stock l'url
 						
 						// Ajout du hash a la liste des visites
@@ -155,7 +154,6 @@ public class CACMFeeder implements Feeder {
 							// Hachage de l'URI courante du doc courant
 							String uriHash = hashContent(nextURI); 
 							
-							// TODO en cours
 							// se souvient que la page en cours contient ce lien
 							LinkedList<String> list;
 							if ((list = edges.get(currentURI.uri())) == null) {
@@ -163,7 +161,6 @@ public class CACMFeeder implements Feeder {
 								edges.put(currentURI.uri(), list);
 							}
 							list.add(nextURI);
-							// TODO end
 							
 							// Evite de reparcourir une meme URI plusieurs fois
 							if(!urisVerified.contains(uriHash)) {								
@@ -187,19 +184,18 @@ public class CACMFeeder implements Feeder {
 			}
 		}
 
-		// TODO en cours
 		// reconstruit la matrice d'adjascence
-		// Init members
+		// initialisation
 		AdjacencyMatrix am = new ArrayListMatrix(nodes.size());
 		LinkedHashMap<String,Integer> map = new LinkedHashMap<String,Integer>();
 		
-		// Build nodes
+		// reconstruit les noeuds
 		int i=0;
 		for (String node : nodes) {
 				map.put(node, i++);
 		}
 
-		// Build edges
+		// recontruit les liens des pages
 		for (String key : edges.keySet()) {
 			for (String value : edges.get(key)) {
 				if (nodes.contains(value)) {
@@ -213,7 +209,6 @@ public class CACMFeeder implements Feeder {
 		// affichage de la matrice
 		System.out.println("Calcul du PageRank en cours...");
 		
-		// calcul pagerank sur 5 itérations
 		// les matrices
 		Vector<Double> ac  = new Vector<Double>(am.size()); // authorite
 		Vector<Double> hc  = new Vector<Double>(am.size()); // hub
@@ -228,6 +223,7 @@ public class CACMFeeder implements Feeder {
 			pr.add(prInitVal); 
 		}
 		
+		// effectue les iterations pour le calcul du page rank
 		for (short j=0; j<5; j++) {
 			tmp = LinkAnalysis.calculateHc(am, ac); // Hubs
 			ac = LinkAnalysis.calculateAc(am, hc);  // Authority
@@ -235,21 +231,15 @@ public class CACMFeeder implements Feeder {
 			pr = LinkAnalysis.calculatePRc(am, pr); // PageRank
 		}
 		
-		// en cours
+		// conserve l'url ainsi que son pagerank correspondant
+		// qui est utilisé pour trier les resultats par pagerank
 		urlAndPageRank = new LinkedHashMap<String,Double>();
 		
 		short j=0;
 		for (String url : map.keySet()) {
 			urlAndPageRank.put(url, pr.get(j));
 			j++;
-		}
-		
-		// debug 
-		
-		System.out.println("Page : \n" + map);
-		System.out.println("Résultat du PageRank de chaque pages: \n" + pr);
-		System.out.println("ReZZZ: "+ urlAndPageRank);
-		
+		}		
 		
 		// Finalisation de l'indexation
 		indexer.finalizeIndexation();

@@ -37,6 +37,7 @@ import rim.util.Constants;
  * </ul>
  * If you have any question, please ask the assistant or the professor.<br/>
  * Enjoy !
+ * Modified by : Romain de Wolff & Simon Hintermann
  */
 public class Labo {
 	
@@ -70,7 +71,6 @@ public class Labo {
 			cpt++;
 		}
 	}
-	
 	
 	/**
 	 * Permet de lire le contenu ecrit par l'utilisateur
@@ -147,6 +147,7 @@ public class Labo {
 		}
 		
 		// et on affiche les resultats
+		System.out.println("\nResultats (pagerank/url) : ");
 		System.out.println(resultatPR);
 		
 	}
@@ -166,17 +167,42 @@ public class Labo {
 	 * affiche les resultats obtenus
 	 * @param cr Retriever
 	 */
-	private static void searchQuery(CACMRetriever cr) {
+	private static void searchQuery(CACMRetriever cr, CACMFeeder cf) {
+		
 		System.out.print("Entrez votre requete (lang. nat.) : ");
 		
 		// Requete
 		String query = readString();
 		
-		// Resultat
+		// effectue la recherche et conserve les resultats trouves
 		Map<Double, String> result = cr.executeQuery(query);
 		
+		// TODO
+		// les url ainsi que le page rank correspondant
+		LinkedHashMap<String,Double> urlAndPageRank =cf.getUrlAndPageRank();
+		
+		// le resultat comportant uniquement le page rank et l'url
+		// on utilise un comparateur de double pour classer les résultats
+		TreeMap<Double, String> resultatPR = 
+			new TreeMap<Double, String>(new Comparator<Double>() {
+				public int compare(Double o1, Double o2) {
+					return o2.compareTo(o1) ;
+				}
+			});
+		
+		// finalement on met les resultat trouvé dans le treemap 
+		for (Entry<Double, String> e : result.entrySet()) {
+			
+			resultatPR.put(urlAndPageRank.get(e.getValue()), e.getValue());
+		}
+		
+		// et on affiche les resultats
+		System.out.println("\nResultats (pagerank/url) : ");
+		System.out.println(resultatPR);
+		// TODO
+		
 		// Affichage
-		showQueryResult(result, query, -1);
+		// showQueryResult(result, query, -1);
 	}
 	
 	/**
@@ -260,7 +286,7 @@ public class Labo {
 				break;
 				
 			case 3: 
-				searchQuery(retriever);
+				searchQuery(retriever, cacmFeeder);
 				break;
 				
 			default:
@@ -276,15 +302,6 @@ public class Labo {
 	public static void main (String[] args) {
 		// Chemin du dossier vers les fichiers utilises
 		String folder = null;
-		
-		// Variables de test
-		String[] queries = new String[] {
-			"Offres d'Emploi",
-			"Inscriptions et ingenierie",
-			"Horaire TIC trimestre",
-			"Travail de diplome a l'etranger",
-			"Raclette de noel"
-		};
 		
 		// Verification que le dossier ou ecrire les
 		// resultats soit accessible en ecriture
@@ -366,35 +383,9 @@ public class Labo {
 		int nbDeathLinks = cacmFeeder.root().showInvalids(404);
 		
 		System.out.println("Nb liens morts : " + nbDeathLinks);
-			
-		System.out.println();
-		System.out.println("Appuyez sur <enter> pour " +
-			"lancer les test automatiques");
-		System.out.println();
-		
-		readString();
 		
 		// Recherche
 		CACMRetriever retriever = new CACMRetriever(index, cw);
-
-		// Recherches de tests
-		for (String s : queries) {
-			System.out.println("=========================================");
-			System.out.println("10 premiers resultats pour la recherche : \""
-				+ s + "\" : ");
-			System.out.println("=========================================");
-
-			showQueryResult(retriever.executeQuery(s), s, 10);
-		
-			System.out.println();
-		}
-		
-		System.out.println();
-		System.out.println("Fin des tests automatiques");
-		System.out.println("Appuyez sur <enter> pour lancer le menu");
-		System.out.println();
-		
-		readString();
 
 		// Debut de la console permettant de faire d'autre recherches
 		System.out.println();
