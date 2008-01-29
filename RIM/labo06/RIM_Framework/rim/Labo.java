@@ -177,7 +177,6 @@ public class Labo {
 		// effectue la recherche et conserve les resultats trouves
 		Map<Double, String> result = cr.executeQuery(query);
 		
-		// TODO
 		// les url ainsi que le page rank correspondant
 		LinkedHashMap<String,Double> urlAndPageRank =cf.getUrlAndPageRank();
 		
@@ -199,10 +198,7 @@ public class Labo {
 		// et on affiche les resultats
 		System.out.println("\nResultats (pagerank/url) : ");
 		System.out.println(resultatPR);
-		// TODO
 		
-		// Affichage
-		// showQueryResult(result, query, -1);
 	}
 	
 	/**

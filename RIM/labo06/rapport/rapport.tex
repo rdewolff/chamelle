@@ -91,8 +91,15 @@ Analyse des hyperliens\\
 \pagebreak{}
 \begin{document}
 \maketitle
+
+\newpage
+\tableofcontents
+\newpage
+
 \thispagestyle{empty} % enleve le numero de page sur la page de titre (uniquement)
 \newpage
+
+\
 %==============================================================================
 % configuration des numerotations de pages (chiffres romains)
 \pagenumbering{arabic} \setcounter{page}{1} 
@@ -114,8 +121,7 @@ calculs dans notre moteur de recherche.
 Les méthode de calculs utilisées sont les suivantes: Couplage Bibliographique, 
 Co-Citation, Hub, Autorité et PageRank. 
 
-Ces méthodes de calculs sont décrites dans les support de cours ainsi que dans 
-la donnée du laboratoire.
+Les algorithmes utilisés pour effectuer ces calculs sont sont décrits dans le support de cours.
 
 %==============================================================================
 \section{Demarches adoptées} 
@@ -158,48 +164,34 @@ passée en paramètre. En effet, le calcul est le même, sauf que la matrice
 utilisée doit être transposée auparavant. C'est ce que nous faisons.
 
 Pour pouvoir répondre et analyser le graphe fourni, il nous faut le représenter
-au format texte. Voici cette représentation:
+au format texte. 
 
-%\begin{lstlisting}
-\begin{verbatim}
-# nodes
-1
-2
-4
-6
-8
-9
-10
-20
-22
-25
-40
-41
-42
-49
-60
-80
+Cette représentation est illustrée dans la figure 1 (il s'agit en faite d'une seule colonne, mais nous l'affichons sur deux colonnes pour gagner de la place).
+
+\begin{lstlisting}
+# nodes     # edges (16)
+1           1;10
+2           2;20
+4           4;2;
+6           4;40
+8           4;41
+9           4;42
+10          6;60
+20          8;4
+22          8;80
+25          9;1
+40          9;10
+41          10;100
+42          22;20
+49          25;2
+60          25;20
+80          49;4
 93
 100
-# edges (16)
-1;10
-2;20
-4;2;
-4;40
-4;41
-4;42
-6;60
-8;4
-8;80
-9;1
-9;10
-10;100
-22;20
-25;2
-25;20
-49;4
-\end{verbatim}
-% \end{lstlisting}
+\end{lstlisting}
+\begin{center}
+	\emph{Fig. 1} : contenu du fichier \texttt{graphe-full.txt} représentant le graphe du laboratoire
+\end{center}
 
 
 Nous pouvons tester notre travail. Pour cela nous allons créer notre programme
@@ -209,10 +201,9 @@ afin de lire le contenu du fichier représentant notre graphe. Une fois la
 matrice d'adjascence récuperée, nous effectuons les calculs et affichons les
 résultats obtenus à l'écran. 
 
-Voici le résultat des calculs effectués sur le graphe complet donné dans la
-donnée:
+La figure 2 illustre les résultat des calculs effectués sur le graphe complet donné dans la donnée.
 
-\begin{verbatim}
+\begin{lstlisting}
 ------------------------------------------------
 - RIM - Laboratoire 6                          -
 - Auteurs : Romain de Wolff & Simon Hintermann -
@@ -240,7 +231,10 @@ CC 20 <->  2 : 1.0
    80    0,00000   0,10073     0,03089
    93    0,00000   0,00000     0,01259
   100    0,00000   0,01259     0,12099
-\end{verbatim}
+\end{lstlisting}
+\begin{center}
+	\emph{Fig. 2} : résultats des calculs obtenus sur le graphe
+\end{center}
 
 \subsection{Intégration dans le moteur de recherche}
 
@@ -256,14 +250,26 @@ adaptations pour que celui-ci fonctionne sur nos système d'exploitation.
 Pour cela nous avons tout d'abord modifier le chemin des
 \textit{common words} configuré dans le fichier \texttt{Constants.java}. 
 
+Ensuite nous allons ajouter à la méthode \texttt{parseCollection()} du fichier \texttt{CACMFeeder.java} les opérations nécessaire afin de stocker les noeuds (qui correspondent aux URI visitées), la matrice d'adjacence, et les liens que comporte la page visitée. Ceci est effectué dans la boucle qui visite toute les pages web indexées.
+
+A la fin de cette boucle, nous pouvons reconstruire la matrice d'adjacence et effectuer les calculs de pagerank. Nous effectuons 5 itérations comme il est suggéré dans l'utilisation de l'algorithme pagerank.
+
+Nous conservonc finalement ces données dans une variable \texttt{urlAndPageRank}, qui est de type \texttt{LinkedHashMap<String,Double>}. 
+
+Nous allons créer une méthode \texttt{getUrlAndPageRank()} qui retourne la liste des URI ainsi que le pagerank associé. Ceci est stockeé dans la \texttt{LinkedHashMap} citée précédemment.
+
+Nous avons décidé de conserver les valeurs de cosinus retournées lors des recherches. Pour mettre nos résultats dans l'ordre du pagerank, nous créons, avec les résultats de la recherche, une sorte de jointure. En fait nous rassemblons les URI et la valeur du pagerank associée dans une \texttt{TreeMap}. Cette \texttt{TreeMap} est définie à l'aide d'un comparateur sur les doubles, qui permet de les enregistrer dans l'ordre décroissant automatiquement.
+
 %==============================================================================
 \section{Conclusion personnelle} 
 %==============================================================================
 
 Comme au laboratoire précédant, il est difficile de faire des tests sur un site
 web comportant autant de page que celui de la HEIG-VD. Nous avons donc fait des
-tests sur d'autre site compotant moins de pages, comme le site
+tests sur d'autre site comptant moins de pages, comme le site
 \url{http://www.kdanse.ch}.
+
+Le laboratoire dans son ensemble c'est très bien déroulé. Nous remercions encore M. Schmid et M. Prévost de nous avoir mis à disposition leur code.
 
 
 
