@@ -6,8 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import rim.cacm.CACMFeeder;
@@ -34,7 +38,10 @@ import rim.util.Constants;
  * If you have any question, please ask the assistant or the professor.<br/>
  * Enjoy !
  */
-public class Labo5 {
+public class Labo {
+	
+	private static CACMFeeder cacmFeeder;
+	
 	/**
 	 * Affichage du resultat d'une requete
 	 * en "langage naturel"
@@ -106,16 +113,42 @@ public class Labo5 {
 		
 		return r;
 	}
-	
+		 
+
 	/**
 	 * Invite l'utilisateur a entrer un mot et en affiche les
-	 * resulats de la recherche
+	 * resulats de la recherche, ordonne les resultats en fonction
+	 * du pagerank de chaque page
 	 * 
 	 * @param cr Retriever
 	 */
-	private static void seachTerm(CACMRetriever cr) {
+	private static void seachTerm(CACMRetriever cr, CACMFeeder cf) {
+		
 		System.out.print("Entrez un mot a rechercher : ");
-		System.out.println(cr.searchTerm(readString()));
+		
+		// effectue la recherche et conserve les resultats trouves
+		Map<String,Double> result = cr.searchTerm(readString());
+		
+		// les url ainsi que le page rank correspondant
+		LinkedHashMap<String,Double> urlAndPageRank =cf.getUrlAndPageRank();
+		
+		// le resultat comportant uniquement le page rank et l'url
+		// on utilise un comparateur de double pour classer les résultats
+		TreeMap<Double, String> resultatPR = 
+			new TreeMap<Double, String>(new Comparator<Double>() {
+				public int compare(Double o1, Double o2) {
+					return o2.compareTo(o1) ;
+				}
+			});
+		
+		// finalement on met les resultat trouvé dans le treemap 
+		for (String url : result.keySet()) {
+			resultatPR.put(urlAndPageRank.get(url), url);
+		}
+		
+		// et on affiche les resultats
+		System.out.println(resultatPR);
+		
 	}
 	
 	/**
@@ -219,7 +252,7 @@ public class Labo5 {
 				return;
 				
 			case 1:
-				seachTerm(retriever);
+				seachTerm(retriever, cacmFeeder);
 				break;
 				
 			case 2:
@@ -283,8 +316,8 @@ public class Labo5 {
 		// Creation de l'Indexer
 		Indexer cacmIndex = new CACMIndexer(index, cw);
 		
-		// Creation du Feeder
-		CACMFeeder cacmFeeder = new CACMFeeder();
+		// Creation du Feeder // TODO : en cours
+		cacmFeeder = new CACMFeeder();
 		
 		// Affichage
 		System.out.println("Creation de l'index [" + index.type() + "]...");
