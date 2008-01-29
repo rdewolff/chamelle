@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -38,11 +39,18 @@ public class CACMFeeder implements Feeder {
 	// Page de base
 	LeafPage root;
 	
+	// Pages avec pagerank correspondant
+	LinkedHashMap<String,Double> urlAndPageRank;
+	
 	/**
 	 * Constructeur
 	 */
 	public CACMFeeder() {
 		subDomains = new HashMap<String, Integer>();
+	}
+	
+	public LinkedHashMap<String,Double> getUrlAndPageRank() {
+		return urlAndPageRank;
 	}
 	
 	/* (non-Javadoc)
@@ -227,9 +235,21 @@ public class CACMFeeder implements Feeder {
 			pr = LinkAnalysis.calculatePRc(am, pr); // PageRank
 		}
 		
-		// 
+		// en cours
+		urlAndPageRank = new LinkedHashMap<String,Double>();
+		
+		short j=0;
+		for (String url : map.keySet()) {
+			urlAndPageRank.put(url, pr.get(j));
+			j++;
+		}
+		
+		// debug 
+		
+		System.out.println("Page : \n" + map);
 		System.out.println("Résultat du PageRank de chaque pages: \n" + pr);
-		// TODO end
+		System.out.println("ReZZZ: "+ urlAndPageRank);
+		
 		
 		// Finalisation de l'indexation
 		indexer.finalizeIndexation();
@@ -241,7 +261,7 @@ public class CACMFeeder implements Feeder {
 	 * Gestion des statistiques des sous
 	 * domaines et du nombre de documents
 	 * par sous domaines
-	 * @param lp URI � analyser
+	 * @param lp URI a analyser
 	 */
 	private void subDomain(LeafPage lp) {
 		String sub = lp.uri().replace("http://", "");
@@ -256,8 +276,8 @@ public class CACMFeeder implements Feeder {
 	}
 	
 	/**
-	 * R�cup�re les sous-domaines visit�s
-	 * @return Sous domaines visit�s
+	 * Recupere les sous-domaines visites
+	 * @return Sous domaines visites
 	 */
 	public HashMap<String, Integer> subDomains() {
 		return subDomains;
@@ -294,7 +314,7 @@ public class CACMFeeder implements Feeder {
 	
 	/**
 	 * Gestion d'un arbre de navigation
-	 * @author J. Schmid & L. Pr�vost
+	 * @author J. Schmid & L. Prevost
 	 */
 	public class LeafPage implements Comparable<LeafPage> {
 		// Uri du noeud
