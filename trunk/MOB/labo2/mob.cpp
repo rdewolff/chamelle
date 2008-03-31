@@ -200,7 +200,7 @@ int main() {
     
     // creation d'un fichier PostScript pour visualiser les solutions
     ofstream ps("visual.ps");
-    float zoom_x = 3;
+    float zoom_x = 5;
     float zoom_y = 2;
     
     ps << "%!PS-Adobe-2.0 EPSF-2.0;" << endl;
