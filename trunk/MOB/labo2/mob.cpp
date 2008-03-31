@@ -7,7 +7,6 @@
 
 #include <iostream>
 #include <fstream> // travail avec des fichiers
-#include <vector>
 #include <math.h>
 #include <stdlib.h> // random
 
@@ -16,19 +15,25 @@ using namespace std;
 // parametres
 const int alpha = 1;
 const int beta  = 1;
+unsigned int max_iter = 1;
 const float rho = 0.5;  // constante d'évaporation, entre 0 et 1
 
 // le fichier source
 const char fichier_source[] = "BERLIN52.TSP";
 
 // variable utiles pour la lecture des données du fichier source
-char tabString[0][80];
 string buffer[5][5];
 string tmp;
 
 int dimension;
 
-int getLength() {return 0;}
+float getLength(int* tab, float** dists) {
+	float ret = 0.0;
+	for(int i=0; i<dimension; i++) {
+		ret += dists[tab[i]][tab[(i+1)%dimension]];
+	}
+	return ret;
+}
 
 // programme principal
 int main() {
@@ -40,9 +45,9 @@ int main() {
     // ouvre le fichier contenant les données
     ifstream data(fichier_source);
     
-    // les deux vecteurs contenant les valeurs 
-    vector<float> node_x(0);
-    vector<float> node_y(0);
+    // les deux tableaux contenant les valeurs
+	float *coord_x;
+	float *coord_y;
     
     // temp element for insertion in vector      
     float e;
@@ -57,7 +62,7 @@ int main() {
         data >> buffer[1][1];
         // 3 : COMMENT, lis toute la ligne
         data >> buffer[2][0];
-        data.getline( tabString[0], 80, '\n' );
+		getline( data, tmp );
         // 4 : dimension
         data >> buffer[3][0];
         data >> dimension;
@@ -67,16 +72,24 @@ int main() {
         // ignore, debut coordonnees
         data >> tmp;
         
+		coord_x = new float[dimension];
+		coord_y = new float[dimension];
+
         // boucle et enregistre toute les valeurs dans un tableau
         for (int i=1; i<=dimension; i++) {
             data >> tmp; // ignore the first value
             data >> e;
-            node_x.push_back(e);
+            //node_x.push_back(e);
+			coord_x[i] = e;
             data >> e;
-            node_y.push_back(e);
+            //node_y.push_back(e);
+			coord_y[i] = e;
         }
 
-    }
+    } else {
+		printf("Erreur de chargement des donnees");
+		return 1;
+	}
     
     // affichage des valeurs lues
     // cout << buffer[0][0] << buffer[0][1] << endl;
@@ -85,7 +98,7 @@ int main() {
     
     // affichage du fichier lu
     // for(int i = 0; i < dimension; ++i) {
-    //         printf("val %d \t:\t %f \t %f \n", i, node_x.at(i), node_y.at(i) );
+    //         printf("val %d \t:\t %f \t %f \n", i, coord_x[i], coord_y[i] );
     //     }
     
     // ------------------
@@ -96,12 +109,15 @@ int main() {
     // matrice symétrique
     
     //dimension = 10;
-    float distance[dimension][dimension];
+	float **distance = new float*[dimension];
+	for(int i=0; i<dimension; i++) {
+		distance[i] = new float[dimension];
+	}
     float r[dimension][dimension]; // R, utilisé dans chaque iteration
-    unsigned int traces[dimension][dimension]; // traces globals
-    unsigned int t0 = 0;
-    unsigned int max_iter = 5;
-    unsigned int m = 10; // nombre de fourmis
+    int traces[dimension][dimension]; // traces 
+	bool visited[dimension]; // liste des villes visitées
+    int t0 = 0;
+    int nbFourmis = 10; // nombre de fourmis
     int L = 0;
     int random;
 
@@ -116,59 +132,51 @@ int main() {
     
     // calcul des distances 
     for(int i = 0; i < dimension; i++) {
-        // uniquement la moitié de la matrice est calculée car elle est symétrique
         for(int j = 0; j < dimension; j++) {
 			if(i!=j) {
 		        // calcul la distance en utilisant pythagore
-		        distance[i][j] = 1/sqrt(pow(node_x.at(i) - node_x.at(j), 2) + pow(node_y.at(i) - node_y.at(j), 2));
-			} else {
+		        distance[i][j] = 1/sqrt(pow(coord_x[i] - coord_x[j], 2) + pow(coord_y[i] - coord_y[j], 2));
+			} else { // Diagonale
 				distance[i][j] = 0;
 			}
         }
     }
     
     // affiche la matrice de distance
-    cout << "Matrice de distance" << endl;
-                    for(int i = 0; i < dimension; i++) {
-                        for(int j = 0; j < dimension; j++) {
-                            cout << distance[i][j] << "\t ";
-                        }
-                        cout << endl;
-                    }
+    //cout << "Matrice de distance" << endl;
+    //                for(int i = 0; i < dimension; i++) {
+    //                    for(int j = 0; j < dimension; j++) {
+    //                        cout << distance[i][j] << "\t ";
+    //                    }
+    //                    cout << endl;
+    //                }
     
-	int soluces[max_iter][dimension];
-	float solucesQuality[max_iter];
-    // stock les solutions
-    vector< vector<int> > solutions; // stock les tournées de 0 à max_iter-1
-    vector<float> solutionsQuality;
-    
+	// Pour stocker les solutions
+	int solutions[max_iter][dimension];
+	float solutionsQuality[max_iter];
     
     cout << " 3 - execution - iteration" << endl;
     
     // demarrage des iterations
-    for(unsigned int i = 1; i <= max_iter; i++) {
+    for(int n = 0; n < max_iter; n++) {
         
         // reset R à 0
         for (int i = 0; i < dimension; i++)
             for (int j = 0; j < dimension; j++)
                 r[i][j] = 0.0;
             
-        bool visited[dimension]; // liste des villes visitées
-        for ( int i = 0; i < dimension; i++) // initialise  à false
+        // Reset des villes visitees
+        for ( int i = 0; i < dimension; i++)
             visited[i] = false;
     
         // pour chaque fourmi
-        for (unsigned int k = 1; k <= m; k++) {
+        for (unsigned int k = 1; k <= nbFourmis; k++) {
             
-            // sort by rank 
-            
-            
+            // sort by rank
             L = 0; // what???
-            
-            vector<int> vtmp;
                         
             // tant que toute les villes n'ont pas ete visitées
-            while ( (int)vtmp.size() <= dimension-1 ) {
+            for (int j=0; j<dimension; j++) {
                 // trouve la ville suivante non-visitée de manière aléatoire
                 while (true) {
                     // choix d'une ville au hasard (0..dimension)
@@ -176,8 +184,9 @@ int main() {
                 
                     if ( !visited[random] ) {
                         visited[random] = true; // la ville est maintenant visitée
-                        vtmp.push_back(random);
-                        //solutions.push_back(random); // on l'insere dans la tournée
+                        
+						solutions[n][j] = random;
+
                         // TODO proportionnel aux traces!
                         break;
                     }
@@ -185,23 +194,20 @@ int main() {
                 }
             }
             
-            // stock la tournée
-            solutions.push_back(vtmp);
-            
             break; // buggy without? --> TODO : understand!!!!
         }
 
     }
     
     // affiche les solutions trouvées, sous forme de liste
-    cout << "Nombre de solutions trouvées : " << solutions.size() << endl;
-    for ( int i = 0; i<(int)solutions.size(); i++ ) {
-        cout << i << ":";
-        vector<int> tmp(solutions.at(i).begin(), solutions.at(i).end());
-        for ( int j = 0; j < (int)tmp.size(); j++ ) {
-            cout << tmp.at(j) << "-";
+    cout << "Nombre de solutions trouvées : " << max_iter << endl;
+    for ( int i = 0; i<max_iter; i++ ) {
+		cout << i << ":";
+		for ( int j = 0; j < dimension; j++ ) {
+            cout << solutions[i][j] << "-";
         }
         cout << endl;
+		cout << getLength(solutions[i], distance) << endl;
     }
 
     cout << "Creation d'un fichier postscript pour visualiser les resultats" << endl;
@@ -216,10 +222,9 @@ int main() {
     //ps << "%%BoundingBox: 0 0 535 333" << endl;
     ps << "0 0 0 setrgbcolor" << endl; // couleur
     ps << "0 0 moveto" << endl;     
-    for ( int i = 0; i<(int)solutions.size(); i++ ) {
-        vector<int> tmp(solutions.at(i).begin(), solutions.at(i).end());
-        for ( int j = 0; j < (int)tmp.size(); j++ ) {
-            ps << node_x.at(tmp.at(j))/zoom_x << " " << node_y.at(tmp.at(j))/zoom_y << " lineto" << endl;
+    for ( int i = 0; i<max_iter; i++ ) {
+        for ( int j = 0; j < dimension; j++ ) {
+            ps << coord_x[solutions[i][j]]/zoom_x << " " << coord_y[solutions[i][j]]/zoom_y << " lineto" << endl;
         }
         ps << "stroke" << endl;
         ps << "0.0 0.0 " << (sin(i)) << " setrgbcolor" << endl; // TODO COLORS
@@ -230,7 +235,13 @@ int main() {
     ps << "%%EOF" << endl;
     
     cout << "Fin du programme" << endl;
-    
+	
+	// Fermeture des fichiers et liberation de la memoire
+    ps.close();
     data.close();
-    return 0;
+	delete[] coord_x;
+	delete[] coord_y;
+	delete[] distance;
+    
+	return 0;
 }
