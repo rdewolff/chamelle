@@ -28,6 +28,8 @@ string tmp;
 
 int dimension;
 
+int getLength() {return 0;}
+
 // programme principal
 int main() {
     
@@ -115,9 +117,13 @@ int main() {
     // calcul des distances 
     for(int i = 0; i < dimension; i++) {
         // uniquement la moitié de la matrice est calculée car elle est symétrique
-        for(int j = i+1; j < dimension; j++) {
-            // calcul la distance en utilisant pythagore
-            distance[i][j] = 1/sqrt(pow(node_x.at(i) - node_x.at(j), 2) + pow(node_y.at(i) - node_y.at(j), 2));
+        for(int j = 0; j < dimension; j++) {
+			if(i!=j) {
+		        // calcul la distance en utilisant pythagore
+		        distance[i][j] = 1/sqrt(pow(node_x.at(i) - node_x.at(j), 2) + pow(node_y.at(i) - node_y.at(j), 2));
+			} else {
+				distance[i][j] = 0;
+			}
         }
     }
     
@@ -130,6 +136,8 @@ int main() {
                         cout << endl;
                     }
     
+	int soluces[max_iter][dimension];
+	float solucesQuality[max_iter];
     // stock les solutions
     vector< vector<int> > solutions; // stock les tournées de 0 à max_iter-1
     vector<float> solutionsQuality;
@@ -201,7 +209,7 @@ int main() {
     // creation d'un fichier PostScript pour visualiser les solutions
     ofstream ps("visual.ps");
     float zoom_x = 4;
-    float zoom_y = 3;
+    float zoom_y = 2;
     
     ps << "%!PS-Adobe-2.0 EPSF-2.0;" << endl;
     ps << "1 setlinewidth" << endl;
